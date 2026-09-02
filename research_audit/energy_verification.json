@@ -1,0 +1,13 @@
+{
+  "continuous_theorem": "dH/dt <= -p^T C p <= 0 (Strict Continuous Dissipativity)",
+  "numerical_scheme": "Explicit Symplectic / Forward Euler with step size dt=0.1",
+  "theoretical_monotonic": "Guaranteed in continuous limit as dt -> 0",
+  "empirical_discrete_monotonic": false,
+  "initial_energy": 10.009934283060225,
+  "final_energy": 3.779629883226146,
+  "total_token_steps": 196,
+  "positive_delta_steps": 30,
+  "fraction_positive_steps": 0.15384615384615385,
+  "mean_step_delta": -0.0319502789735081,
+  "paper_claim_guideline": "Report as asymptotically dissipative in continuous time with bounded O(dt) discrete numerical residual. Do NOT claim strict step-by-step discrete monotonicity."
+}

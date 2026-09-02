@@ -1,0 +1,9 @@
+{
+  "python_version": "3.13.6",
+  "torch_version": "2.8.0+cpu",
+  "cuda_available": false,
+  "cuda_device_name": "CPU",
+  "evaluation_protocol": "Standard 1,000-image / 5,000-caption Flickr8k bidirectional retrieval",
+  "normalization": "Unit L2-normalized cosine similarity",
+  "similarity_formula": "S(i, j) = (u_i / ||u_i||_2) \u00b7 (v_j / ||v_j||_2)"
+}

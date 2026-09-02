@@ -1,0 +1,14 @@
+{
+  "train_count": 6000,
+  "val_count": 1000,
+  "test_count": 1000,
+  "train_val_overlap_count": 0,
+  "train_test_overlap_count": 0,
+  "val_test_overlap_count": 0,
+  "zero_leakage_certified": true,
+  "split_manifest_paths": {
+    "train": "data/flickr8k/Flickr_8k.trainImages.txt",
+    "val": "data/flickr8k/Flickr_8k.devImages.txt",
+    "test": "data/flickr8k/Flickr_8k.testImages.txt"
+  }
+}
