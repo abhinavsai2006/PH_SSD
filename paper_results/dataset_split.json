@@ -1,0 +1,10 @@
+{
+  "dataset_name": "Flickr8k",
+  "total_raw_pairs": 40453,
+  "unique_images": 8091,
+  "train_images": 6472,
+  "val_images": 809,
+  "test_images": 810,
+  "current_split": "test",
+  "samples_in_split": 4050
+}

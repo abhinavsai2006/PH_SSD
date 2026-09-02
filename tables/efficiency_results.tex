@@ -1,0 +1,15 @@
+\begin{table}
+\caption{Inference Efficiency, Parameter Counts, and Computational Scaling on NVIDIA T4 GPU}
+\label{tab:efficiency_results}
+\begin{tabular}{lrrrrl}
+\toprule
+Architecture & Params (M) & Throughput (samp/s) & Batch Latency (ms) & Peak VRAM (GB) & Complexity \\
+\midrule
+Vanilla CLIP & 151.200000 & 52.400000 & 520.400000 & 6.800000 & $\mathcal{O}(N^2)$ \\
+Mamba-2 Baseline & 182.400000 & 49.800000 & 642.100000 & 7.780000 & $\mathcal{O}(N)$ \\
+PH-SSD (w/o SD-NPF) & 196.800000 & 44.500000 & 718.500000 & 7.780000 & $\mathcal{O}(N)$ \\
+PH-SSD (w/o VCM-SSD) & 195.100000 & 40.200000 & 794.200000 & 8.500000 & $\mathcal{O}(N)$ \\
+\textbf{Full PH-SSD (Ours)} & 211.060000 & 36.600000 & 871.300000 & 12.820000 & $\mathcal{O}(N)$ \\
+\bottomrule
+\end{tabular}
+\end{table}

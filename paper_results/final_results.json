@@ -1,0 +1,21 @@
+{
+  "test_metrics": {
+    "retrieval/i2t_r1": 3.125,
+    "retrieval/i2t_r5": 18.75,
+    "retrieval/i2t_r10": 40.625,
+    "retrieval/t2i_r1": 5.0,
+    "retrieval/t2i_r5": 19.375,
+    "retrieval/t2i_r10": 30.625000000000004,
+    "retrieval/mean_recall": 19.583333333333332
+  },
+  "energy_stats": {
+    "H_initial": 0.2418874204158783,
+    "H_final": 28.858312606811523,
+    "H_reduction": -28.616424560546875,
+    "H_min": 0.2418874204158783,
+    "max_positive_delta_H": 4.793693542480469,
+    "monotonic_violations": 101,
+    "perc_violations": 51.53061224489795,
+    "sequence_steps": 197
+  }
+}

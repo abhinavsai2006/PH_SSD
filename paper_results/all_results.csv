@@ -1,0 +1,5 @@
+experiment,model,seed,dataset,split,i2t_r1,i2t_r5,i2t_r10,t2i_r1,t2i_r5,t2i_r10,mean_rank,median_rank,mean_recall,parameters,trainable_parameters,latency_ms,throughput,peak_memory_mb,flops,training_time,status
+Exp_A_Baseline,Baseline-MambaSSD,42,flickr8k,test,0.625,1.25,3.75,0.3125,1.5625,3.125,158.559375,158.0,1.7708333333333333,0,0,0.0,0.0,0.0,0,17.801684141159058,COMPLETED
+Exp_B_SDNPF,Mamba-SSD+SDNPF,42,flickr8k,test,0.3125,1.875,3.75,0.3125,1.5625,3.125,160.421875,161.0,1.8229166666666667,0,0,0.0,0.0,0.0,0,22.82642960548401,COMPLETED
+Exp_C_VCMSSD,Mamba-SSD+VCMSSD,42,flickr8k,test,0.625,3.75,5.0,0.3125,1.5625,3.125,155.140625,155.5,2.3958333333333335,0,0,0.0,0.0,0.0,0,16.110530376434326,COMPLETED
+Exp_D_Proposed_PHSSD,PH-SSD,42,flickr8k,test,0.0,1.875,2.8125,0.3125,1.5625,3.125,158.984375,159.5,1.6145833333333333,0,0,0.0,0.0,0.0,0,22.69002103805542,COMPLETED

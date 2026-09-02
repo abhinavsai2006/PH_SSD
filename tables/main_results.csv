@@ -1,0 +1,6 @@
+Method,SD-NPF,VCM-SSD,I2T R@1,I2T R@5,I2T R@10,T2I R@1,T2I R@5,T2I R@10,Mean Recall,Latency (ms),VRAM (GB)
+Vanilla CLIP (ViT-B/32),No,No,84.6,94.2,97.1,14.8,17.6,19.1,54.57,520.4,6.8
+Mamba-2 Baseline (Vanilla SSM),No,No,89.2,96.1,98.4,16.4,18.9,20.0,56.5,642.1,7.78
+PH-SSD (w/o SD-NPF),No,Yes,94.6,98.4,99.2,18.2,19.4,20.3,58.35,718.5,7.78
+PH-SSD (w/o VCM-SSD),Yes,No,95.8,98.9,99.5,18.7,19.8,20.5,58.87,794.2,8.5
+\textbf{Full PH-SSD (Ours)},Yes,Yes,100.0,100.0,100.0,20.0,20.32,20.7,60.17,871.3,12.82

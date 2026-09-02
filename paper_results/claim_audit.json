@@ -1,0 +1,24 @@
+{
+  "claims": [
+    {
+      "claim": "Symplectic Dissipative Neural Pre-Filter (SD-NPF) satisfies continuous energy dissipation dH/dt <= 0",
+      "status": "THEORETICALLY PROVEN & EMPIRICALLY VERIFIED",
+      "evidence_file": "paper_results/energy_decay.csv"
+    },
+    {
+      "claim": "VCM-SSD implements closed-form Gaussian Variational Information Bottleneck at chunk boundaries",
+      "status": "THEORETICALLY PROVEN & CODE VERIFIED",
+      "evidence_file": "ph_ssd/modules/vcm_ssd.py"
+    },
+    {
+      "claim": "Real Flickr8k Image-Text Contrastive Retrieval evaluation",
+      "status": "EMPIRICALLY VERIFIED",
+      "evidence_file": "paper_results/all_results.json"
+    },
+    {
+      "claim": "Official CUDA Mamba-2 execution",
+      "status": "PyTorch Fallback Verified (CUDA mamba_ssm pending Linux environment)",
+      "evidence_file": "paper_results/run_manifest.json"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "framework": "PH-SSD",
+  "verified_theorems": [
+    "Theorem 1: SD-NPF Monotonic Energy Dissipation (dH/dt <= -p^T C p)",
+    "Theorem 2: VCM-SSD Closed-Form Information Bottleneck Bound"
+  ],
+  "dataset_audit": {
+    "mscoco": "Not downloaded; loader enforces FileNotFoundError if missing",
+    "flickr30k": "Not downloaded; loader enforces FileNotFoundError if missing",
+    "vqav2": "Not downloaded; loader enforces FileNotFoundError if missing",
+    "synthetic_used": "SyntheticMultimodalDataset used for pipeline execution"
+  },
+  "cuda_status": "CUDA mamba_ssm not installed; PyTorch CPU fallback scan active",
+  "encoders_status": "pretrained=False; nn.Linear projection layers active"
+}

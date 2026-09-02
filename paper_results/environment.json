@@ -1,0 +1,13 @@
+{
+  "pytorch_version": "2.8.0+cpu",
+  "cuda_available": false,
+  "device": "cpu",
+  "vit_model": "vit_base_patch16_224",
+  "text_model": "roberta-base",
+  "ssd_implementation": "SSD-style PyTorch state-space fallback",
+  "epochs": 1,
+  "batch_size": 32,
+  "lr_backbone": 1e-05,
+  "lr_ph_ssd": 0.0001,
+  "global_seed": 42
+}

@@ -1,0 +1,7 @@
+{
+  "status": "PREVIOUS FAILED/UNSUCCESSFUL TRAINING RUN",
+  "loss": 3.4657,
+  "test_i2t_r1": 0.37,
+  "test_t2i_r1": 0.12,
+  "test_mean_recall": 0.78
+}

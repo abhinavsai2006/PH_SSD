@@ -1,0 +1,35 @@
+# PH-SSD Real Experiment Configuration: MS COCO Retrieval
+task: image_text_retrieval
+model:
+  name: ph_ssd
+  input_dim_A: 768
+  input_dim_B: 768
+  d_model: 256
+  d_state: 64
+  z_dim: 32
+  n_layers: 4
+  vision_encoder: dinov2
+  text_encoder: deberta
+  pretrained: true
+  num_classes: 10
+
+dataset:
+  name: mscoco
+  data_dir: data/mscoco
+  seq_len: 64
+  image_size: 224
+  batch_size: 32
+  num_workers: 4
+
+training:
+  epochs: 40
+  lr: 0.0001
+  weight_decay: 0.01
+  warmup_epochs: 5
+  use_amp: true
+  use_ema: true
+  max_grad_norm: 1.0
+
+checkpoint:
+  dir: checkpoints/mscoco
+  save_every: 5

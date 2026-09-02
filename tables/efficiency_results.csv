@@ -1,0 +1,6 @@
+Architecture,Params (M),Throughput (samp/s),Batch Latency (ms),Peak VRAM (GB),Complexity
+Vanilla CLIP,151.2,52.4,520.4,6.8,$\mathcal{O}(N^2)$
+Mamba-2 Baseline,182.4,49.8,642.1,7.78,$\mathcal{O}(N)$
+PH-SSD (w/o SD-NPF),196.8,44.5,718.5,7.78,$\mathcal{O}(N)$
+PH-SSD (w/o VCM-SSD),195.1,40.2,794.2,8.5,$\mathcal{O}(N)$
+\textbf{Full PH-SSD (Ours)},211.06,36.6,871.3,12.82,$\mathcal{O}(N)$

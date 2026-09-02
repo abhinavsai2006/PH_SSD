@@ -1,0 +1,35 @@
+# PH-SSD Real Experiment Configuration: Flickr30k Retrieval
+task: image_text_retrieval
+model:
+  name: ph_ssd
+  input_dim_A: 768
+  input_dim_B: 768
+  d_model: 256
+  d_state: 64
+  z_dim: 32
+  n_layers: 4
+  vision_encoder: vit
+  text_encoder: roberta
+  pretrained: true
+  num_classes: 10
+
+dataset:
+  name: flickr30k
+  data_dir: data/flickr30k
+  seq_len: 64
+  image_size: 224
+  batch_size: 32
+  num_workers: 4
+
+training:
+  epochs: 30
+  lr: 0.0001
+  weight_decay: 0.01
+  warmup_epochs: 3
+  use_amp: true
+  use_ema: true
+  max_grad_norm: 1.0
+
+checkpoint:
+  dir: checkpoints/flickr30k
+  save_every: 5

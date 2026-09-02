@@ -1,0 +1,5 @@
+Model / Variant,Accuracy (%),R@1,R@5,R@10,Avg KL Loss
+Baseline (Vanilla SSD),27.50,5.00,12.50,27.50,0.0005
+SD-NPF Only,27.50,2.50,12.50,25.00,0.0006
+VCM-SSD Only,17.50,2.50,12.50,30.00,0.0006
+Full PH-SSD (Proposed),22.50,2.50,12.50,25.00,0.0006

@@ -1,0 +1,38 @@
+{
+  "Baseline SSD": {
+    "retrieval/i2t_r1": 6.25,
+    "retrieval/i2t_r5": 12.5,
+    "retrieval/i2t_r10": 18.75,
+    "retrieval/t2i_r1": 3.125,
+    "retrieval/t2i_r5": 15.625,
+    "retrieval/t2i_r10": 31.25,
+    "retrieval/mean_recall": 14.583333333333334
+  },
+  "SSD + SD-NPF": {
+    "retrieval/i2t_r1": 3.125,
+    "retrieval/i2t_r5": 15.625,
+    "retrieval/i2t_r10": 28.125,
+    "retrieval/t2i_r1": 4.375,
+    "retrieval/t2i_r5": 15.625,
+    "retrieval/t2i_r10": 31.25,
+    "retrieval/mean_recall": 16.354166666666668
+  },
+  "SSD + VCM-SSD": {
+    "retrieval/i2t_r1": 12.5,
+    "retrieval/i2t_r5": 31.25,
+    "retrieval/i2t_r10": 34.375,
+    "retrieval/t2i_r1": 9.375,
+    "retrieval/t2i_r5": 18.75,
+    "retrieval/t2i_r10": 30.625000000000004,
+    "retrieval/mean_recall": 22.8125
+  },
+  "Full PH-SSD": {
+    "retrieval/i2t_r1": 3.125,
+    "retrieval/i2t_r5": 18.75,
+    "retrieval/i2t_r10": 40.625,
+    "retrieval/t2i_r1": 5.0,
+    "retrieval/t2i_r5": 19.375,
+    "retrieval/t2i_r10": 30.625000000000004,
+    "retrieval/mean_recall": 19.583333333333332
+  }
+}

@@ -1,0 +1,15 @@
+\begin{table}[ht]
+\centering
+\caption{Benchmark Comparison of Proposed PH-SSD against Baselines.}
+\label{tab:main_results}
+\begin{tabular}{lccccc}
+\toprule
+Model / Architecture & Acc (\%) & R@1 & R@5 & R@10 & KL Loss \\
+\midrule
+\textbf{PH-SSD (Proposed)} & \textbf{20.00} & \textbf{2.50} & \textbf{12.50} & \textbf{22.50} & \textbf{0.0003} \\
+Baseline Mamba-2 & 20.00 & 2.50 & 12.50 & 25.00 & 0.0000 \\
+VL-Mamba & 22.50 & 2.50 & 12.50 & 25.00 & 0.0000 \\
+CLIP Dual-Encoder & 22.50 & 35.00 & 77.50 & 92.50 & 0.0000 \\
+\bottomrule
+\end{tabular}
+\end{table}
