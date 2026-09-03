@@ -84,9 +84,10 @@ Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies \
 % ------------------------------------------------------------------------------
 % Figure 2: Dataset & Preprocessing Pipeline (Full-Width figure*)
 % Perfectly symmetric 2-stage architecture strictly within 0.85\textwidth (140mm total width)
+% Zero fake arrows between Test and Stage 2 — Clean semantic separation
 % ------------------------------------------------------------------------------
 \newcommand{\HEDODatasetFigure}{
-\begin{tikzpicture}[node distance=6mm and 8mm]
+\begin{tikzpicture}[node distance=5.5mm and 8mm]
 
 % Stage 1: Central Dataset Header
 \node[hvenc, minimum width=136mm, minimum height=9mm] (root)
@@ -110,20 +111,16 @@ Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies \
 \draw[flow] (split_junction -| te) -- (te.north);
 \draw[hvline] (split_junction -| tr) -- (split_junction -| te);
 
-% Stage 2 Title / Divider
-\node[font=\bfseries\footnotesize, color=blue!70!black, below=10mm of va] (pipe_title)
-{Modality-Specific Feature Extraction Pipelines (Frozen Foundation Backbones)};
+% Stage 2 Section Label (Visual Whitespace — Strictly NO ARROWS from Test or Label)
+\node[font=\bfseries\footnotesize, color=blue!70!black, below=12mm of va] (pipe_title)
+{Modality-Specific Preprocessing and Feature Extraction (Applied Across All Benchmark Splits)};
 
 % Modality Pipelines Symmetrically Centered under Stage 2
-\node[hvinput, below=5mm of pipe_title, xshift=-34mm, minimum width=58mm, minimum height=13mm] (ip)
-{\textbf{Modality 1: Visual Feature Pipeline}\\$224 \times 224$ Center Crop, ImageNet Normalization\\Frozen ViT-B/16 Backbone $\implies 197 \times 768$ Tokens};
+\node[hvinput, below=4mm of pipe_title, xshift=-34mm, minimum width=58mm, minimum height=13mm] (ip)
+{\textbf{Visual Pipeline (Images $\to$ Patch Tokens)}\\224 $\times$ 224 Center Crop, ImageNet Normalization\\Frozen ViT-B/16 Backbone $\implies 197 \times 768$ Tokens};
 
-\node[hvinput, below=5mm of pipe_title, xshift=34mm, minimum width=58mm, minimum height=13mm] (tp)
-{\textbf{Modality 2: Textual Feature Pipeline}\\RoBERTa BPE Tokenizer, Max Length $L_T=64$\\Frozen RoBERTa-base Backbone $\implies 64 \times 768$ Tokens};
-
-% Straight Vertical Arrows from Title Level into Feature Extraction Blocks
-\draw[flow] (pipe_title.south -| ip) -- (ip.north);
-\draw[flow] (pipe_title.south -| tp) -- (tp.north);
+\node[hvinput, below=4mm of pipe_title, xshift=34mm, minimum width=58mm, minimum height=13mm] (tp)
+{\textbf{Textual Pipeline (Captions $\to$ Token Sequences)}\\RoBERTa BPE Tokenizer, Max Length $L_T=64$\\Frozen RoBERTa-base Backbone $\implies 64 \times 768$ Tokens};
 
 \end{tikzpicture}
 }
