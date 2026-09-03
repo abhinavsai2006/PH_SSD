@@ -59,10 +59,10 @@ Despite their efficiency in unimodal sequence modeling, applying state-space rec
 \subsection{Contributions of This Work}
 To investigate these challenges, this paper presents HEDO-HVSC, a multimodal state-space framework combining dissipative coordinate-momentum updates with variational chunk boundary coupling. The primary contributions of this work are:
 \begin{enumerate}
-    \item \textbf{Hamiltonian-Inspired Energy Dissipation Operator (HEDO):} We formulate a learned discrete coordinate-momentum transformation parameterized by weight matrices $\mathbf{W}_q, \mathbf{W}_p$, integration step $\Delta t=0.1$, damping coefficient $\beta=0.05$, and perturbation scale $\gamma=0.1$. HEDO introduces a Hamiltonian-inspired dissipative inductive bias that bounds discrete momentum growth prior to sequence recurrence.
+    \item \textbf{Hamiltonian-Inspired Energy Dissipation Operator (HEDO):} We formulate a learned discrete coordinate-momentum transformation parameterized by weight matrices $\mathbf{W}_q, \mathbf{W}_p$, integration step $\Delta t=0.1$, damping coefficient $\beta=0.05$, and perturbation scale $\gamma=0.1$. HEDO introduces a Hamiltonian-inspired damping term that limits momentum amplification prior to sequence recurrence.
     \item \textbf{State-Continuous Chunk-Wise SSD-Style Recurrence:} We design a custom PyTorch recurrent state-space block ($C=16, d_{\text{state}}=64$) that maintains hidden-state continuity across chunk boundaries, avoiding state resets between consecutive chunks.
     \item \textbf{Chunk-Wise Variational State Coupling (HVSC):} We introduce mask-weighted boundary-state aggregation to reduce padding-induced aggregation bias, parameterizing Gaussian latent distributions regularized via symmetric KL divergence in FP32 precision during training, while ensuring strictly unimodal, deterministic inference at test time.
-    \item \textbf{Controlled Multi-Seed Factorial Benchmark:} We execute an exhaustive 12-run factorial benchmark ($4\text{ model configurations} \times 3\text{ random seeds}: 42, 43, 44$) on the official Flickr8k dataset with frozen ViT-B/16 and RoBERTa-base backbones, accompanied by secondary corruption testing and empirical latency scaling analysis.
+    \item \textbf{Controlled Multi-Seed Factorial Benchmark:} We execute a 12-run controlled factorial benchmark ($4\text{ model configurations} \times 3\text{ random seeds}: 42, 43, 44$) on the standard Flickr8k dataset \cite{hodosh2013framing} with frozen ViT-B/16 and RoBERTa-base backbones, accompanied by secondary corruption testing and empirical latency scaling analysis.
 \end{enumerate}
 
 \begin{figure*}[!t]
@@ -86,7 +86,7 @@ To circumvent the quadratic complexity of self-attention, State-Space Models (SS
 Mamba \cite{gu2023mamba} introduced selective state spaces, allowing the recurrent matrices $\mathbf{B}, \mathbf{C},$ and decay step $\Delta$ to be dynamic functions of the input tokens. More recently, State-Space Duality (SSD) and Mamba-2 \cite{dao2024transformers} established the mathematical equivalence between 1-D structured masked attention and continuous recurrence. In this paper, we extend state-space recurrence to multimodal metric learning by introducing continuous boundary state propagation across sequence chunks and mask-weighted variational alignment.
 
 \subsection{Hamiltonian Mechanics and Neural Dynamical Systems}
-Hamiltonian Neural Networks (HNNs) \cite{greydanus2019hamiltonian} and Lagrangian Neural Networks \cite{cranmer2020lagrangian} embed fundamental energy-conservation principles into deep learning architectures by enforcing symplectic gradient updates. Port-Hamiltonian Neural ODEs \cite{port_hamiltonian_neural_odes} extended continuous neural ODEs to dissipative dynamical systems incorporating a positive semi-definite damping matrix $\mathbf{D} \succ 0$. In our architecture, HEDO adapts discrete dissipative mechanics into a parameter-efficient sequence transformation operator to introduce an explicit dissipative inductive bias for sequence representations.
+Hamiltonian Neural Networks (HNNs) \cite{greydanus2019hamiltonian} and Lagrangian Neural Networks \cite{cranmer2020lagrangian} embed fundamental energy-conservation principles into deep learning architectures by enforcing symplectic gradient updates. Port-Hamiltonian systems \cite{massaroli2019port} extended continuous neural networks to dissipative dynamical systems incorporating a positive semi-definite damping matrix $\mathbf{D} \succ 0$. In our architecture, HEDO adapts discrete dissipative mechanics into a parameter-efficient sequence transformation operator to introduce an explicit dissipative inductive bias for sequence representations.
 
 \subsection{Variational Representation Learning}
 Variational Autoencoders (VAEs) \cite{kingma2013auto} and the Variational Information Bottleneck (VIB) \cite{alemi2016deep} formalize latent representation learning by optimizing trade-offs between mutual information and compression. In this work, HVSC parameterizes Gaussian latent distributions from recurrent chunk boundary states, using symmetric KL divergence to align cross-modal boundary representations during training.
@@ -118,7 +118,7 @@ In classical mechanics, a physical system with generalized coordinates $\mathbf{
 \begin{equation}
 \begin{bmatrix} \dot{\mathbf{q}} \\ \dot{\mathbf{p}} \end{bmatrix} = \begin{bmatrix} \mathbf{0} & \mathbf{I} \\ -\mathbf{I} & -\mathbf{D} \end{bmatrix} \begin{bmatrix} \nabla_{\mathbf{q}} \mathcal{H} \\ \nabla_{\mathbf{p}} \mathcal{H} \end{bmatrix}
 \end{equation}
-The total energy derivative evaluates to $\dot{\mathcal{H}} = -\nabla_{\mathbf{p}}\mathcal{H}^\top \mathbf{D} \nabla_{\mathbf{p}}\mathcal{H} \le 0$, ensuring continuous energy dissipation. In our architecture, we adapt these continuous physical principles into a discrete learnable sequence transformation operator.
+The total energy derivative evaluates to $\dot{\mathcal{H}} = -\nabla_{\mathbf{p}}\mathcal{H}^\top \mathbf{D} \nabla_{\mathbf{p}}\mathcal{H} \le 0$, ensuring continuous energy dissipation. This continuous-time dissipation property motivates our construction but does not directly imply monotonic energy decay for the proposed discrete learned HEDO update. In our architecture, we adapt these continuous physical principles into a discrete learnable sequence transformation operator.
 
 \section{Proposed HEDO-HVSC Architecture}
 \label{sec:methodology}
@@ -127,7 +127,7 @@ The total energy derivative evaluates to $\dot{\mathcal{H}} = -\nabla_{\mathbf{p
 The overall architecture of HEDO-HVSC (Fig.~\ref{fig:overall_architecture}) processes paired images $\mathbf{I} \in \mathbb{R}^{3 \times 224 \times 224}$ and textual captions $\mathbf{T}$ through three sequential stages:
 \begin{enumerate}
     \item \textbf{Frozen Backbone Feature Extraction:} Input images and tokenized text are mapped into continuous sequence representations using frozen pretrained encoders (ViT-B/16 and RoBERTa-base).
-    \item \textbf{Dissipative Hamiltonian Transformation (HEDO):} Token representations are processed through coordinate-momentum dissipative updates to suppress high-frequency perturbation noise.
+    \item \textbf{Dissipative Hamiltonian Transformation (HEDO):} Token representations are processed through coordinate-momentum dissipative updates intended to reduce sensitivity to representation perturbations.
     \item \textbf{State-Continuous Chunk-Wise SSD \& Variational Coupling (HVSC):} Sequences are partitioned into chunks ($C=16$), recurrent hidden states are propagated continuously across boundaries, and valid boundary states parameterize Gaussian latent distributions regularized via symmetric KL divergence.
 \end{enumerate}
 
@@ -175,7 +175,7 @@ Under the momentum update step \eqref{eq:momentum_update}, the norm of the updat
 \begin{equation}
 \|\mathbf{p}_{t+1}\|_2 \le (1 - \beta \Delta t)\|\mathbf{p}_t\|_2 + \Delta t \|\tanh(\mathbf{W}_q \mathbf{q}_t)\|_2
 \end{equation}
-Because $\|\tanh(\cdot)\|_2 \le \sqrt{d_{\text{model}}}$, the contraction factor $(1 - \beta \Delta t) = 0.995 < 1$ provides a dissipative damping effect on momentum magnitude.
+Because $\|\tanh(\cdot)\|_2 \le \sqrt{d_{\text{model}}}$, the contraction factor $(1 - \beta \Delta t) = 0.995 < 1$ introduces a Hamiltonian-inspired damping term that limits momentum amplification under the bounded nonlinear force term.
 
 \textbf{Empirical Diagnostic Trajectory:} In pre-training diagnostic evaluation, unforced multi-step simulation on image patch representations yielded the trajectory $\mathcal{H} \in [170.824, 170.651, 170.927, 171.646, 172.801, 174.387]$, while text representations yielded $\mathcal{H} \in [5.849, 5.796, 5.774, 5.783, 5.823, 5.892]$. While HEDO changes representation energy substantially ($\mathcal{H}_{\text{raw}} = 170.824 \to \mathcal{H}_{\text{HEDO}} = 77.563$ for images, maintaining cosine similarity $0.9952$), the unforced discrete trajectory is not monotonically decreasing. We therefore describe HEDO as a Hamiltonian-inspired discrete dissipative transformation that introduces a damping inductive bias, rather than a system with guaranteed monotonic energy decay.
 
@@ -286,7 +286,7 @@ where $\mathbf{s}_{i,j} = \hat{\mathbf{e}}_{I, i}^\top \hat{\mathbf{e}}_{T, j}$ 
 \STATE Compute mask-weighted boundary states and parameterize latents (18)--(20)
 \STATE Compute symmetric KL loss $\mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$ in FP32 precision (24)--(25)
 \STATE Sample latents $\mathbf{z}$ and evaluate coupled embeddings $\mathbf{e}_I, \mathbf{e}_T$ (22)--(23)
-\STATE Compute multi-positive InfoNCE loss $\mathcal{L}_{\text{InfoNCE}}$ (27)
+\STATE Compute multi-positive InfoNCE loss $\mathcal{L}_{\text{InfoNCE}}$ (29)
 \STATE $\mathcal{L}_{\text{total}} \leftarrow \mathcal{L}_{\text{InfoNCE}} + 0.01 \cdot \mathcal{D}_{\text{SKL}}$
 \RETURN $\mathcal{L}_{\text{total}}$
 \end{algorithmic}
@@ -296,7 +296,7 @@ where $\mathbf{s}_{i,j} = \hat{\mathbf{e}}_{I, i}^\top \hat{\mathbf{e}}_{T, j}$ 
 \label{sec:experimental_setup}
 
 \subsection{Dataset Partition and Provenance Protocol}
-Experiments are conducted on the standard Flickr8k dataset \cite{young2014image}, comprising 8,000 photographic images paired with 5 human-annotated captions each (40,000 total captions). We utilize the predefined 6,000 / 1,000 / 1,000 train / validation / test partition protocol summarized in Table~\ref{tab:dataset_splits} and Fig.~\ref{fig:dataset_pipeline}. Split integrity was strictly verified via image identifier hashing to guarantee zero cross-split overlap ($\text{Train} \cap \text{Val} = \emptyset$, $\text{Train} \cap \text{Test} = \emptyset$, $\text{Val} \cap \text{Test} = \emptyset$).
+Experiments are conducted on the standard Flickr8k benchmark introduced by Hodosh et~al. \cite{hodosh2013framing}, comprising 8,000 photographic images paired with 5 human-annotated captions each (40,000 total captions). We utilize a predefined 6,000 / 1,000 / 1,000 train / validation / test partition protocol summarized in Table~\ref{tab:dataset_splits} and Fig.~\ref{fig:dataset_pipeline}. Split integrity was strictly verified via image identifier hashing to guarantee zero cross-split overlap ($\text{Train} \cap \text{Val} = \emptyset$, $\text{Train} \cap \text{Test} = \emptyset$, $\text{Val} \cap \text{Test} = \emptyset$).
 
 \begin{table}[!t]
 \centering
@@ -510,7 +510,7 @@ The empirical corruption results show a mixed robustness profile:
 The $+0.50\%$ gain under severe Gaussian noise shows a small advantage under high-frequency perturbations, while overall performance across diverse perturbations remains mixed.
 
 \subsection{Computational Scaling Efficiency}
-To empirically characterize the sequence-length scaling of the custom PyTorch SSD block, we measured inference latency across sequence lengths $L \in \{16, 32, 64, 128, 256\}$ with batch size $B=16$ (Table~\ref{tab:scaling} and Fig.~\ref{fig:scaling}).
+To empirically characterize the sequence-length scaling of the custom PyTorch SSD block, we measured inference latency across sequence lengths $L \in \{16, 32, 64, 128, 256\}$ with batch size $B=16$ (Table~\ref{tab:scaling} and Fig.~\ref{fig:scaling}). For each sequence length, GPU timing was performed after 10 warm-up iterations with explicit CUDA synchronization (\texttt{torch.cuda.synchronize()}); the reported latency is the mean over 50 timed iterations with controlled GPU clock state.
 
 \begin{table}[!t]
 \centering
@@ -597,7 +597,7 @@ The trainable modules constitute $<0.21\%$ of total network capacity, confirming
 
 \subsection{Evaluation of Main Benchmark Results}
 \begin{itemize}
-    \item \textbf{Clean Retrieval Equivalence:} Full HEDO-HVSC achieves $48.28\% \pm 0.59\%$ test Mean Recall compared to $48.25\% \pm 0.47\%$ for the baseline (paired difference $+0.03\% \pm 0.20\%$). Given the small number of independent seeds ($N=3$), the reported standard deviations are used primarily to characterize run-to-run variability rather than to assert formal statistical significance claims. These results indicate that state-space sequence models with coordinate-momentum transformations provide competitive clean-data retrieval performance.
+    \item \textbf{Clean Retrieval Equivalence:} Full HEDO-HVSC achieves $48.28\% \pm 0.59\%$ test Mean Recall compared to $48.25\% \pm 0.47\%$ for the baseline (paired difference $+0.03\% \pm 0.20\%$). Because only three seeds were evaluated per configuration, inferential statistical testing is not emphasized; variability is reported descriptively through mean $\pm$ standard deviation and matched-seed differences. These results indicate that state-space sequence models with coordinate-momentum transformations provide competitive clean-data retrieval performance.
     \item \textbf{Ablation Dynamics:} The w/o HVSC configuration achieves the highest mean recall ($48.43\% \pm 0.29\%$) among the four tested configurations, suggesting that the HEDO transformation can provide useful representation regularization under the present clean-data protocol.
     \item \textbf{HVSC Mask Weighting:} The mask-weighted pooling prevents zero-padding from contaminating boundary state representations, ensuring reliable boundary parameterization.
     \item \textbf{Robustness Profile:} Robustness testing demonstrates a mixed profile, where HEDO provides a small advantage ($+0.50\%$) under severe Gaussian noise ($\sigma=0.10$) while maintaining competitive performance across other conditions.
@@ -615,7 +615,7 @@ To ensure complete scientific integrity, we explicitly clarify:
 
 \subsection{Limitations and Future Work}
 \begin{enumerate}
-    \item \textbf{Dataset Scope:} Evaluation was conducted on Flickr8k. Extending validation to MS-COCO \cite{lin2014microsoft} and Flickr30k \cite{young2014image} represents future work.
+    \item \textbf{Dataset Scope:} Evaluation was conducted on Flickr8k. Extending validation to Flickr30k \cite{young2014image} and MS-COCO \cite{lin2014microsoft} represents future work.
     \item \textbf{Joint Fine-Tuning:} Backbones were kept frozen. Joint end-to-end training of visual and language backbones may unlock higher absolute capacity.
     \item \textbf{Hardware Optimization:} The SSD recurrence was implemented in pure PyTorch; compilation into native CUDA kernels will further accelerate inference.
 \end{enumerate}
@@ -625,7 +625,7 @@ The experiments use the publicly available Flickr8k dataset. The full PyTorch so
 
 \section{Conclusion}
 \label{sec:conclusion}
-In this work, we introduced HEDO-HVSC, a multimodal state-space framework combining a Hamiltonian-inspired discrete dissipative operator (HEDO) with mask-weighted chunk-wise variational state coupling (HVSC). Through an exhaustive 12-run multi-seed benchmark on the predefined Flickr8k dataset partition, we demonstrated that HEDO-HVSC achieves retrieval performance comparable to the controlled baseline ($48.28\% \pm 0.59\%$). The measured latency exhibits approximately linear scaling over the tested sequence lengths, consistent with the algorithmically linear recurrent structure. Robustness evaluation shows a small advantage under severe Gaussian noise, while performance across other tested perturbations remains mixed.
+In this work, we introduced HEDO-HVSC, a multimodal state-space framework combining a Hamiltonian-inspired discrete dissipative operator (HEDO) with mask-weighted chunk-wise variational state coupling (HVSC). Through a 12-run controlled factorial benchmark on the predefined Flickr8k dataset partition, we demonstrated that HEDO-HVSC achieves retrieval performance comparable to the controlled baseline ($48.28\% \pm 0.59\%$). The measured latency exhibits approximately linear scaling over the tested sequence lengths, consistent with the algorithmically linear recurrent structure. Robustness evaluation shows a small advantage under severe Gaussian noise, while performance across other tested perturbations remains mixed.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

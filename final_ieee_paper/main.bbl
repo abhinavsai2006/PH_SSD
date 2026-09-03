@@ -128,6 +128,11 @@ J.~Devlin, M.-W. Chang, K.~Lee, and K.~Toutanova, ``{BERT}: Pre-training of
   American Chapter of the Association for Computational Linguistics (NAACL)},
   pp. 4171--4186, 2019.
 
+\bibitem{hodosh2013framing}
+M.~Hodosh, P.~Young, and J.~Hockenmaier, ``Framing image description as a
+  ranking task: Data, models and evaluation metrics,'' \emph{Journal of
+  Artificial Intelligence Research}, vol.~47, pp. 853--899, 2013.
+
 \bibitem{greydanus2019hamiltonian}
 S.~Greydanus, M.~Dzamba, and J.~Yosinski, ``Hamiltonian neural networks,''
   \emph{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~32,
@@ -138,11 +143,11 @@ M.~Cranmer, S.~Greydanus, S.~Hoyer, P.~Battaglia, D.~Spergel, and S.~Ho,
   ``Lagrangian neural networks,'' \emph{ICLR Workshop on Deep Differential
   Equations}, 2020.
 
-\bibitem{port_hamiltonian_neural_odes}
-M.~Poli, S.~Massaroli, A.~Yamashita, H.~Asama, and J.~Park, ``Port-hamiltonian
-  neural ordinary differential equations,'' \emph{Advances in Neural
-  Information Processing Systems (NeurIPS)}, vol.~35, pp. 14\,578--14\,590,
-  2022.
+\bibitem{massaroli2019port}
+S.~Massaroli, M.~Poli, F.~Califano, A.~Faragasso, J.~Park, A.~Yamashita, and
+  H.~Asama, ``Port-hamiltonian approach to neural network training,'' in
+  \emph{Proceedings of the 2019 IEEE 58th Conference on Decision and Control
+  (CDC)}, 2019, pp. 6799--6806.
 
 \bibitem{kingma2013auto}
 D.~P. Kingma and M.~Welling, ``Auto-encoding variational {Bayes},''
@@ -155,8 +160,8 @@ A.~A. Alemi, I.~Fischer, J.~V. Dillon, and K.~Murphy, ``Deep variational
 
 \bibitem{young2014image}
 P.~Young, A.~Lai, M.~Hodosh, and J.~Hockenmaier, ``From image descriptions to
-  visual denotations: New large scale datasets for semantic image-text
-  matching,'' \emph{Transactions of the Association for Computational
+  visual denotations: New similarity metrics for semantic inference over event
+  descriptions,'' \emph{Transactions of the Association for Computational
   Linguistics (TACL)}, vol.~2, pp. 67--78, 2014.
 
 \bibitem{lin2014microsoft}
