@@ -1,70 +1,74 @@
 % ==============================================================================
 % HEDO-HVSC CONCEPTUAL DIAGRAMS — 100% NATIVE LATEX TIKZ
 % Clean, uncrowded architecture diagrams with zero text-in-node bloat
-% Designed for strict float isolation and standard IEEE journal readability
+% Strict geometric alignment, no overlapping boxes, restrained professional IEEE colors
 % ==============================================================================
 
 \tikzset{
-  hvblock/.style={draw=black!80, rounded corners=3pt, align=center,
-    minimum height=8.5mm, minimum width=34mm, font=\footnotesize, line width=0.6pt},
-  hvinput/.style={hvblock, fill=gray!12},
-  hvenc/.style={hvblock, fill=blue!10, draw=blue!80!black},
-  hvmethod/.style={hvblock, fill=green!10, draw=green!70!black},
-  hvstate/.style={hvblock, fill=orange!12, draw=orange!80!black},
-  hvloss/.style={hvblock, fill=red!10, draw=red!80!black, minimum width=65mm, minimum height=13mm},
-  hvarrow/.style={-{Stealth[scale=0.9]}, line width=0.7pt, color=black!85},
+  hvblock/.style={draw=black!70, rounded corners=2.5pt, align=center,
+    minimum height=8mm, minimum width=36mm, font=\footnotesize, line width=0.55pt},
+  hvinput/.style={hvblock, fill=gray!8},
+  hvenc/.style={hvblock, fill=blue!5, draw=blue!60!black},
+  hvmethod/.style={hvblock, fill=green!5, draw=green!60!black},
+  hvstate/.style={hvblock, fill=orange!8, draw=orange!70!black},
+  hvloss/.style={hvblock, fill=red!5, draw=red!60!black, minimum width=76mm, minimum height=11mm},
+  hvinfer/.style={hvblock, fill=blue!5, draw=blue!60!black, minimum width=76mm, minimum height=11mm},
+  hvarrow/.style={-{Stealth[scale=0.85]}, line width=0.6pt, color=black!80},
 }
 
 % ------------------------------------------------------------------------------
 % Figure 1: Overall Architecture Pipeline (Full-Width figure*)
+% Zero box collision: Training and Test boxes stacked vertically along centerline
 % ------------------------------------------------------------------------------
 \newcommand{\HEDOArchitectureFigure}{
-\begin{tikzpicture}[node distance=6mm and 36mm]
+\begin{tikzpicture}[node distance=5mm and 34mm]
 % Column Titles
-\node[font=\bfseries\normalsize, color=blue!80!black] (ititle) {Visual Stream};
-\node[font=\bfseries\normalsize, color=blue!80!black, right=56mm of ititle] (ttitle) {Textual Stream};
+\node[font=\bfseries\small, color=blue!70!black] (ititle) {Visual Stream};
+\node[font=\bfseries\small, color=blue!70!black, right=50mm of ititle] (ttitle) {Textual Stream};
 
 % Left Visual Stream
-\node[hvinput, below=4mm of ititle] (i0) {Input Image $\mathbf{I}$\\$224 \times 224 \times 3$};
+\node[hvinput, below=3.5mm of ititle] (i0) {Input Image $\mathbf{I}$\\$224 \times 224 \times 3$};
 \node[hvenc, below=of i0] (i1) {\textbf{Frozen ViT-B/16}\\$L_I=197,\ d=768$};
-\node[hvmethod, below=of i1] (i2) {Linear Projection\\$d_{\text{model}}=128$};
+\node[hvmethod, below=of i1] (i2) {Linear Projection $\mathbf{W}_{\text{proj}, I}$\\$d_{\text{model}}=128$};
 \node[hvmethod, below=of i2] (i3) {\textbf{HEDO Dissipative Block}\\Damped Momentum Update};
 \node[hvstate, below=of i3] (i4) {\textbf{Custom SSD Block}\\$C=16,\ d_{\text{state}}=64$};
 \node[hvstate, below=of i4] (i5) {Chunk Boundary States\\$\mathbf{b}_1, \dots, \mathbf{b}_K$};
-\node[hvmethod, below=of i5] (i6) {\textbf{HVSC Latent Parameterization}\\$\mathbf{z}_I \sim \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{\sigma}_I^2)$};
-\node[hvenc, below=of i6] (i7) {\textbf{Image Embedding $\hat{\mathbf{e}}_I \in \mathbb{S}^{127}$}\\Normalized Fusion};
+\node[hvmethod, below=of i5] (i6) {\textbf{HVSC Latent Distribution}\\$\mathbf{z}_I \sim \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{\sigma}_I^2)$};
+\node[hvenc, below=of i6] (i7) {\textbf{Image Embedding $\hat{\mathbf{e}}_I$}\\$\hat{\mathbf{e}}_I \in \mathbb{S}^{127}$};
 
 % Right Textual Stream
-\node[hvinput, below=4mm of ttitle] (t0) {Caption Tokens $\mathbf{T}$\\Length $L_T=64$ + Mask};
+\node[hvinput, below=3.5mm of ttitle] (t0) {Caption Tokens $\mathbf{T}$\\$L_T=64$ + Mask $\mathbf{M}_T$};
 \node[hvenc, below=of t0] (t1) {\textbf{Frozen RoBERTa-base}\\$L_T=64,\ d=768$};
-\node[hvmethod, below=of t1] (t2) {Linear Projection\\$d_{\text{model}}=128$};
+\node[hvmethod, below=of t1] (t2) {Linear Projection $\mathbf{W}_{\text{proj}, T}$\\$d_{\text{model}}=128$};
 \node[hvmethod, below=of t2] (t3) {\textbf{HEDO Dissipative Block}\\Damped Momentum Update};
 \node[hvstate, below=of t3] (t4) {\textbf{Custom SSD Block}\\$C=16,\ d_{\text{state}}=64$};
 \node[hvstate, below=of t4] (t5) {Mask-Weighted Aggregation\\$\mathbf{h}_{\text{bound}}$};
-\node[hvmethod, below=of t5] (t6) {\textbf{HVSC Latent Parameterization}\\$\mathbf{z}_T \sim \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)$};
-\node[hvenc, below=of t6] (t7) {\textbf{Text Embedding $\hat{\mathbf{e}}_T \in \mathbb{S}^{127}$}\\Normalized Fusion};
+\node[hvmethod, below=of t5] (t6) {\textbf{HVSC Latent Distribution}\\$\mathbf{z}_T \sim \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)$};
+\node[hvenc, below=of t6] (t7) {\textbf{Text Embedding $\hat{\mathbf{e}}_T$}\\$\hat{\mathbf{e}}_T \in \mathbb{S}^{127}$};
 
 % Connectors in streams
 \foreach \a/\b in {i0/i1,i1/i2,i2/i3,i3/i4,i4/i5,i5/i6,i6/i7,
                    t0/t1,t1/t2,t2/t3,t3/t4,t4/t5,t5/t6,t6/t7}
   \draw[hvarrow] (\a) -- (\b);
 
-% Two Separate Horizontal Blocks Below Streams
-\node[hvloss, below=10mm of i7, xshift=20mm, minimum width=65mm] (tr_box)
-{\textbf{Training Objective}\\[2pt]
-Multi-Positive InfoNCE Loss $+$ Symmetric KL $\mathcal{D}_{\text{SKL}}$};
+% Midpoint reference between streams
+\path (i7) -- (t7) coordinate[midway] (mid_embs);
 
-\node[hvenc, below=10mm of t7, xshift=-20mm, minimum width=65mm] (te_box)
-{\textbf{Test-Time Retrieval}\\[2pt]
-Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies$ Cosine Similarity};
+% Section 1: Training Objective (Centered Below Streams)
+\node[hvloss, below=8mm of mid_embs] (tr_box)
+{\textbf{Training Objective (Joint Optimization)}\\[2pt]
+$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$};
 
 \draw[hvarrow] (i7.south) |- (tr_box.west);
 \draw[hvarrow] (t7.south) |- (tr_box.east);
-\draw[hvarrow] (i7.south) |- (te_box.west);
-\draw[hvarrow] (t7.south) |- (te_box.east);
 
-\node[below=3mm of tr_box, xshift=38mm, font=\scriptsize\bfseries, color=black!75]
-{Strictly Zero Cross-Modal Attention $\;\vert\;$ Zero Inter-Modality Hidden-State Communication at Test Time};
+% Section 2: Test-Time Retrieval (Stacked Below Training Objective)
+\node[hvinfer, below=6mm of tr_box] (te_box)
+{\textbf{Test-Time Retrieval (Strictly Independent)}\\[2pt]
+Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies \mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top$};
+
+\node[below=2.5mm of te_box, font=\scriptsize, color=black!75]
+{Strictly Zero Cross-Modal Attention $\;\vert\;$ Zero Inter-Modality Hidden-State Exchange at Test Time};
 
 \end{tikzpicture}
 }
@@ -74,24 +78,24 @@ Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies$ 
 % ------------------------------------------------------------------------------
 \newcommand{\HEDODatasetFigure}{
 \begin{tikzpicture}[node distance=5mm, every node/.style={font=\footnotesize}]
-\node[hvenc, minimum width=76mm, minimum height=8.5mm] (root)
+\node[hvenc, minimum width=78mm, minimum height=8.5mm] (root)
 {\textbf{Official Flickr8k Benchmark Split (Certified Disjoint)}\\8,000 Images $\;\vert\;$ 40,000 Captions $\;\vert\;$ 5 Captions / Image};
 
-\node[hvmethod, below left=6mm and -14mm of root, minimum width=23mm] (tr)
+\node[hvmethod, below left=6mm and -13mm of root, minimum width=23mm] (tr)
 {\textbf{Train (75\%)}\\6,000 Images\\30,000 Caps};
 \node[hvmethod, below=6mm of root, minimum width=23mm] (va)
 {\textbf{Val (12.5\%)}\\1,000 Images\\5,000 Caps};
-\node[hvmethod, below right=6mm and -14mm of root, minimum width=23mm] (te)
+\node[hvmethod, below right=6mm and -13mm of root, minimum width=23mm] (te)
 {\textbf{Test (12.5\%)}\\1,000 Images\\5,000 Caps};
 
 \draw[hvarrow] (root.south) -| (tr.north);
 \draw[hvarrow] (root.south) -- (va.north);
 \draw[hvarrow] (root.south) -| (te.north);
 
-\node[hvinput, below=6mm of tr, minimum width=36mm, minimum height=14mm] (ip)
-{\textbf{Visual Pipeline}\\$224 \times 224$ Center Crop\\ViT-B/16 Encoder\\$197 \times 768$ Tokens};
+\node[hvinput, below=6mm of tr, minimum width=36mm, minimum height=13mm] (ip)
+{\textbf{Visual Pipeline}\\$224 \times 224$ Center Crop\\ViT-B/16 Backbone\\$197 \times 768$ Tokens};
 
-\node[hvinput, below=6mm of te, minimum width=36mm, minimum height=14mm] (tp)
+\node[hvinput, below=6mm of te, minimum width=36mm, minimum height=13mm] (tp)
 {\textbf{Textual Pipeline}\\RoBERTa Tokenizer\\Max Length $L_T=64$\\$64 \times 768$ Tokens};
 
 \draw[hvarrow] (tr.south) -- (ip.north);
@@ -103,7 +107,7 @@ Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies$ 
 % Figure 3: HEDO Coordinate-Momentum Mechanism (Independent Single Column)
 % ------------------------------------------------------------------------------
 \newcommand{\HEDOMechanismFigure}{
-\begin{tikzpicture}[node distance=5mm, every node/.style={font=\footnotesize}]
+\begin{tikzpicture}[node distance=4.5mm, every node/.style={font=\footnotesize}]
 \node[hvinput, minimum width=72mm] (q)
 {\textbf{Coordinate State}\\$\mathbf{q}_0 \in \mathbb{R}^{B \times L \times d_{\text{model}}}$};
 
@@ -127,20 +131,21 @@ Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies$ 
 
 % ------------------------------------------------------------------------------
 % Figure 4: State-Continuous Chunk-Wise SSD Recurrence (Independent Single Column)
+% Direct straight vertical routing into aggregation box
 % ------------------------------------------------------------------------------
 \newcommand{\HEDOChunkFigure}{
-\begin{tikzpicture}[node distance=4.5mm and 6mm, every node/.style={font=\footnotesize}]
+\begin{tikzpicture}[node distance=4mm and 6mm, every node/.style={font=\footnotesize}]
 \node[hvstate, minimum width=22mm, minimum height=14mm] (c1)
 {\textbf{Chunk 1}\\$x_1, \dots, x_{16}$\\$\mathbf{h}_{\text{start}, 1} = \mathbf{0}$\\$\mathbf{b}_1 = \mathbf{h}_{\text{end}, 1}$};
 
-\node[hvstate, right=8mm of c1, minimum width=22mm, minimum height=14mm] (c2)
-{\textbf{Chunk 2}\\$x_{17}, \dots, x_{32}$\\\textbf{\color{red!80!black}$\mathbf{h}_{\text{start}, 2} = \mathbf{h}_{\text{end}, 1}$}\\$\mathbf{b}_2 = \mathbf{h}_{\text{end}, 2}$};
+\node[hvstate, right=7mm of c1, minimum width=22mm, minimum height=14mm] (c2)
+{\textbf{Chunk 2}\\$x_{17}, \dots, x_{32}$\\$\mathbf{h}_{\text{start}, 2} = \mathbf{h}_{\text{end}, 1}$\\$\mathbf{b}_2 = \mathbf{h}_{\text{end}, 2}$};
 
-\node[hvstate, right=8mm of c2, minimum width=22mm, minimum height=14mm] (ck)
-{\textbf{Chunk $K$}\\$x_{(K-1)C+1}, \dots$\\\textbf{\color{red!80!black}$\mathbf{h}_{\text{start}, K} = \mathbf{h}_{\text{end}, K-1}$}\\$\mathbf{b}_K = \mathbf{h}_{\text{end}, K}$};
+\node[hvstate, right=7mm of c2, minimum width=22mm, minimum height=14mm] (ck)
+{\textbf{Chunk $K$}\\$x_{(K-1)C+1}, \dots, x_L$\\$\mathbf{h}_{\text{start}, K} = \mathbf{h}_{\text{end}, K-1}$\\$\mathbf{b}_K = \mathbf{h}_{\text{end}, K}$};
 
-\draw[hvarrow, color=red!80!black, line width=1.1pt] (c1.east) -- node[above, font=\tiny\bfseries\color{red!80!black}] {NO RESET} (c2.west);
-\draw[hvarrow, color=red!80!black, line width=1.1pt] (c2.east) -- node[above, font=\tiny\bfseries\color{red!80!black}] {NO RESET} (ck.west);
+\draw[hvarrow] (c1.east) -- node[above, font=\tiny, color=black!80] {state cont.} (c2.west);
+\draw[hvarrow] (c2.east) -- node[above, font=\tiny, color=black!80] {state cont.} (ck.west);
 
 \node[hvmethod, below=7mm of c2, minimum width=78mm, minimum height=10mm] (agg)
 {\textbf{Mask-Weighted Boundary Aggregation}\\[2pt]
@@ -154,37 +159,38 @@ $\displaystyle \mathbf{h}_{\text{bound}} = \frac{\sum_{k=1}^K m_k \mathbf{b}_k}{
 
 % ------------------------------------------------------------------------------
 % Figure 5: Training vs. Test-Time Inference Flow (Full-Width figure*)
+% Straight orthogonal routing with clean semantic distinction
 % ------------------------------------------------------------------------------
 \newcommand{\HEDOInferenceFigure}{
-\begin{tikzpicture}[node distance=5mm and 24mm]
+\begin{tikzpicture}[node distance=5mm and 28mm]
 % Top Training Section
-\node[font=\bfseries\normalsize, color=blue!80!black] (tr_title) {A. Training Phase: Stochastic Reparameterization \& Joint Metric Alignment};
+\node[font=\bfseries\small, color=blue!70!black] (tr_title) {A. Training Phase: Stochastic Latent Alignment \& Joint Metric Learning};
 
-\node[hvmethod, below=4mm of tr_title, xshift=-42mm, minimum width=45mm] (iz)
+\node[hvmethod, below=3.5mm of tr_title, xshift=-44mm, minimum width=46mm] (iz)
 {\textbf{Visual Encoder Pipeline}\\$\mathbf{z}_I \sim \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{\sigma}_I^2)$\\Latent Embedding $\mathbf{e}_I$};
 
-\node[hvmethod, below=4mm of tr_title, xshift=42mm, minimum width=45mm] (tz)
+\node[hvmethod, below=3.5mm of tr_title, xshift=44mm, minimum width=46mm] (tz)
 {\textbf{Textual Encoder Pipeline}\\$\mathbf{z}_T \sim \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)$\\Latent Embedding $\mathbf{e}_T$};
 
-\node[hvloss, below=6mm of tr_title, yshift=-10mm, minimum width=96mm, minimum height=12mm] (tr_loss)
-{\textbf{\color{red!80!black}Joint Optimization Loss: $\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$}\\[2pt]
-\scriptsize Multi-Positive Contrastive Ranking (5:1 caption-image mapping) $+$ Symmetric FP32 KL Regularization};
+\node[hvloss, below=6mm of tr_title, yshift=-11mm, minimum width=96mm, minimum height=12mm] (tr_loss)
+{\textbf{Joint Optimization Objective}\\[2pt]
+$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$};
 
 \draw[hvarrow] (iz.south) |- (tr_loss.west);
 \draw[hvarrow] (tz.south) |- (tr_loss.east);
 
 % Bottom Test Inference Section
-\node[font=\bfseries\normalsize, color=green!70!black, below=14mm of tr_loss] (te_title) {B. Test-Time Retrieval: Deterministic Unimodal Evaluation (Strictly Independent)};
+\node[font=\bfseries\small, color=green!60!black, below=12mm of tr_loss] (te_title) {B. Test-Time Retrieval: Deterministic Unimodal Evaluation (Strictly Independent)};
 
-\node[hvinput, below=4mm of te_title, xshift=-42mm, minimum width=45mm] (iq)
+\node[hvinput, below=3.5mm of te_title, xshift=-44mm, minimum width=46mm] (iq)
 {\textbf{Query Image $\mathbf{I}$}\\Deterministic Mean $\boldsymbol{\mu}_I$\\Unit Embedding $\hat{\mathbf{e}}_I \in \mathbb{S}^{127}$};
 
-\node[hvinput, below=4mm of te_title, xshift=42mm, minimum width=45mm] (tg)
+\node[hvinput, below=3.5mm of te_title, xshift=44mm, minimum width=46mm] (tg)
 {\textbf{Text Gallery $\mathcal{T}$}\\Deterministic Mean $\boldsymbol{\mu}_T$\\Unit Embedding $\hat{\mathbf{e}}_T \in \mathbb{S}^{127}$};
 
-\node[hvenc, below=6mm of te_title, yshift=-10mm, minimum width=96mm, minimum height=12mm] (te_eval)
-{\textbf{Cosine Similarity Ranking: $\mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top \implies$ Recall @ $K$ (1, 5, 10) \& MedR}\\[2pt]
-\scriptsize \textbf{Strictly Independent Dual Encoders $\;\vert\;$ Zero Cross-Modal Attention $\;\vert\;$ Zero Hidden-State Exchange}};
+\node[hvinfer, below=6mm of te_title, yshift=-11mm, minimum width=96mm, minimum height=12mm] (te_eval)
+{\textbf{Cosine Similarity Ranking: $\mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top \implies$ Recall @ $K$ (1, 5, 10)}\\[2pt]
+\scriptsize Strictly Independent Dual Encoders $\;\vert\;$ Zero Cross-Modal Interaction at Retrieval Time};
 
 \draw[hvarrow] (iq.south) |- (te_eval.west);
 \draw[hvarrow] (tg.south) |- (te_eval.east);
