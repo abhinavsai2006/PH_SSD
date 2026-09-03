@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 22:20
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 22:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -861,7 +861,7 @@ Underfull \hbox (badness 2951) in paragraph at lines 87--88
  []
 
 [2]
-Underfull \vbox (badness 1609) has occurred while \output is active []
+Underfull \vbox (badness 1158) has occurred while \output is active []
 
  [3]
 Underfull \hbox (badness 10000) in paragraph at lines 118--120
@@ -1008,10 +1008,10 @@ L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 26796 strings out of 467871
- 686027 string characters out of 5418376
- 1221753 words of memory out of 5000000
- 55217 multiletter control sequences out of 15000+600000
+ 26770 strings out of 467871
+ 685618 string characters out of 5418376
+ 1221100 words of memory out of 5000000
+ 55191 multiletter control sequences out of 15000+600000
  684993 words of font info for 150 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,19n,94p,2428b,2742s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1050,7 +1050,7 @@ rograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Users/mndab/AppData
 a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8
 a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri
 8a.pfb>
-Output written on main.pdf (10 pages, 431561 bytes).
+Output written on main.pdf (10 pages, 431637 bytes).
 PDF statistics:
  194 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
