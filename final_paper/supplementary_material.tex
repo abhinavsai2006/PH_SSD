@@ -1,0 +1,107 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{multirow}
+\usepackage{bm}
+
+\begin{document}
+
+\title{Supplementary Material:\\Hamiltonian-Inspired Energy Dissipation and Chunk-Wise Variational State Coupling for Efficient Multimodal State-Space Models}
+
+\author{Abhinav~Sai~Maddineni%
+\thanks{Abhinav Sai Maddineni is with the Department of Computer Science and Engineering. (e-mail: \texttt{[AUTHOR EMAIL]}).}%
+}
+
+\maketitle
+
+\section{Overview}
+This supplementary document provides additional architectural specifications, parameter counts, empirical diagnostic trajectories, dataset split manifests, and microsecond-level latency scaling measurements supporting the main manuscript.
+
+\section{Complete Parameter Breakdown}
+Table~\ref{tab:supp_params} presents the parameter allocation across all four experimental configurations. The frozen encoders (ViT-B/16 and RoBERTa-base) comprise $209.854\text{ M}$ parameters. The newly introduced trainable projection, recurrence, and coupling components require between $0.330\text{ M}$ and $0.422\text{ M}$ parameters ($<0.21\%$ of total network capacity).
+
+\begin{table}[h]
+\centering
+\caption{Detailed Parameter Breakdown Across Experimental Configurations.}
+\label{tab:supp_params}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Configuration} & \textbf{Frozen (M)} & \textbf{Trainable (M)} & \textbf{Total (M)} & \textbf{Trainable (\%)} \\
+\midrule
+SSD Baseline & $209.854$ & $0.330$ & $210.184$ & $0.157\%$ \\
+w/o HEDO & $209.854$ & $0.356$ & $210.209$ & $0.169\%$ \\
+w/o HVSC & $209.854$ & $0.397$ & $210.251$ & $0.189\%$ \\
+\textbf{Full HEDO-HVSC (Ours)} & $209.854$ & $\mathbf{0.422}$ & $\mathbf{210.276}$ & $\mathbf{0.201\%}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Pre-Training Diagnostic and Coordinate Trajectories}
+Prior to full benchmark training, the numerical stability and coordinate-momentum behavior of HEDO were evaluated on initial batches.
+
+\subsection{Image Feature Transformation}
+\begin{itemize}
+    \item Raw Input Energy: $\mathcal{H}_{\text{raw}} = 170.824$
+    \item Post-HEDO Energy: $\mathcal{H}_{\text{HEDO}} = 77.563$
+    \item Cosine Similarity: $\text{sim}(\mathbf{X}_{\text{raw}}, \mathbf{X}_{\text{HEDO}}) = 0.9952$
+    \item Unforced Trajectory over 5 steps: $[170.824, 170.651, 170.927, 171.646, 172.801, 174.387]$
+\end{itemize}
+
+\subsection{Text Feature Transformation}
+\begin{itemize}
+    \item Raw Input Energy: $\mathcal{H}_{\text{raw}} = 5.849$
+    \item Post-HEDO Energy: $\mathcal{H}_{\text{HEDO}} = 77.414$
+    \item Cosine Similarity: $\text{sim}(\mathbf{X}_{\text{raw}}, \mathbf{X}_{\text{HEDO}}) = 0.9920$
+    \item Unforced Trajectory over 5 steps: $[5.849, 5.796, 5.774, 5.783, 5.823, 5.892]$
+\end{itemize}
+
+\subsection{Initial Layer Gradient Norms}
+\begin{itemize}
+    \item Custom SSD Recurrence: $\|\nabla_{\theta}\|_{\text{SSD}} = 2.3619$
+    \item HEDO Operator: $\|\nabla_{\theta}\|_{\text{HEDO}} = 0.8861$
+    \item HVSC Coupling Block: $\|\nabla_{\theta}\|_{\text{HVSC}} = 1.3847$
+\end{itemize}
+
+\section{Detailed Dataset Split Manifest}
+The official Flickr8k split was strictly enforced without data leakage:
+\begin{itemize}
+    \item \textbf{Train Set:} 6,000 unique image filenames, 30,000 text descriptions.
+    \item \textbf{Validation Set:} 1,000 unique image filenames, 5,000 text descriptions.
+    \item \textbf{Held-Out Test Set:} 1,000 unique image filenames, 5,000 text descriptions.
+    \item $\text{Train} \cap \text{Val} = \emptyset$, $\text{Train} \cap \text{Test} = \emptyset$, $\text{Val} \cap \text{Test} = \emptyset$.
+\end{itemize}
+
+\section{Empirical Latency Scaling Data}
+Table~\ref{tab:supp_latency} provides the exact microsecond-level timing measurements across sequence lengths $L \in \{16, 32, 64, 128, 256\}$ on an NVIDIA Tesla T4 GPU ($B=16, d_{\text{model}}=128, d_{\text{state}}=64$).
+
+\begin{table}[h]
+\centering
+\caption{Empirical Latency Measurements for Custom PyTorch SSD Recurrent Scan.}
+\label{tab:supp_latency}
+\begin{tabular}{cccc}
+\toprule
+\textbf{Sequence Length ($L$)} & \textbf{Measured Latency (ms)} & \textbf{Standard Error (ms)} & \textbf{Linear Model Prediction (ms)} \\
+\midrule
+16 & $2.89356$ & $\pm 0.021$ & $2.966$ \\
+32 & $5.43640$ & $\pm 0.034$ & $5.350$ \\
+64 & $10.31483$ & $\pm 0.052$ & $10.118$ \\
+128 & $19.71283$ & $\pm 0.089$ & $19.654$ \\
+256 & $38.60174$ & $\pm 0.141$ & $38.726$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Linear regression parameters:
+\begin{equation}
+\text{Latency}(L) = 0.149 \cdot L + 0.582\,\text{ms} \quad (R^2 = 0.9998)
+\end{equation}
+
+\end{document}
