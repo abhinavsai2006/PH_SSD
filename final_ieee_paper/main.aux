@@ -1,0 +1,139 @@
+\relax 
+\citation{radford2021learning,li2022blip,jia2021scaling}
+\citation{faghri2017vse++,lee2018stacked}
+\citation{vaswani2017attention,dosovitskiy2020image,liu2019roberta}
+\citation{dao2022flashattention}
+\citation{li2023blip2,wang2023image}
+\citation{gu2021efficiently}
+\citation{smith2022simplified}
+\citation{gu2023mamba}
+\citation{dao2024transformers}
+\citation{gu2020hippo,smith2022simplified}
+\citation{he2016deep,hendrycks2019benchmarking}
+\citation{devlin2018bert,faghri2017vse++}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
+\newlabel{sec:introduction}{{I}{1}{}{section.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-A}}Computational Challenges in Multimodal Transformers}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-B}}State-Space Models as Sub-Quadratic Alternatives}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-C}}Challenges in Multimodal State-Space Recurrence}{1}{}\protected@file@percent }
+\citation{dao2024transformers}
+\citation{faghri2017vse++}
+\citation{lee2018stacked}
+\citation{radford2021learning}
+\citation{jia2021scaling}
+\citation{li2022blip}
+\citation{li2023blip2}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Controlled 4-model factorial benchmark comparison across 3 independent random seeds ($42, 43, 44$) on the official Flickr8k held-out test split ($N=1{,}000$ images, $5{,}000$ captions). Error bars represent $\pm 1$ standard deviation.}}{2}{}\protected@file@percent }
+\newlabel{fig:benchmark_results}{{1}{2}{}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-D}}Contributions of This Work}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {II}Problem Formulation and Background}{2}{}\protected@file@percent }
+\newlabel{sec:problem_formulation}{{II}{2}{}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Cross-Modal Image-Text Metric Learning}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}State-Space Duality and Sequence Recurrence}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Hamiltonian and Dissipative Mechanics}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {III}Related Work}{2}{}\protected@file@percent }
+\newlabel{sec:related_work}{{III}{2}{}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Vision-Language Metric Learning}{2}{}\protected@file@percent }
+\citation{gu2021efficiently}
+\citation{gu2020hippo}
+\citation{smith2022simplified}
+\citation{gu2023mamba}
+\citation{dao2024transformers}
+\citation{greydanus2019hamiltonian}
+\citation{cranmer2020lagrangian}
+\citation{port_hamiltonian_neural_odes}
+\citation{kingma2013auto}
+\citation{alemi2016deep}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Structured State Space Models}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Hamiltonian Mechanics and Neural Dynamical Systems}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Variational Representation Learning}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Proposed HEDO-HVSC Architecture}{3}{}\protected@file@percent }
+\newlabel{sec:methodology}{{IV}{3}{}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Architectural Pipeline}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Backbone Feature Extraction}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Hamiltonian-Inspired Energy Dissipation Operator (HEDO)}{3}{}\protected@file@percent }
+\newlabel{eq:momentum_update}{{10}{3}{}{equation.10}{}}
+\newlabel{eq:coordinate_update}{{11}{3}{}{equation.11}{}}
+\newlabel{eq:hedo_output}{{12}{3}{}{equation.12}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-C}1}Discrete Energy Analysis and Inductive Bias}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Custom PyTorch Chunk-Wise SSD-Style Recurrence}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}1}State Continuity Across Chunk Boundaries}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-E}}Chunk-Wise Variational State Coupling (HVSC)}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-E}1}Mask-Weighted Sequence Pooling and Embedding Fusion}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-E}2}Symmetric KL Divergence Regularization}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-E}3}Deterministic Unimodal Retrieval Inference}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-F}}Training Objective}{4}{}\protected@file@percent }
+\citation{young2014image}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces HEDO-HVSC Forward Pass and Training Step}}{5}{}\protected@file@percent }
+\newlabel{alg:hedo_hvsc}{{1}{5}{}{algorithm.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Experimental Setup and Dataset Protocol}{5}{}\protected@file@percent }
+\newlabel{sec:experimental_setup}{{V}{5}{}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Dataset and Certified Splits}{5}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Official Flickr8k dataset split partition and functional roles.}}{5}{}\protected@file@percent }
+\newlabel{tab:dataset_splits}{{I}{5}{}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Backbone Freezing Protocol}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Implementation and Hyperparameters}{5}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Complete hyperparameter specification for HEDO-HVSC.}}{5}{}\protected@file@percent }
+\newlabel{tab:hyperparameters}{{II}{5}{}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Retrieval Evaluation Protocol and Metrics}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Experimental Results}{6}{}\protected@file@percent }
+\newlabel{sec:results}{{VI}{6}{}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Main Benchmark Performance}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Paired Per-Seed Delta Analysis}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Factorial Interaction Effect}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-D}}Robustness Under Input Corruptions}{6}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Robustness comparison under pixel-space perturbations. Full HEDO-HVSC shows a small advantage over the controlled baseline under severe Gaussian noise ($\sigma =0.10$), while results under other tested perturbations are mixed.}}{6}{}\protected@file@percent }
+\newlabel{fig:robustness}{{2}{6}{}{figure.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Empirical inference latency scaling of the custom PyTorch chunk-wise SSD block ($d_{\text  {model}}=128, d_{\text  {state}}=64, B=16$). Measurements exhibit approximately linear empirical latency scaling over the tested sequence lengths.}}{6}{}\protected@file@percent }
+\newlabel{fig:scaling}{{3}{6}{}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-E}}Computational Scaling Efficiency}{6}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Cross-modal image-text retrieval performance on the official Flickr8k held-out test split ($1{,}000$ images, $5{,}000$ captions) across $N=3$ independent random seeds ($42, 43, 44$). All models use frozen ViT-B/16 and RoBERTa-base backbones under identical training and evaluation protocols.}}{7}{}\protected@file@percent }
+\newlabel{tab:main_results}{{III}{7}{}{table.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Complete per-run test retrieval results and computational metrics across all 12 individual experimental runs ($4\text  { models} \times 3\text  { seeds}$).}}{7}{}\protected@file@percent }
+\newlabel{tab:per_run_results}{{IV}{7}{}{table.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Secondary corruption stress test on predefined 100-image test subset under pixel-space perturbations.}}{7}{}\protected@file@percent }
+\newlabel{tab:robustness}{{V}{7}{}{table.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Empirical inference latency scaling of custom PyTorch chunk-wise SSD block ($d_{\text  {model}}=128, d_{\text  {state}}=64, B=16$).}}{7}{}\protected@file@percent }
+\newlabel{tab:scaling}{{VI}{7}{}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-F}}Parameter Footprint and Memory Analysis}{7}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Detailed parameter allocation and peak training VRAM usage.}}{7}{}\protected@file@percent }
+\newlabel{tab:parameters_breakdown}{{VII}{7}{}{table.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Discussion and Scientific Insights}{7}{}\protected@file@percent }
+\newlabel{sec:discussion}{{VII}{7}{}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Evaluation of Main Benchmark Results}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}What the Results Do Not Establish}{7}{}\protected@file@percent }
+\citation{lin2014microsoft}
+\citation{young2014image}
+\bibstyle{IEEEtran}
+\bibdata{references}
+\bibcite{radford2021learning}{1}
+\bibcite{li2022blip}{2}
+\bibcite{jia2021scaling}{3}
+\bibcite{faghri2017vse++}{4}
+\bibcite{lee2018stacked}{5}
+\bibcite{vaswani2017attention}{6}
+\bibcite{dosovitskiy2020image}{7}
+\bibcite{liu2019roberta}{8}
+\bibcite{dao2022flashattention}{9}
+\bibcite{li2023blip2}{10}
+\bibcite{wang2023image}{11}
+\bibcite{gu2021efficiently}{12}
+\bibcite{smith2022simplified}{13}
+\bibcite{gu2023mamba}{14}
+\bibcite{dao2024transformers}{15}
+\bibcite{gu2020hippo}{16}
+\bibcite{he2016deep}{17}
+\bibcite{hendrycks2019benchmarking}{18}
+\bibcite{devlin2018bert}{19}
+\bibcite{greydanus2019hamiltonian}{20}
+\bibcite{cranmer2020lagrangian}{21}
+\bibcite{port_hamiltonian_neural_odes}{22}
+\bibcite{kingma2013auto}{23}
+\bibcite{alemi2016deep}{24}
+\bibcite{young2014image}{25}
+\bibcite{lin2014microsoft}{26}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Limitations and Future Work}{8}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion}{8}{}\protected@file@percent }
+\newlabel{sec:conclusion}{{VIII}{8}{}{section.8}{}}
+\@writefile{toc}{\contentsline {section}{References}{8}{}\protected@file@percent }
+\gdef \@abspage@last{8}
