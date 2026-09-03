@@ -68,13 +68,6 @@ To investigate these challenges, this paper presents HEDO-HVSC, a multimodal sta
     \item \textbf{Controlled Multi-Seed Factorial Benchmark:} We execute a 12-run controlled factorial benchmark ($4\text{ model configurations} \times 3\text{ random seeds}: 42, 43, 44$) on the standard Flickr8k dataset \cite{hodosh2013framing} with frozen ViT-B/16 and RoBERTa-base backbones, accompanied by secondary corruption testing and empirical latency scaling analysis.
 \end{enumerate}
 
-\begin{figure*}[!t]
-\centering
-\HEDOArchitectureFigure
-\caption{Overall architectural pipeline of the proposed HEDO-HVSC multimodal state-space framework. Visual patch sequences ($L_I=197$) and textual token sequences ($L_T=64$) are extracted from frozen ViT-B/16 and RoBERTa-base encoders, projected to $d_{\text{model}}=128$, stabilized via HEDO coordinate-momentum dissipation, and processed through custom chunk-wise SSD recurrence blocks ($C=16, d_{\text{state}}=64$). During training, mask-weighted boundary states parameterize Gaussian latent distributions regularized via symmetric KL divergence $\mathcal{D}_{\text{SKL}}$ alongside multi-positive InfoNCE contrastive alignment. At test time, retrieval evaluates deterministic posterior means strictly unimodally with zero cross-modal communication.}
-\label{fig:overall_architecture}
-\end{figure*}
-
 \section{Literature Survey}
 \label{sec:literature_survey}
 
@@ -136,13 +129,20 @@ The total energy derivative evaluates to $\dot{\mathcal{H}} = -\nabla_{\mathbf{p
 \label{sec:methodology}
 
 \subsection{Architectural Pipeline}
-The overall architecture of HEDO-HVSC (Fig.~\ref{fig:overall_architecture}) processes paired images $\mathbf{I} \in \mathbb{R}^{3 \times 224 \times 224}$ and textual captions $\mathbf{T}$ through three sequential stages:
+The overall architecture of HEDO-HVSC (Fig.~\ref{fig:overall_architecture}) processes paired images $\mathbf{I} \in \mathbb{R}^{3 \times 224 \times 224}$ and textual captions $\mathbf{T}$ through four coordinated stages:
 \begin{enumerate}
     \item \textbf{Frozen Backbone Feature Extraction:} Input images and tokenized text are mapped into continuous sequence representations using frozen pretrained encoders (ViT-B/16 and RoBERTa-base).
     \item \textbf{Dissipative Hamiltonian Transformation (HEDO):} Token representations are processed through coordinate-momentum dissipative updates intended to reduce sensitivity to representation perturbations.
     \item \textbf{State-Continuous Chunk-Wise Recurrence (SSD):} Sequences are partitioned into non-overlapping chunks of size $C=16$ and processed with inter-chunk hidden-state continuity.
     \item \textbf{Variational Chunk Boundary State Coupling (HVSC):} Valid chunk boundary states are aggregated with attention-mask weighting and used to parameterize modality-specific Gaussian latent distributions.
 \end{enumerate}
+
+\begin{figure*}[!t]
+\centering
+\HEDOArchitectureFigure
+\caption{Overall architectural pipeline of the proposed HEDO-HVSC multimodal state-space framework. Visual patch sequences ($L_I=197$) and textual token sequences ($L_T=64$) are extracted from frozen ViT-B/16 and RoBERTa-base encoders, projected to $d_{\text{model}}=128$, stabilized via HEDO coordinate-momentum dissipation, and processed through custom chunk-wise SSD recurrence blocks ($C=16, d_{\text{state}}=64$). During training, mask-weighted boundary states parameterize Gaussian latent distributions regularized via symmetric KL divergence $\mathcal{D}_{\text{SKL}}$ alongside multi-positive InfoNCE contrastive alignment. At test time, retrieval evaluates deterministic posterior means strictly unimodally with zero cross-modal communication.}
+\label{fig:overall_architecture}
+\end{figure*}
 
 \subsection{Frozen Pretrained Feature Extraction}
 Given an input image $\mathbf{I} \in \mathbb{R}^{3 \times 224 \times 224}$, a frozen Vision Transformer (ViT-B/16) extracts patch tokens with a classification token, projected to $d_{\text{model}}=128$:

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  4 SEP 2026 00:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  4 SEP 2026 00:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -883,34 +883,34 @@ Underfull \hbox (badness 6808) in paragraph at lines 68--69
  []
 
 
-Underfull \hbox (badness 2951) in paragraph at lines 92--93
+Underfull \hbox (badness 2951) in paragraph at lines 85--86
 []\OT1/ptm/m/n/10 Hamiltonian Neu-ral Net-works (HNNs) [21] and La-
  []
 
-[2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 132--134
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 125--127
 \OT1/ptm/m/n/10 The to-tal en-ergy deriva-tive eval-u-ates to $[] \OT1/cmr/m/n/
 10 =
  []
 
 
-Underfull \hbox (badness 2799) in paragraph at lines 132--134
+Underfull \hbox (badness 2799) in paragraph at lines 125--127
 \OT1/ptm/m/n/10 This continuous-time dis-si-pa-tion prop-erty mo-ti-vates our
  []
 
 
-Underfull \hbox (badness 1546) in paragraph at lines 132--134
+Underfull \hbox (badness 1546) in paragraph at lines 125--127
 \OT1/ptm/m/n/10 de-cay for the pro-posed dis-crete learned HEDO up-date.
  []
 
 
-Underfull \hbox (badness 1365) in paragraph at lines 132--134
+Underfull \hbox (badness 1365) in paragraph at lines 125--127
 \OT1/ptm/m/n/10 In our ar-chi-tec-ture, we adapt these con-tin-u-ous phys-i-cal
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 144--145
+Underfull \hbox (badness 10000) in paragraph at lines 137--138
 []\OT1/ptm/b/n/10 Variational Chunk Bound-ary State Cou-pling
  []
 
@@ -919,11 +919,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 158--158
  \OT1/ptm/m/it/10 C. Hamiltonian-Inspired En-ergy Dis-si-pa-tion Op-er-a-tor
  []
 
-
+[3]
 Underfull \hbox (badness 3492) in paragraph at lines 169--170
 []\OT1/ptm/m/n/10 The dis-crete dis-si-pa-tive up-date in-te-grates coordinate-
 
  []
+
+
+Underfull \vbox (badness 1122) has occurred while \output is active []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 180--181
@@ -1042,7 +1045,7 @@ L3 programming layer <2025-12-24>
 Here is how much of TeX's memory you used:
  26787 strings out of 467871
  686167 string characters out of 5418376
- 1229768 words of memory out of 5000000
+ 1228768 words of memory out of 5000000
  55196 multiletter control sequences out of 15000+600000
  687130 words of font info for 155 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1081,7 +1084,7 @@ ers/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Us
 ers/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/U
 sers/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/U
 sers/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (10 pages, 429099 bytes).
+Output written on main.pdf (10 pages, 429208 bytes).
 PDF statistics:
  194 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
