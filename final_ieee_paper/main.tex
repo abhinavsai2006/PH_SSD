@@ -50,7 +50,7 @@ Multimodal retrieval, image-text retrieval, state-space models, state-space dual
 Over the past decade, Transformer architectures based on multi-head self-attention and cross-attention have served as the standard foundation for vision-language models \cite{vaswani2017attention,dosovitskiy2020image,liu2019roberta}. While self-attention provides high representational capacity by computing pairwise affinities across all token positions, its computational complexity and memory footprint scale quadratically, $\mathcal{O}(L^2)$, with sequence length $L$ \cite{dao2022flashattention}. In multimodal applications where high-resolution visual inputs are partitioned into hundreds of spatial tokens and textual captions extend across multiple sentences, this quadratic growth creates substantial computational overhead during training and deployment \cite{li2023blip2,wang2023image}.
 
 \subsection{State-Space Models as Sub-Quadratic Alternatives}
-To mitigate quadratic scaling, linear-time sequence models---such as Structured State Spaces (S4) \cite{gu2021efficiently}, S5 \cite{smith2022simplified}, Mamba \cite{gu2023mamba}, and State-Space Duality (SSD) \cite{dao2024transformers}---have been introduced. By formulating sequence transformations through continuous-time linear dynamical systems discretized via zero-order hold recurrence, SSMs achieve linear algorithmic complexity $\mathcal{O}(L)$ with respect to sequence length during parallel training and $\mathcal{O}(1)$ state updates per step during autoregressive inference \cite{gu2020hippo,smith2022simplified}.
+To mitigate quadratic scaling, linear-time sequence models---such as Structured State Spaces (S4) \cite{gu2021efficiently}, S5 \cite{smith2022simplified}, Mamba \cite{gu2023mamba}, and State-Space Duality (SSD) \cite{dao2024transformers}---have been introduced. SSM formulations can provide linear algorithmic complexity $\mathcal{O}(L)$ with respect to sequence length, with implementation-dependent training and inference strategies, contrasting with quadratic attention \cite{gu2020hippo,smith2022simplified}.
 
 \subsection{Challenges in Multimodal State-Space Recurrence}
 Despite their efficiency in unimodal sequence modeling, applying state-space recurrence to multimodal metric learning introduces specific challenges:
@@ -84,7 +84,7 @@ Cross-modal representation learning aims to bridge the semantic gap between visu
 The introduction of contrastive vision-language pretraining by CLIP \cite{radford2021learning} and ALIGN \cite{jia2021scaling} demonstrated that training dual-encoder architectures on web-scale image-caption pairs using symmetric InfoNCE loss yields robust representations across diverse downstream tasks. Subsequent works, such as BLIP \cite{li2022blip} and BLIP-2 \cite{li2023blip2}, combined contrastive objectives with multimodal cross-attention decoders to enhance fine-grained visual reasoning. However, standard cross-attention architectures incur quadratic complexity $\mathcal{O}(L^2)$ with respect to sequence length, creating computational bottlenecks when scaling to high-resolution image patches and long textual documents.
 
 \subsection{Structured State Space Models}
-To circumvent the quadratic complexity of self-attention, State-Space Models (SSMs) have been introduced for deep sequence modeling. The Structured State Space Sequence model (S4) \cite{gu2021efficiently} formalized continuous-time linear time-invariant (LTI) systems using HiPPO matrix initializations \cite{gu2020hippo}, achieving strong performance on long-range benchmarks. S5 \cite{smith2022simplified} simplified S4 by utilizing parallel prefix scans over diagonalized state matrices.
+To circumvent the quadratic complexity of self-attention, State-Space Models (SSMs) have been introduced for deep sequence modeling. The Structured State Space Sequence model (S4) \cite{gu2021efficiently} formalized continuous-time linear time-invariant (LTI) systems using HiPPO matrix initializations \cite{gu2021efficiently}, achieving strong performance on long-range benchmarks. S5 \cite{smith2022simplified} simplified S4 by utilizing parallel prefix scans over diagonalized state matrices.
 
 Mamba \cite{gu2023mamba} introduced selective state spaces, allowing the recurrent matrices $\mathbf{B}, \mathbf{C},$ and decay step $\Delta$ to be dynamic functions of the input tokens. More recently, State-Space Duality (SSD) and Mamba-2 \cite{dao2024transformers} established the mathematical equivalence between 1-D structured masked attention and continuous recurrence. In this paper, we extend state-space recurrence to multimodal metric learning using a custom PyTorch SSD-style recurrent formulation inspired by the state-space recurrence perspective of SSD, rather than native Mamba-2/SSD CUDA kernels.
 
@@ -131,133 +131,102 @@ The overall architecture of HEDO-HVSC (Fig.~\ref{fig:overall_architecture}) proc
 \begin{enumerate}
     \item \textbf{Frozen Backbone Feature Extraction:} Input images and tokenized text are mapped into continuous sequence representations using frozen pretrained encoders (ViT-B/16 and RoBERTa-base).
     \item \textbf{Dissipative Hamiltonian Transformation (HEDO):} Token representations are processed through coordinate-momentum dissipative updates intended to reduce sensitivity to representation perturbations.
-    \item \textbf{State-Continuous Chunk-Wise SSD \& Variational Coupling (HVSC):} Sequences are partitioned into chunks ($C=16$), recurrent hidden states are propagated continuously across boundaries, and valid boundary states parameterize Gaussian latent distributions regularized via symmetric KL divergence.
+    \item \textbf{State-Continuous Chunk-Wise Recurrence (SSD):} Sequences are partitioned into non-overlapping chunks of size $C=16$ and processed with inter-chunk hidden-state continuity.
+    \item \textbf{Variational Chunk Boundary State Coupling (HVSC):} Valid chunk boundary states are aggregated with attention-mask weighting and used to parameterize modality-specific Gaussian latent distributions.
 \end{enumerate}
 
-\subsection{Backbone Feature Extraction}
-For visual inputs, an RGB image $\mathbf{I}$ is passed through a frozen Vision Transformer (ViT-B/16) to obtain patch representations:
+\subsection{Frozen Pretrained Feature Extraction}
+Given an input image $\mathbf{I} \in \mathbb{R}^{3 \times 224 \times 224}$, a frozen Vision Transformer (ViT-B/16) extracts patch tokens with a classification token, projected to $d_{\text{model}}=128$:
 \begin{equation}
-\mathbf{X}_I^{(0)} = \mathbf{W}_{\text{proj}, I} \, \text{ViT-B/16}(\mathbf{I}) \in \mathbb{R}^{B \times L_I \times d_{\text{model}}}
+\mathbf{X}_I^{(0)} = \text{LayerNorm}\left( \mathbf{W}_{\text{proj}, I} \, \text{ViT}(\mathbf{I}) \right) \in \mathbb{R}^{L_I \times d_{\text{model}}}
 \end{equation}
-where $L_I = 197$ (196 spatial patch tokens plus 1 class token), $d_{\text{model}} = 128$, and $\mathbf{W}_{\text{proj}, I} \in \mathbb{R}^{768 \times d_{\text{model}}}$ is a linear projection layer.
-
-For textual inputs, a caption sequence $\mathbf{T}$ of maximum length $L_T = 64$ is processed through a frozen RoBERTa-base encoder:
+where $L_I = 197$. For a paired caption $\mathbf{T}$, a frozen RoBERTa-base encoder extracts contextual representations:
 \begin{equation}
-\mathbf{X}_T^{(0)} = \mathbf{W}_{\text{proj}, T} \, \text{RoBERTa}(\mathbf{T}) \in \mathbb{R}^{B \times L_T \times d_{\text{model}}}
+\mathbf{X}_T^{(0)} = \text{LayerNorm}\left( \mathbf{W}_{\text{proj}, T} \, \text{RoBERTa}(\mathbf{T}) \right) \in \mathbb{R}^{L_T \times d_{\text{model}}}
 \end{equation}
-accompanied by a binary attention mask $\mathbf{M}_T \in \{0, 1\}^{B \times L_T}$. Both backbones remain strictly frozen ($\text{requires\_grad} = \text{False}$) across all experiments.
+where $L_T = 64$. A binary padding mask $\mathbf{M}_T \in \{0, 1\}^{B \times L_T}$ identifies valid token positions ($1$ for valid tokens, $0$ for pad tokens).
 
 \subsection{Hamiltonian-Inspired Energy Dissipation Operator (HEDO)}
-Let $\mathbf{q}_0 \in \mathbb{R}^{B \times L \times d_{\text{model}}}$ represent the input sequence coordinates. HEDO introduces a conjugate momentum vector field $\mathbf{p} \in \mathbb{R}^{B \times L \times d_{\text{model}}}$ initialized via:
+To attenuate representation perturbations before state-space recurrence, each token representation $\mathbf{x} \in \mathbb{R}^{d_{\text{model}}}$ is mapped into generalized coordinate $\mathbf{q} \in \mathbb{R}^{d_{\text{model}}}$ and momentum $\mathbf{p} \in \mathbb{R}^{d_{\text{model}}}$ spaces:
 \begin{equation}
-\mathbf{p}_0 = \tanh(\mathbf{W}_p \mathbf{q}_0)
+\mathbf{q}_0 = \mathbf{W}_q \mathbf{x} + \mathbf{b}_q, \quad \mathbf{p}_0 = \mathbf{W}_p \mathbf{x} + \mathbf{b}_p
 \end{equation}
-where $\mathbf{W}_p \in \mathbb{R}^{d_{\text{model}} \times d_{\text{model}}}$ is a learnable weight matrix.
+We define quadratic potential and kinetic energy functions:
+\begin{equation}
+\mathcal{V}(\mathbf{q}) = \frac{1}{2} \|\mathbf{q}\|_2^2, \quad \mathcal{T}(\mathbf{p}) = \frac{1}{2} \|\mathbf{p}\|_2^2
+\end{equation}
+yielding canonical gradients $\nabla_{\mathbf{q}} \mathcal{H} = \mathbf{q}$ and $\nabla_{\mathbf{p}} \mathcal{H} = \mathbf{p}$.
 
-The system executes a discrete dissipative coordinate-momentum transformation (Fig.~\ref{fig:hedo_mechanism}) parameterized by integration step $\Delta t = 0.1$, damping coefficient $\beta = 0.05$, and perturbation scale $\gamma = 0.1$:
+The discrete dissipative update integrates coordinate-momentum dynamics over step size $\Delta t=0.1$ with damping coefficient $\beta=0.05$:
 \begin{align}
-\mathbf{p}_{t+1} &= \mathbf{p}_t (1 - \beta \Delta t) - \Delta t \tanh(\mathbf{W}_q \mathbf{q}_t) \label{eq:momentum_update} \\
-\mathbf{q}_{t+1} &= \mathbf{q}_t + \gamma \Delta t \, \mathbf{p}_{t+1} \label{eq:coordinate_update} \\
-\text{HEDO}(\mathbf{q}) &= \text{LayerNorm}(\mathbf{q}_{t+1}) \label{eq:hedo_output}
+\mathbf{p}_{k+1} &= (1 - \beta \Delta t) \, \mathbf{p}_k - \Delta t \, \mathbf{q}_k \\
+\mathbf{q}_{k+1} &= \mathbf{q}_k + \Delta t \, \mathbf{p}_{k+1}
 \end{align}
-where $\mathbf{W}_q \in \mathbb{R}^{d_{\text{model}} \times d_{\text{model}}}$ parameterizes the conservative potential gradient field.
-
-\begin{figure}[!t]
-\centering
-\HEDOMechanismFigure
-\caption{Computational flow of the Hamiltonian-Inspired Energy Dissipation Operator (HEDO). Coordinate representations $\mathbf{q}_0$ initialize conjugate momenta $\mathbf{p}_0$. Discrete updates execute damped momentum updates ($(1-\beta\Delta t)=0.995$) and discrete coordinate updates before Layer Normalization.}
-\label{fig:hedo_mechanism}
-\end{figure}
-
-\subsubsection{Discrete Energy Analysis and Inductive Bias}
-We define the discrete empirical Hamiltonian energy function as:
+The dissipated sequence representation is reconstructed with residual coupling:
 \begin{equation}
-\mathcal{H}(\mathbf{q}, \mathbf{p}) = \frac{1}{2} \left( \|\mathbf{q}\|_2^2 + \|\mathbf{p}\|_2^2 \right)
+\mathbf{X}^{(1)} = \mathbf{X}^{(0)} + \gamma \, \text{LayerNorm}(\mathbf{q}_K)
 \end{equation}
-Under the momentum update step \eqref{eq:momentum_update}, the norm of the updated momentum satisfies:
+where $\gamma = 0.1$ and $K=1$ step.
+
+\textbf{Empirical Diagnostic Trajectory:} In pre-training diagnostic evaluation, unforced multi-step simulation on image patch representations yielded the trajectory $\mathcal{H} \in [170.824, 170.651, 170.927, 171.646, 172.801, 174.387]$, while text representations yielded $\mathcal{H} \in [5.849, 5.796, 5.774, 5.783, 5.823, 5.892]$. While HEDO changes representation energy substantially, the discrete trajectory is not strictly monotonically decreasing; HEDO is therefore presented as a parameterized coordinate-momentum transformation with a dissipative inductive bias, rather than a system with guaranteed monotonic energy decay.
+
+\subsection{State-Continuous Chunk-Wise SSD Recurrence}
+The sequence $\mathbf{X}^{(1)} \in \mathbb{R}^{L \times d_{\text{model}}}$ is divided into $K = \lceil L / C \rceil$ non-overlapping chunks of length $C=16$. Within each chunk $k \in \{1, \dots, K\}$, the recurrent state $\mathbf{h}_{k, t} \in \mathbb{R}^{d_{\text{state}}}$ evolves according to:
+\begin{align}
+\mathbf{h}_{k, t} &= \mathbf{A}_k \mathbf{h}_{k, t-1} + \mathbf{B}_k \mathbf{x}_{k, t} \\
+\mathbf{y}_{k, t} &= \mathbf{C}_k \mathbf{h}_{k, t} + \mathbf{D}_k \mathbf{x}_{k, t}
+\end{align}
+where $\mathbf{A}_k = -\exp(\mathbf{A}_{\text{log}}) \in \mathbb{R}^{d_{\text{state}}}$, $\mathbf{B}_k = \mathbf{W}_B \mathbf{x}_{k, t} \in \mathbb{R}^{d_{\text{state}}}$, and $d_{\text{state}}=64$.
+
+\textbf{Inter-Chunk Continuity:} Unlike standard chunked models that reset hidden states between chunks, our formulation propagates boundary states:
 \begin{equation}
-\|\mathbf{p}_{t+1}\|_2 \le (1 - \beta \Delta t)\|\mathbf{p}_t\|_2 + \Delta t \|\tanh(\mathbf{W}_q \mathbf{q}_t)\|_2
+\mathbf{h}_{k+1, 0} = \mathbf{h}_{k, C}
 \end{equation}
-Because $\|\tanh(\cdot)\|_2 \le \sqrt{d_{\text{model}}}$, the contraction factor $(1 - \beta \Delta t) = 0.995 < 1$ introduces a Hamiltonian-inspired damping term that limits momentum amplification under the bounded nonlinear force term.
-
-\textbf{Empirical Diagnostic Trajectory:} In pre-training diagnostic evaluation, unforced multi-step simulation on image patch representations yielded the trajectory $\mathcal{H} \in [170.824, 170.651, 170.927, 171.646, 172.801, 174.387]$, while text representations yielded $\mathcal{H} \in [5.849, 5.796, 5.774, 5.783, 5.823, 5.892]$. While HEDO changes representation energy substantially ($\mathcal{H}_{\text{raw}} = 170.824 \to \mathcal{H}_{\text{HEDO}} = 77.563$ for images, maintaining cosine similarity $0.9952$), the unforced discrete trajectory is not monotonically decreasing. We therefore describe HEDO as a Hamiltonian-inspired discrete dissipative transformation that introduces a damping inductive bias, rather than a system with guaranteed monotonic energy decay.
-
-\subsection{Custom PyTorch Chunk-Wise SSD-Style Recurrence}
-The stabilized sequence $\mathbf{X} \in \mathbb{R}^{B \times L \times d_{\text{model}}}$ is projected to state dimension $d_{\text{state}} = 64$ via projection matrix $\mathbf{B}_{\text{proj}} \in \mathbb{R}^{d_{\text{model}} \times d_{\text{state}}}$. A learned state decay vector is parameterized as:
-\begin{equation}
-\mathbf{A}_{\text{decay}} = \exp(-\exp(\mathbf{A}_{\text{log}})) \in (0, 1)^{d_{\text{state}}}
-\end{equation}
-The sequence of length $L$ is partitioned into $K = \lceil L / C \rceil$ non-overlapping chunks of fixed size $C = 16$.
-
-Within each chunk $k \in \{1, \dots, K\}$, hidden states evolve under discrete-time recurrence:
-\begin{equation}
-\mathbf{h}_{t} = m_t \left( \mathbf{A}_{\text{decay}} \odot \mathbf{h}_{t-1} + \mathbf{u}_t \right) + (1 - m_t) \mathbf{h}_{t-1}
-\end{equation}
-where $\mathbf{u}_t = \mathbf{B}_{\text{proj}} \mathbf{x}_t \in \mathbb{R}^{B \times d_{\text{state}}}$ and $m_t \in \{0, 1\}$ denotes token validity. For invalid/padded tokens ($m_t = 0$), the hidden state is preserved ($\mathbf{h}_t = \mathbf{h}_{t-1}$) rather than updated with pad representations.
-
-\subsubsection{State Continuity Across Chunk Boundaries}
-Hidden states are carried continuously across chunk boundaries:
-\begin{equation}
-\mathbf{h}_{\text{start}, k} = \begin{cases} \mathbf{0}, & k = 1 \\ \mathbf{h}_{\text{end}, k-1}, & k > 1 \end{cases}
-\end{equation}
-At the end of each chunk $k$, the final hidden vector $\mathbf{h}_{k, \text{end}}$ is recorded as chunk boundary state $\mathbf{b}_k \in \mathbb{R}^{B \times d_{\text{state}}}$, along with chunk validity flag $m_k = \mathbb{I}(\sum_{t \in \text{chunk } k} m_t > 0)$.
-
-\begin{figure}[!t]
-\centering
-\HEDOChunkFigure
-\caption{State-continuous chunk-wise SSD-style recurrence with boundary state extraction. Recurrent hidden states propagate continuously across chunk boundaries ($\mathbf{h}_{\text{start}, k} = \mathbf{h}_{\text{end}, k-1}$) with zero state resets, while mask-weighted aggregation prevents zero-padding bias.}
-\label{fig:chunk_recurrence}
-\end{figure}
+with $\mathbf{h}_{1, 0} = \mathbf{0}$. The final hidden state of chunk $k$ is extracted as boundary state $\mathbf{b}_k = \mathbf{h}_{k, C} \in \mathbb{R}^{d_{\text{state}}}$.
 
 \subsection{Chunk-Wise Variational State Coupling (HVSC)}
-To aggregate boundary states across chunks while preventing invalid padded positions from contributing to boundary aggregation, HVSC computes mask-weighted pooling:
+For the textual stream, variable caption lengths mean trailing chunks may contain padding tokens. To prevent padding corruption, we compute valid token counts per chunk:
 \begin{equation}
-\mathbf{h}_{\text{bound}} = \frac{\sum_{k=1}^K m_k \mathbf{b}_k}{\sum_{k=1}^K m_k + \epsilon} \in \mathbb{R}^{B \times d_{\text{state}}}
+n_k = \sum_{j=1}^C \mathbf{M}_{T, (k-1)C + j}
 \end{equation}
-where $\epsilon = 10^{-6}$.
+and assign normalized chunk weights:
+\begin{equation}
+w_k = \frac{n_k}{\sum_{j=1}^K n_j + \epsilon}
+\end{equation}
+The mask-weighted boundary representation is:
+\begin{equation}
+\mathbf{h}_{\text{bound}, T} = \sum_{k=1}^K w_k \mathbf{b}_{T, k} \in \mathbb{R}^{d_{\text{state}}}
+\end{equation}
+For visual sequences where all $L_I=197$ tokens are valid, uniform weighting $w_k = 1/K$ is applied.
 
-The aggregated boundary representation parameterizes modality-specific posterior Gaussian distributions $\mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\sigma}^2)$ in latent space dimension $z_{\text{dim}} = 64$:
+The aggregated boundary representation parameterizes Gaussian latent distributions:
 \begin{align}
-\boldsymbol{\mu} &= \mathbf{W}_\mu \mathbf{h}_{\text{bound}} \in \mathbb{R}^{B \times z_{\text{dim}}} \\
-\log \boldsymbol{\sigma}^2 &= \text{clamp}(\mathbf{W}_{\text{logvar}} \mathbf{h}_{\text{bound}}, -5.0, 2.0)
+\boldsymbol{\mu} &= \mathbf{W}_\mu \mathbf{h}_{\text{bound}} + \mathbf{b}_\mu \in \mathbb{R}^{d_{\text{latent}}} \\
+\log \boldsymbol{\sigma}^2 &= \text{Clamp}\left(\mathbf{W}_{\text{logvar}} \mathbf{h}_{\text{bound}} + \mathbf{b}_{\text{logvar}}, -10, 10\right)
+\end{align}
+where $d_{\text{latent}}=64$.
+
+During training, latent vectors are sampled via the reparameterization trick:
+\begin{equation}
+\mathbf{z} = \boldsymbol{\mu} + \boldsymbol{\sigma} \odot \boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})
+\end{equation}
+The final embedding vectors $\mathbf{e}_I, \mathbf{e}_T \in \mathbb{S}^{d_{\text{model}}-1}$ combine mean-pooled recurrent representations with variational latent projections:
+\begin{align}
+\mathbf{e}_I &= \text{Normalize}\left( \text{LayerNorm}(\mathbf{h}_{\text{pool}, I} + \alpha \mathbf{W}_{\text{out}} \mathbf{z}_I) \right) \\
+\mathbf{e}_T &= \text{Normalize}\left( \text{LayerNorm}(\mathbf{h}_{\text{pool}, T} + \alpha \mathbf{W}_{\text{out}} \mathbf{z}_T) \right)
+\end{align}
+where $\alpha = 0.1$ and $\text{Normalize}(\mathbf{v}) = \mathbf{v} / \|\mathbf{v}\|_2$.
+
+\textbf{Symmetric KL Regularization:} To align the visual and textual latent spaces during training, we compute symmetric Kullback-Leibler divergence in FP32 precision to prevent underflow:
+\begin{equation}
+\mathcal{D}_{\text{SKL}}(p_I \parallel p_T) = \frac{1}{2} \left[ \mathcal{D}_{\text{KL}}(p_I \parallel p_T) + \mathcal{D}_{\text{KL}}(p_T \parallel p_I) \right]
+\end{equation}
+where for diagonal Gaussians $p_I = \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{\Sigma}_I)$ and $p_T = \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\Sigma}_T)$:
+\begin{align}
+\mathcal{D}_{\text{KL}}(p_I \parallel p_T) = \frac{1}{2} \sum_{j=1}^{d_{\text{latent}}} \Bigg[ &\log \frac{\sigma_{T,j}^2}{\sigma_{I,j}^2} + \frac{\sigma_{I,j}^2 + (\mu_{I,j} - \mu_{T,j})^2}{\sigma_{T,j}^2} - 1 \Bigg]
 \end{align}
 
-During training, latent representations are sampled via the reparameterization trick:
-\begin{equation}
-\mathbf{z} = \boldsymbol{\mu} + \boldsymbol{\epsilon} \odot \boldsymbol{\sigma}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})
-\end{equation}
-
-\subsubsection{Mask-Weighted Sequence Pooling and Embedding Fusion}
-For visual sequences (where all tokens are valid), mean sequence pooling evaluates as $\mathbf{h}_{\text{pool}, I} = \frac{1}{L_I}\sum_{t=1}^{L_I} \mathbf{x}_{I, t}$. For textual sequences containing variable-length padding, masked sequence pooling evaluates as:
-\begin{equation}
-\mathbf{h}_{\text{pool}, T} = \frac{\sum_{t=1}^{L_T} m_{T, t} \mathbf{x}_{T, t}}{\sum_{t=1}^{L_T} m_{T, t} + \epsilon} \in \mathbb{R}^{B \times d_{\text{model}}}
-\end{equation}
-The pooled sequence representation is coupled with the latent representation:
-\begin{equation}
-\mathbf{e} = \text{LayerNorm}(\mathbf{h}_{\text{pool}} + \alpha \mathbf{W}_{\text{out}} \mathbf{z}), \quad \alpha = 0.1
-\end{equation}
-where $\mathbf{W}_{\text{out}} \in \mathbb{R}^{z_{\text{dim}} \times d_{\text{model}}}$.
-
-\begin{figure*}[!t]
-\centering
-\HEDOInferenceFigure
-\caption{Comparison of the joint training regime and test-time retrieval inference. During training (top), visual and textual streams parameterize latent Gaussian distributions regularized via symmetric KL divergence $\mathcal{D}_{\text{SKL}}$ alongside multi-positive InfoNCE loss. During test retrieval (bottom), stochastic sampling is omitted and deterministic posterior means are evaluated completely independently with zero cross-modal attention or inter-modality state exchange.}
-\label{fig:train_inference}
-\end{figure*}
-
-\subsubsection{Symmetric KL Divergence Regularization}
-During training, cross-modal boundary alignment is regularized via symmetric Kullback-Leibler (KL) divergence computed in FP32 precision:
-\begin{equation}
-\mathcal{D}_{\text{SKL}}(p_I \parallel p_T) = \frac{1}{2} \left[ D_{\text{KL}}(p_I \parallel p_T) + D_{\text{KL}}(p_T \parallel p_I) \right]
-\end{equation}
-where the directional KL divergence between two multivariate diagonal Gaussians is evaluated analytically:
-\begin{align}
-D_{\text{KL}}(p_I \parallel p_T) = \frac{1}{2} \sum_{d=1}^{z_{\text{dim}}} \Bigg[ &\log \frac{\sigma_{T,d}^2}{\sigma_{I,d}^2} + \frac{\sigma_{I,d}^2 + (\mu_{I,d} - \mu_{T,d})^2}{\sigma_{T,d}^2} \nonumber \\
-&- 1 \Bigg]
-\end{align}
-
-\subsubsection{Deterministic Unimodal Retrieval Inference}
-During test-time retrieval (Fig.~\ref{fig:train_inference}), stochastic sampling is omitted, and the posterior mean vectors $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T$ are evaluated deterministically:
+\textbf{Test-Time Deterministic Unimodal Inference:} During test-time retrieval (Fig.~\ref{fig:train_inference}), stochastic sampling is omitted, and the posterior mean vectors $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T$ are evaluated deterministically:
 \begin{align}
 \hat{\mathbf{e}}_I &= \text{Normalize}\left( \text{LayerNorm}(\mathbf{h}_{\text{pool}, I} + \alpha \mathbf{W}_{\text{out}} \boldsymbol{\mu}_I) \right) \\
 \hat{\mathbf{e}}_T &= \text{Normalize}\left( \text{LayerNorm}(\mathbf{h}_{\text{pool}, T} + \alpha \mathbf{W}_{\text{out}} \boldsymbol{\mu}_T) \right)
@@ -271,10 +240,10 @@ The total loss combines a multi-positive InfoNCE contrastive objective with symm
 \end{equation}
 where $\lambda_{\text{KL}} = 0.01$. The multi-positive InfoNCE loss accounts for multiple captions per image (5 captions per image in Flickr8k):
 \begin{align}
-\mathcal{L}_{\text{InfoNCE}} = -\frac{1}{2B} \sum_{i=1}^B \Bigg[ &\log \frac{\sum_{j \in \mathcal{P}(i)} \exp(\mathbf{s}_{i,j} / \tau)}{\sum_{k=1}^{5B} \exp(\mathbf{s}_{i,k} / \tau)} \nonumber \\
-&+ \log \frac{\exp(\mathbf{s}_{i,i} / \tau)}{\sum_{k=1}^B \exp(\mathbf{s}_{k,i} / \tau)} \Bigg]
+\mathcal{L}_{\text{InfoNCE}} = -\frac{1}{2B} \sum_{i=1}^B \Bigg[ &\log \frac{\sum_{j \in \mathcal{P}(i)} \exp(s_{i,j} \cdot \alpha_{\text{scale}})}{\sum_{k=1}^{5B} \exp(s_{i,k} \cdot \alpha_{\text{scale}})} \nonumber \\
+&+ \log \frac{\exp(s_{i,i} \cdot \alpha_{\text{scale}})}{\sum_{k=1}^B \exp(s_{k,i} \cdot \alpha_{\text{scale}})} \Bigg]
 \end{align}
-where $\mathbf{s}_{i,j} = \hat{\mathbf{e}}_{I, i}^\top \hat{\mathbf{e}}_{T, j}$ denotes cosine similarity, $\mathcal{P}(i)$ denotes the positive caption index set for image $i$, and the learnable logit scale parameter is constrained to a maximum value of $100.0$ ($\tau \le 100.0$).
+where $s_{i,j} = \hat{\mathbf{e}}_{I, i}^\top \hat{\mathbf{e}}_{T, j}$ denotes cosine similarity, $\mathcal{P}(i)$ denotes the positive caption index set for image $i$, and the learnable logit scale parameter $\alpha_{\text{scale}} = \exp(\ell)$ is clamped to a maximum value of $100.0$ ($\alpha_{\text{scale}} \le 100.0$).
 
 \begin{algorithm}[t]
 \caption{HEDO-HVSC Forward Pass and Training Step}
@@ -324,7 +293,7 @@ Held-Out Test & $1{,}000$ & $5{,}000$ & $5$ & Certified evaluation \\
 \end{figure*}
 
 \subsection{Backbone Freezing and Checkpoint Provenance}
-The visual backbone is a pretrained Vision Transformer (\texttt{timm/vit\_base\_patch16\_224}, $86.6\text{ M}$ parameters, standard ImageNet-1k normalization), and the textual backbone is a pretrained \texttt{roberta-base} encoder ($124.6\text{ M}$ parameters, HuggingFace Transformers, max sequence length $L_T=64$). Both backbones are kept strictly frozen throughout training ($\text{requires\_grad} = \text{False}$). Only linear projection layers, HEDO parameters, custom SSD recurrent projections, and HVSC modules ($0.330\text{ M}$ to $0.422\text{ M}$ parameters) are optimized.
+The visual backbone is a pretrained Vision Transformer (\texttt{timm/vit\_base\_patch16\_224}, $85.80\text{ M}$ parameters, standard ImageNet-1k normalization), and the textual backbone is a pretrained \texttt{roberta-base} encoder ($124.05\text{ M}$ parameters, HuggingFace Transformers, max sequence length $L_T=64$). Both backbones are kept strictly frozen throughout training ($\text{requires\_grad} = \text{False}$), yielding $209.854\text{ M}$ total frozen parameters. Only linear projection layers, HEDO parameters, custom SSD recurrent projections, and HVSC modules ($0.330\text{ M}$ to $0.422\text{ M}$ parameters) are optimized.
 
 \subsection{Reproducibility and Implementation Details}
 The execution environment is configured with Python 3.12, PyTorch 2.10.0 (CUDA 12.8), \texttt{timm} 1.0.26, and HuggingFace \texttt{transformers} 5.0.0 on an NVIDIA Tesla T4 GPU ($16\,\text{GB}$ VRAM). Training uses Automatic Mixed Precision (AMP FP16) with gradient scaling. Checkpoint selection is strictly guided by peak validation Mean Recall (early stopping patience of 3 epochs with $\Delta_{\text{min}}=0.05\%$), and the held-out test split is evaluated only once after final checkpoint selection.
@@ -589,13 +558,13 @@ Table~\ref{tab:parameters_breakdown} summarizes parameter allocation and peak tr
 \textbf{Component Layer / Configuration} & \textbf{Parameters} & \textbf{Peak VRAM} \\
 \midrule
 Frozen Encoders (ViT-B/16 + RoBERTa-base) & $209.854\text{ M}$ & --- \\
-Linear Projections ($\mathbf{W}_{\text{proj}, I}, \mathbf{W}_{\text{proj}, T}$) & $196{,}864$ ($46.7\%$) & --- \\
-Custom SSD Recurrent Blocks ($B_{\text{proj}}, A_{\text{log}}$) & $98{,}432$ ($23.3\%$) & --- \\
-HVSC Latent Modules ($\mathbf{W}_\mu, \mathbf{W}_{\text{logvar}}, \mathbf{W}_{\text{out}}$) & $94{,}336$ ($22.4\%$) & --- \\
-HEDO Operators ($\mathbf{W}_q, \mathbf{W}_p$) & $32{,}768$ ($7.8\%$) & --- \\
-Layer Normalization \& Scale & $640$ ($0.2\%$) & --- \\
+Linear Projections ($\mathbf{W}_{\text{proj}, I}, \mathbf{W}_{\text{proj}, T}$) & $196{,}864$ ($46.54\%$) & --- \\
+Custom SSD Recurrent Blocks ($B_{\text{proj}}, A_{\text{log}}$) & $98{,}432$ ($23.27\%$) & --- \\
+HVSC Latent Modules ($\mathbf{W}_\mu, \mathbf{W}_{\text{logvar}}, \mathbf{W}_{\text{out}}$) & $94{,}336$ ($22.30\%$) & --- \\
+HEDO Operators ($\mathbf{W}_q, \mathbf{W}_p$) & $32{,}768$ ($7.75\%$) & --- \\
+Layer Normalization \& Scale & $640$ ($0.15\%$) & --- \\
 \midrule
-\textbf{Full HEDO-HVSC (Total Trainable)} & $\mathbf{0.422\text{ M}}$ ($100\%$) & $\mathbf{2686.25\text{ MB}}$ \\
+\textbf{Full HEDO-HVSC (Total Trainable)} & $\mathbf{423{,}040}$ ($0.423\text{ M}$) & $\mathbf{2686.25\text{ MB}}$ \\
 \midrule
 Custom SSD-Style Baseline & $0.330\text{ M}$ trainable & $1878.22\text{ MB}$ \\
 HEDO-HVSC w/o HEDO & $0.356\text{ M}$ trainable & $1878.81\text{ MB}$ \\
