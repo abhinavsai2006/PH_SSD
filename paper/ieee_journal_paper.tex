@@ -55,7 +55,7 @@ Despite their mathematical elegance, transferring state-space recurrence directl
     \item \textbf{Cross-Modal Boundary State Drift:} Unidirectional recurrence across separate visual and textual streams accumulates modality-specific biases. In language streams, variable sequence lengths require zero-padding, which severely skews naive hidden state aggregation if the padding tokens are allowed to corrupt chunk boundary vectors \cite{devlin2018bert}.
 \end{enumerate}
 
-To overcome these fundamental limitations, we propose \textbf{HEDO-HVSC}, a principled multimodal architecture built on two mathematically grounded innovations:
+To overcome these fundamental limitations, we propose \textbf{HEDO-HVSC}, a unified multimodal architecture built on two mathematically grounded innovations:
 \begin{enumerate}
     \item \textbf{Hamiltonian-Inspired Energy Dissipation Operator (HEDO):} A coordinate-momentum dynamical transformation parameterized by learned vector fields $W_q, W_p$, combined with a fixed positive damping coefficient $\beta = 0.05$ and perturbation step $\gamma = 0.1$. HEDO introduces an explicit dissipative inductive bias that bounds discrete Hamiltonian energy and attenuates high-frequency representation noise prior to state-space recurrence.
     \item \textbf{Chunk-Wise Variational State Coupling (HVSC):} A state-continuous chunk-wise SSD block that partitions sequences into chunks of size $C=16$, propagates recurrent states $h_k$ continuously across chunk boundaries ($h_{\text{start}, k} = h_{\text{end}, k-1}$), and aggregates boundary states via attention-mask weighting ($\mathbf{h}_{\text{bound}} = \frac{\sum m_k \mathbf{b}_k}{\sum m_k}$). Modality-specific Gaussian latent spaces are coupled through symmetric Kullback-Leibler (KL) divergence in FP32 precision during training, while test-time retrieval evaluates deterministic posterior means strictly independently per modality.
@@ -83,7 +83,7 @@ where $\mathcal{H}(\mathbf{q}, \mathbf{p})$ represents total Hamiltonian energy 
 \label{sec:methodology}
 
 \subsection{Overall Architectural Pipeline}
-An overview of the HEDO-HVSC architecture is shown in Fig.~\ref{fig:benchmark_results}. An input image $\mathbf{I} \in \mathbb{R}^{3 \times 224 \times 224}$ and paired caption text $\mathbf{T}$ are first passed through frozen pretrained feature extractors:
+An input image $\mathbf{I} \in \mathbb{R}^{3 \times 224 \times 224}$ and paired caption text $\mathbf{T}$ are first passed through frozen pretrained feature extractors:
 \begin{align}
     \mathbf{X}_I^{(0)} &= \mathbf{W}_{\text{proj}, I} \, \text{ViT-B/16}(\mathbf{I}) \in \mathbb{R}^{B \times 197 \times d_{\text{model}}} \\
     \mathbf{X}_T^{(0)} &= \mathbf{W}_{\text{proj}, T} \, \text{RoBERTa}(\mathbf{T}) \in \mathbb{R}^{B \times 64 \times d_{\text{model}}}
@@ -138,7 +138,10 @@ Cross-modal alignment is enforced via symmetric Kullback-Leibler (KL) divergence
 \end{equation}
 where:
 \begin{equation}
-    D_{\text{KL}}(p_I \parallel p_T) = \frac{1}{2} \sum_{d=1}^{z_{\text{dim}}} \left[ \log \frac{\sigma_{T,d}^2}{\sigma_{I,d}^2} + \frac{\sigma_{I,d}^2 + (\mu_{I,d} - \mu_{T,d})^2}{\sigma_{T,d}^2} - 1 \right]
+\begin{aligned}
+    D_{\text{KL}}(p_I \parallel p_T) = \frac{1}{2} \sum_{d=1}^{z_{\text{dim}}} \Bigg[ & \log \frac{\sigma_{T,d}^2}{\sigma_{I,d}^2} \\
+    & + \frac{\sigma_{I,d}^2 + (\mu_{I,d} - \mu_{T,d})^2}{\sigma_{T,d}^2} - 1 \Bigg]
+\end{aligned}
 \end{equation}
 
 \textbf{Deterministic Unimodal Inference:} At test time, image and text retrieval embeddings are computed strictly independently using deterministic posterior means $\boldsymbol{\mu}_I$ and $\boldsymbol{\mu}_T$:
@@ -212,29 +215,32 @@ HEDO-HVSC w/o HVSC & Yes & No & $\mathbf{27.20 \pm 0.99}$ & $56.97 \pm 0.19$ & $
 
 \begin{table*}[t]
 \centering
-\caption{Complete per-run test retrieval results and computational metrics across all 12 individual experimental runs ($4\text{ models} \times 3\text{ seeds}$).}
-\label{tab:per_run_results}
+\small
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lcccccccc}
 \toprule
-\textbf{Model} & \textbf{Seed} & \textbf{Best Epoch} & \textbf{Val MR (\%)} & \textbf{Test I2T R@1 (\%)} & \textbf{Test T2I R@1 (\%)} & \textbf{Test MR (\%)} & \textbf{Train Time (min)} & \textbf{Peak VRAM (MB)} \\
+\textbf{Model Configuration} & \textbf{Seed} & \textbf{Best Epoch} & \textbf{Val MR (\%)} & \textbf{Test I2T R@1 (\%)} & \textbf{Test T2I R@1 (\%)} & \textbf{Test MR (\%)} & \textbf{Train Time (min)} & \textbf{Peak VRAM (MB)} \\
 \midrule
-SSD Baseline & 42 & 8 & 48.03 & 27.00 & 21.24 & 48.55 & 17.51 & 1875.76 \\
-SSD Baseline & 43 & 8 & 48.01 & 26.30 & 19.94 & 47.58 & 17.47 & 1878.22 \\
-SSD Baseline & 44 & 8 & 47.78 & 26.30 & 20.18 & 48.61 & 17.47 & 1877.78 \\
+\multirow{3}{*}{SSD Baseline} & 42 & 8 & 48.03 & 27.00 & 21.24 & 48.55 & 17.51 & 1875.76 \\
+ & 43 & 8 & 48.01 & 26.30 & 19.94 & 47.58 & 17.47 & 1878.22 \\
+ & 44 & 8 & 47.78 & 26.30 & 20.18 & 48.61 & 17.47 & 1877.78 \\
 \midrule
-HEDO-HVSC w/o HEDO & 42 & 8 & 48.08 & 27.70 & 20.52 & 48.43 & 17.72 & 1878.61 \\
-HEDO-HVSC w/o HEDO & 43 & 8 & 48.14 & 25.70 & 19.78 & 47.62 & 17.84 & 1878.37 \\
-HEDO-HVSC w/o HEDO & 44 & 8 & 47.67 & 26.70 & 20.58 & 48.61 & 17.90 & 1878.81 \\
+\multirow{3}{*}{HEDO-HVSC w/o HEDO} & 42 & 8 & 48.08 & 27.70 & 20.52 & 48.43 & 17.72 & 1878.61 \\
+ & 43 & 8 & 48.14 & 25.70 & 19.78 & 47.62 & 17.84 & 1878.37 \\
+ & 44 & 8 & 47.67 & 26.70 & 20.58 & 48.61 & 17.90 & 1878.81 \\
 \midrule
-HEDO-HVSC w/o HVSC & 42 & 8 & 48.03 & 27.90 & 21.28 & 48.43 & 17.56 & 1878.99 \\
-HEDO-HVSC w/o HVSC & 43 & 8 & 49.16 & 25.80 & 19.98 & 48.07 & 17.56 & 1879.74 \\
-HEDO-HVSC w/o HVSC & 44 & 8 & 48.70 & 27.90 & 20.72 & 48.78 & 17.60 & 2685.66 \\
+\multirow{3}{*}{HEDO-HVSC w/o HVSC} & 42 & 8 & 48.03 & 27.90 & 21.28 & 48.43 & 17.56 & 1878.99 \\
+ & 43 & 8 & 49.16 & 25.80 & 19.98 & 48.07 & 17.56 & 1879.74 \\
+ & 44 & 8 & 48.70 & 27.90 & 20.72 & 48.78 & 17.60 & 2685.66 \\
 \midrule
-Full HEDO-HVSC (Ours) & 42 & 8 & 47.86 & 28.20 & 20.88 & 48.41 & 17.81 & 2686.05 \\
-Full HEDO-HVSC (Ours) & 43 & 7 & 48.56 & 24.10 & 20.46 & 47.50 & 17.80 & 2686.25 \\
-Full HEDO-HVSC (Ours) & 44 & 8 & 48.60 & 27.90 & 20.78 & 48.93 & 17.85 & 2686.25 \\
+\multirow{3}{*}{\textbf{Full HEDO-HVSC (Ours)}} & 42 & 8 & 47.86 & 28.20 & 20.88 & 48.41 & 17.81 & 2686.05 \\
+ & 43 & 7 & 48.56 & 24.10 & 20.46 & 47.50 & 17.80 & 2686.25 \\
+ & 44 & 8 & 48.60 & 27.90 & 20.78 & 48.93 & 17.85 & 2686.25 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
+\caption{Complete per-run test retrieval results and computational metrics across all 12 individual experimental runs ($4\text{ models} \times 3\text{ seeds}$).}
+\label{tab:per_run_results}
 \end{table*}
 
 \subsection{Main Benchmark Results}
@@ -250,7 +256,10 @@ Table~\ref{tab:main_results} and Table~\ref{tab:per_run_results} present the ful
 
 \textbf{Factorial Interaction:} The $2 \times 2$ factorial interaction evaluates to:
 \begin{equation}
-\Delta_{\text{int}} = \text{MR}_{11} - \text{MR}_{10} - \text{MR}_{01} + \text{MR}_{00} = -0.12\text{ percentage points}
+\begin{aligned}
+\Delta_{\text{int}} &= \text{MR}_{11} - \text{MR}_{10} - \text{MR}_{01} + \text{MR}_{00} \\
+&= 48.28 - 48.43 - 48.22 + 48.25 = -0.12\%
+\end{aligned}
 \end{equation}
 indicating stable, non-interfering parameter dynamics between HEDO and HVSC.
 
