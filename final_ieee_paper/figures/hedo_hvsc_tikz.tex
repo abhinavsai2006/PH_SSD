@@ -1,28 +1,28 @@
 % ==============================================================================
 % HEDO-HVSC CONCEPTUAL DIAGRAMS — 100% NATIVE LATEX TIKZ
 % Clean, uncrowded architecture diagrams with zero text-in-node bloat
-% Strict geometric alignment, explicit top-down junction topology, no diagonal/side entry errors
+% Strict geometric alignment, explicit orthogonal tree junctions, zero diagonal lines
 % ==============================================================================
 
 \tikzset{
   hvblock/.style={draw=black!75, rounded corners=2.5pt, align=center,
-    minimum height=8mm, minimum width=36mm, font=\footnotesize, line width=0.55pt},
+    minimum height=8.5mm, minimum width=38mm, font=\footnotesize, line width=0.55pt},
   hvinput/.style={hvblock, fill=gray!8},
   hvenc/.style={hvblock, fill=blue!5, draw=blue!60!black},
   hvmethod/.style={hvblock, fill=green!5, draw=green!60!black},
   hvstate/.style={hvblock, fill=orange!8, draw=orange!70!black},
-  hvloss/.style={hvblock, fill=red!5, draw=red!60!black, minimum width=84mm, minimum height=11mm},
-  hvinfer/.style={hvblock, fill=blue!5, draw=blue!60!black, minimum width=84mm, minimum height=11mm},
-  flow/.style={-{Stealth[scale=0.95]}, line width=0.65pt, color=black!85},
-  hvline/.style={line width=0.65pt, color=black!85},
+  hvloss/.style={hvblock, fill=red!5, draw=red!60!black, minimum width=84mm, minimum height=12mm},
+  hvinfer/.style={hvblock, fill=blue!5, draw=blue!60!black, minimum width=84mm, minimum height=12mm},
+  flow/.style={-{Stealth[scale=0.95]}, line width=0.7pt, color=black!85},
+  hvline/.style={line width=0.7pt, color=black!85},
 }
 
 % ------------------------------------------------------------------------------
 % Figure 1: Overall Architecture Pipeline (Full-Width figure*)
-% Explicit Tree Junction Topology — No Arrow between Training and Test
+% Strict Orthogonal Bus Convergence — No Diagonal Lines, No Training->Test Arrow
 % ------------------------------------------------------------------------------
 \newcommand{\HEDOArchitectureFigure}{
-\begin{tikzpicture}[node distance=5mm and 40mm]
+\begin{tikzpicture}[node distance=5mm and 42mm]
 % Column Titles
 \node[font=\bfseries\small, color=blue!70!black] (ititle) {Visual Stream};
 \node[font=\bfseries\small, color=blue!70!black, right=56mm of ititle] (ttitle) {Textual Stream};
@@ -56,23 +56,22 @@
 \path (i7) -- (t7) coordinate[midway] (mid_embs);
 
 % Section 1: Training Objective (Centered Below Streams)
-\node[hvloss, below=13mm of mid_embs] (tr_box)
+\node[hvloss, below=14mm of mid_embs] (tr_box)
 {\textbf{Training Objective (Joint Optimization)}\\[2pt]
 $\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$};
 
-% Explicit Tree Convergence into Training Objective Top
-\coordinate (tr_left_drop) at ($(i7.south) + (0, -4.5mm)$);
-\coordinate (tr_right_drop) at ($(t7.south) + (0, -4.5mm)$);
-\coordinate (tr_merge) at ($(tr_box.north) + (0, 4.5mm)$);
+% Pure Orthogonal Tree Convergence into Training Objective Top
+\coordinate (tr_left_drop) at ($(i7.south) + (0, -5mm)$);
+\coordinate (tr_right_drop) at ($(t7.south) + (0, -5mm)$);
+\coordinate (tr_merge) at ($(tr_box.north) + (0, 5mm)$);
 
 \draw[flow] (i7.south) -- (tr_left_drop);
 \draw[flow] (t7.south) -- (tr_right_drop);
-\draw[hvline] (tr_left_drop) -- (tr_merge);
-\draw[hvline] (tr_right_drop) -- (tr_merge);
+\draw[hvline] (tr_left_drop) -- (tr_merge -| tr_left_drop) -- (tr_merge -| tr_right_drop) -- (tr_right_drop);
 \draw[flow] (tr_merge) -- (tr_box.north);
 
 % Section 2: Test-Time Retrieval (Completely Independent - NO ARROW from Training)
-\node[hvinfer, below=12mm of tr_box] (te_box)
+\node[hvinfer, below=13mm of tr_box] (te_box)
 {\textbf{Test-Time Retrieval (Strictly Independent)}\\[2pt]
 Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies \mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top$};
 
@@ -178,57 +177,92 @@ $\displaystyle \mathbf{h}_{\text{bound}} = \frac{\sum_{k=1}^K m_k \mathbf{b}_k}{
 
 % ------------------------------------------------------------------------------
 % Figure 5: Training vs. Test-Time Inference Flow (Full-Width figure*)
-% Explicit Tree Convergence — No Diagonal Lines into Corners, No Arrow between A and B
+% Strict Orthogonal Tree Convergence & Clean Hierarchy (No Diagonal Lines)
 % ------------------------------------------------------------------------------
 \newcommand{\HEDOInferenceFigure}{
-\begin{tikzpicture}[node distance=5mm and 30mm]
-% Top Training Section
-\node[font=\bfseries\small, color=blue!70!black] (tr_title) {A. Training Phase: Stochastic Latent Alignment \& Joint Metric Learning};
+\begin{tikzpicture}[node distance=6mm and 36mm]
 
-\node[hvmethod, below=3.5mm of tr_title, xshift=-46mm, minimum width=48mm] (iz)
-{\textbf{Visual Encoder Pipeline}\\$\mathbf{z}_I \sim \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{\sigma}_I^2)$\\Latent Embedding $\mathbf{e}_I$};
+% ==============================================================================
+% SECTION A: TRAINING PHASE
+% ==============================================================================
+\node[font=\bfseries\small, color=blue!70!black] (tr_title)
+{A. Training Phase: Stochastic Latent Alignment \& Joint Metric Learning};
 
-\node[hvmethod, below=3.5mm of tr_title, xshift=46mm, minimum width=48mm] (tz)
-{\textbf{Textual Encoder Pipeline}\\$\mathbf{z}_T \sim \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)$\\Latent Embedding $\mathbf{e}_T$};
+% Top Encoder Pipelines
+\node[hvmethod, below=6mm of tr_title, xshift=-44mm, minimum width=45mm, minimum height=9mm] (iz)
+{\textbf{Visual Encoder Pipeline}\\Frozen ViT-B/16 + HEDO + SSD};
 
-\node[hvloss, below=6mm of tr_title, yshift=-14mm, minimum width=96mm, minimum height=12mm] (tr_loss)
+\node[hvmethod, below=6mm of tr_title, xshift=44mm, minimum width=45mm, minimum height=9mm] (tz)
+{\textbf{Textual Encoder Pipeline}\\Frozen RoBERTa + HEDO + SSD};
+
+% Intermediate Latent Boxes
+\node[hvstate, below=7mm of iz, minimum width=45mm, minimum height=9mm] (v_lat)
+{\textbf{Visual Latent}\\$\mathbf{z}_I \sim \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{\sigma}_I^2)\implies \mathbf{e}_I$};
+
+\node[hvstate, below=7mm of tz, minimum width=45mm, minimum height=9mm] (t_lat)
+{\textbf{Textual Latent}\\$\mathbf{z}_T \sim \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)\implies \mathbf{e}_T$};
+
+\draw[flow] (iz.south) -- (v_lat.north);
+\draw[flow] (tz.south) -- (t_lat.north);
+
+% Training Joint Optimization Objective Box
+\node[hvloss, below=17mm of $(v_lat)!0.5!(t_lat)$, minimum width=88mm, minimum height=14mm] (tr_loss)
 {\textbf{Joint Optimization Objective}\\[2pt]
-$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$};
+$\displaystyle \mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$};
 
-% Tree Convergence into Training Objective
-\coordinate (v_drop) at ($(iz.south) + (0, -5mm)$);
-\coordinate (t_drop) at ($(tz.south) + (0, -5mm)$);
-\coordinate (tr_merge) at ($(tr_loss.north) + (0, 5mm)$);
+% Clean Orthogonal Tree Convergence into Training Objective Top (tr_loss.north)
+\coordinate (v_join) at ($(v_lat.south) + (0, -5.5mm)$);
+\coordinate (t_join) at ($(t_lat.south) + (0, -5.5mm)$);
+\coordinate (tr_merge) at ($(tr_loss.north) + (0, 5.5mm)$);
 
-\draw[flow] (iz.south) -- (v_drop);
-\draw[flow] (tz.south) -- (t_drop);
-\draw[hvline] (v_drop) -- (tr_merge);
-\draw[hvline] (t_drop) -- (tr_merge);
+\draw[flow] (v_lat.south) -- (v_join);
+\draw[flow] (t_lat.south) -- (t_join);
+\draw[hvline] (v_join) -- (tr_merge -| v_join) -- (tr_merge -| t_join) -- (t_join);
 \draw[flow] (tr_merge) -- (tr_loss.north);
 
-% Bottom Test Inference Section (Completely Separated — NO ARROW between A and B)
-\node[font=\bfseries\small, color=green!60!black, below=15mm of tr_loss] (te_title) {B. Test-Time Retrieval: Deterministic Unimodal Evaluation (Strictly Independent)};
+% ==============================================================================
+% SECTION B: TEST-TIME RETRIEVAL (COMPLETELY SEPARATE — NO ARROW FROM TRAINING)
+% ==============================================================================
+\node[font=\bfseries\small, color=green!60!black, below=15mm of tr_loss] (te_title)
+{B. Test-Time Retrieval: Deterministic Unimodal Evaluation (Strictly Independent)};
 
-\node[hvinput, below=3.5mm of te_title, xshift=-46mm, minimum width=48mm] (iq)
-{\textbf{Query Image $\mathbf{I}$}\\Deterministic Mean $\boldsymbol{\mu}_I$\\Unit Embedding $\hat{\mathbf{e}}_I \in \mathbb{S}^{127}$};
+% Top Inputs for Test-Time
+\node[hvinput, below=6mm of te_title, xshift=-44mm, minimum width=45mm, minimum height=9mm] (iq)
+{\textbf{Query Image $\mathbf{I}$}\\Single Evaluation Sample};
 
-\node[hvinput, below=3.5mm of te_title, xshift=46mm, minimum width=48mm] (tg)
-{\textbf{Text Gallery $\mathcal{T}$}\\Deterministic Mean $\boldsymbol{\mu}_T$\\Unit Embedding $\hat{\mathbf{e}}_T \in \mathbb{S}^{127}$};
+\node[hvinput, below=6mm of te_title, xshift=44mm, minimum width=45mm, minimum height=9mm] (tg)
+{\textbf{Text Gallery $\mathcal{T}$}\\Candidate Corpus ($5{,}000$ Captions)};
 
-\node[hvinfer, below=6mm of te_title, yshift=-14mm, minimum width=96mm, minimum height=12mm] (te_eval)
-{\textbf{Cosine Similarity Ranking: $\mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top \implies$ Recall @ $K$ (1, 5, 10)}\\[2pt]
-\scriptsize Strictly Independent Dual Encoders $\;\vert\;$ Zero Cross-Modal Interaction at Retrieval Time};
+% Intermediate Deterministic Means
+\node[hvenc, below=7mm of iq, minimum width=45mm, minimum height=9mm] (iq_mean)
+{\textbf{Deterministic Mean $\boldsymbol{\mu}_I$}\\Unit Embedding $\hat{\mathbf{e}}_I \in \mathbb{S}^{127}$};
 
-% Tree Convergence into Cosine Similarity
-\coordinate (iq_drop) at ($(iq.south) + (0, -5mm)$);
-\coordinate (tg_drop) at ($(tg.south) + (0, -5mm)$);
-\coordinate (te_merge) at ($(te_eval.north) + (0, 5mm)$);
+\node[hvenc, below=7mm of tg, minimum width=45mm, minimum height=9mm] (tg_mean)
+{\textbf{Deterministic Mean $\boldsymbol{\mu}_T$}\\Unit Embedding $\hat{\mathbf{e}}_T \in \mathbb{S}^{127}$};
 
-\draw[flow] (iq.south) -- (iq_drop);
-\draw[flow] (tg.south) -- (tg_drop);
-\draw[hvline] (iq_drop) -- (te_merge);
-\draw[hvline] (tg_drop) -- (te_merge);
-\draw[flow] (te_merge) -- (te_eval.north);
+\draw[flow] (iq.south) -- (iq_mean.north);
+\draw[flow] (tg.south) -- (tg_mean.north);
+
+% Cosine Similarity Box
+\node[hvinfer, below=16mm of $(iq_mean)!0.5!(tg_mean)$, minimum width=88mm, minimum height=11mm] (te_sim)
+{\textbf{Cosine Similarity Matrix}\\[2pt]
+$\mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top \in \mathbb{R}^{1000 \times 5000}$};
+
+% Clean Orthogonal Tree Convergence into Cosine Similarity Top (te_sim.north)
+\coordinate (iq_join) at ($(iq_mean.south) + (0, -5.5mm)$);
+\coordinate (tg_join) at ($(tg_mean.south) + (0, -5.5mm)$);
+\coordinate (te_merge) at ($(te_sim.north) + (0, 5.5mm)$);
+
+\draw[flow] (iq_mean.south) -- (iq_join);
+\draw[flow] (tg_mean.south) -- (tg_join);
+\draw[hvline] (iq_join) -- (te_merge -| iq_join) -- (te_merge -| tg_join) -- (tg_join);
+\draw[flow] (te_merge) -- (te_sim.north);
+
+% Final Retrieval Metrics Box
+\node[hvmethod, below=7mm of te_sim, minimum width=88mm, minimum height=8.5mm] (te_metrics)
+{\textbf{Ranking \& Cross-Modal Evaluation Metrics:}\; R@1, R@5, R@10, Mean Recall (MR)};
+
+\draw[flow] (te_sim.south) -- (te_metrics.north);
 
 \end{tikzpicture}
 }
