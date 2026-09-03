@@ -55,7 +55,7 @@ To mitigate quadratic scaling, linear-time sequence models---such as Structured 
 \subsection{Challenges in Multimodal State-Space Recurrence}
 Despite their efficiency in unimodal sequence modeling, applying state-space recurrence to multimodal metric learning introduces specific challenges:
 \begin{enumerate}
-    \item \textbf{Representation Perturbation Sensitivity:} Standard discrete recurrent state transitions propagate token variations across the sequence axis. In visual patch sequences, localized sensor noise, background clutter, and photometric variations can propagate across recurrent steps, leading to trajectory drift in hidden state representations \cite{hendrycks2019benchmarking}.
+    \item \textbf{Representation Perturbation Sensitivity:} Standard discrete recurrent state transitions propagate token variations across the sequence axis. Localized image corruptions such as sensor noise and photometric variations can perturb visual token representations \cite{hendrycks2019benchmarking}; in recurrent architectures, such perturbations may subsequently propagate across recurrent steps, leading to trajectory drift in hidden state representations.
     \item \textbf{Potential Boundary Representation Misalignment:} Unidirectional recurrence across separate visual and textual encoders may accumulate modality-specific representational drift. In textual streams, variable sentence lengths require zero-padding; unweighted sequence-end pooling allows uninformative pad tokens to influence final representations, potentially degrading retrieval alignment \cite{devlin2018bert,faghri2017vse++}.
 \end{enumerate}
 
@@ -257,13 +257,13 @@ where $s_{i,j} = \hat{\mathbf{e}}_{I, i}^\top \hat{\mathbf{e}}_{T, j}$ denotes c
 \REQUIRE Image batch $\mathbf{I} \in \mathbb{R}^{B \times 3 \times 224 \times 224}$, text tokens $\mathbf{T} \in \mathbb{Z}^{B \times 64}$, attention masks $\mathbf{M}_T \in \{0, 1\}^{B \times 64}$, positive index mappings
 \ENSURE Total loss $\mathcal{L}_{\text{total}}$, test embeddings $\hat{\mathbf{e}}_I, \hat{\mathbf{e}}_T$
 \STATE Extract frozen representations $\mathbf{X}_I^{(0)}, \mathbf{X}_T^{(0)}$ via (7)--(8)
-\STATE Apply HEDO dissipative transformation if enabled (9)--(13)
-\STATE Execute chunk-wise SSD recurrence with state continuity (14)--(16)
+\STATE Apply HEDO dissipative transformation if enabled (9)--(12)
+\STATE Execute chunk-wise SSD recurrence with state continuity (13)--(15)
 \STATE Extract chunk boundary states $\mathbf{b}_{I, k}, \mathbf{b}_{T, k}$ and validity masks
-\STATE Compute mask-weighted boundary states and parameterize latents (17)--(22)
-\STATE Compute symmetric KL loss $\mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$ in FP32 precision (25)--(26)
-\STATE Sample latents $\mathbf{z}$ and evaluate coupled embeddings $\mathbf{e}_I, \mathbf{e}_T$ (22)--(24)
-\STATE Compute multi-positive InfoNCE loss $\mathcal{L}_{\text{InfoNCE}}$ (30)
+\STATE Compute mask-weighted boundary states and parameterize latents (16)--(21)
+\STATE Compute symmetric KL loss $\mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$ in FP32 precision (24)--(25)
+\STATE Sample latents $\mathbf{z}$ and evaluate coupled embeddings $\mathbf{e}_I, \mathbf{e}_T$ (22)--(23)
+\STATE Compute multi-positive InfoNCE loss $\mathcal{L}_{\text{InfoNCE}}$ (29)
 \STATE $\mathcal{L}_{\text{total}} \leftarrow \mathcal{L}_{\text{InfoNCE}} + 0.01 \cdot \mathcal{D}_{\text{SKL}}$
 \RETURN $\mathcal{L}_{\text{total}}$
 \end{algorithmic}
@@ -591,7 +591,7 @@ The trainable modules account for approximately $0.20\%$ of the total parameter 
     \item \textbf{Clean Retrieval Equivalence:} Full HEDO-HVSC achieves $48.28\% \pm 0.59\%$ test Mean Recall compared to $48.25\% \pm 0.47\%$ for the baseline (paired delta $+0.03\% \pm 0.20\%$). Because only three seeds were evaluated per configuration, inferential statistical testing is not emphasized; variability is reported descriptively through mean $\pm$ standard deviation and matched-seed differences. The proposed architecture achieves essentially comparable retrieval performance while introducing structured sequence recurrence and retaining a very small trainable footprint.
     \item \textbf{Ablation Dynamics and Role of HVSC:} The w/o HVSC configuration achieves the highest mean recall ($48.43\% \pm 0.29\%$) among the four tested configurations. Thus, the present experiments do not demonstrate that HVSC improves clean-data retrieval accuracy; its contribution should instead be interpreted as a training-time cross-modal boundary-distribution regularizer.
     \item \textbf{HVSC Mask Weighting:} Mask-weighted pooling prevents zero-padding from contaminating boundary state representations, ensuring reliable boundary parameterization.
-    \item \textbf{Robustness Profile:} Robustness testing demonstrates a mixed profile, where HEDO provides a small advantage ($+0.50\%$) under severe Gaussian noise ($\sigma=0.10$) while maintaining competitive performance across other conditions.
+    \item \textbf{Robustness Profile:} Robustness testing demonstrates a mixed profile, where HEDO provides a small advantage ($+0.50\%$) under severe Gaussian noise ($\sigma=0.10$) while showing lower recall than the baseline under the other tested corruption conditions.
 \end{itemize}
 
 \subsection{What the Results Do Not Establish}
