@@ -47,9 +47,9 @@
 \newlabel{fig:overall_architecture}{{1}{3}{}{figure.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}State-Space Duality and Sequence Recurrence}{3}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Hamiltonian and Dissipative Mechanics}{3}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Proposed HEDO-HVSC Architecture}{3}{}\protected@file@percent }
-\newlabel{sec:methodology}{{IV}{3}{}{section.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Architectural Pipeline}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Proposed HEDO-HVSC Architecture}{4}{}\protected@file@percent }
+\newlabel{sec:methodology}{{IV}{4}{}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Architectural Pipeline}{4}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Backbone Feature Extraction}{4}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Hamiltonian-Inspired Energy Dissipation Operator (HEDO)}{4}{}\protected@file@percent }
 \newlabel{eq:momentum_update}{{10}{4}{}{equation.10}{}}
@@ -82,15 +82,13 @@
 \newlabel{fig:dataset_pipeline}{{5}{6}{}{figure.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Implementation and Hyperparameters}{6}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Retrieval Evaluation Protocol and Metrics}{6}{}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Complete hyperparameter specification for HEDO-HVSC.}}{7}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Complete hyperparameter specification for HEDO-HVSC framework.}}{7}{}\protected@file@percent }
 \newlabel{tab:hyperparameters}{{II}{7}{}{table.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Controlled 4-model factorial benchmark comparison across 3 independent random seeds ($42, 43, 44$) on the official Flickr8k held-out test split ($N=1{,}000$ images, $5{,}000$ captions). Error bars represent $\pm 1$ standard deviation.}}{7}{}\protected@file@percent }
 \newlabel{fig:benchmark_results}{{6}{7}{}{figure.6}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VI}Experimental Results}{7}{}\protected@file@percent }
 \newlabel{sec:results}{{VI}{7}{}{section.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Main Benchmark Performance}{7}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Robustness comparison under pixel-space perturbations on a 100-image test subset. The evaluation exhibits a mixed robustness profile: Full HEDO-HVSC improves over the baseline under severe Gaussian noise ($\sigma =0.10, +0.50\%$), but achieves lower recall under the other tested conditions.}}{7}{}\protected@file@percent }
-\newlabel{fig:robustness}{{7}{7}{}{figure.7}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Paired Per-Seed Delta Analysis}{7}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Factorial Interaction Effect}{7}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-D}}Robustness Under Input Corruptions}{7}{}\protected@file@percent }
@@ -98,18 +96,19 @@
 \newlabel{tab:main_results}{{III}{8}{}{table.3}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Secondary corruption stress test on predefined 100-image test subset under pixel-space perturbations.}}{8}{}\protected@file@percent }
 \newlabel{tab:robustness}{{IV}{8}{}{table.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Robustness comparison under pixel-space perturbations on a 100-image test subset. The evaluation exhibits a mixed robustness profile: Full HEDO-HVSC improves over the baseline under severe Gaussian noise ($\sigma =0.10, +0.50\%$), but achieves lower recall under the other tested conditions.}}{8}{}\protected@file@percent }
+\newlabel{fig:robustness}{{7}{8}{}{figure.7}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Empirical inference latency scaling of custom PyTorch chunk-wise SSD block ($d_{\text  {model}}=128, d_{\text  {state}}=64, B=16$).}}{8}{}\protected@file@percent }
 \newlabel{tab:scaling}{{V}{8}{}{table.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-E}}Computational Scaling Efficiency}{8}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Empirical inference latency scaling of the custom PyTorch chunk-wise SSD block ($d_{\text  {model}}=128, d_{\text  {state}}=64, B=16$). Measurements exhibit approximately linear empirical latency scaling over the tested sequence lengths.}}{8}{}\protected@file@percent }
 \newlabel{fig:scaling}{{8}{8}{}{figure.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-E}}Computational Scaling Efficiency}{8}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Detailed parameter allocation and peak training VRAM usage.}}{8}{}\protected@file@percent }
 \newlabel{tab:parameters_breakdown}{{VI}{8}{}{table.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-F}}Parameter Footprint and Memory Analysis}{8}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Discussion and Scientific Insights}{8}{}\protected@file@percent }
 \newlabel{sec:discussion}{{VII}{8}{}{section.7}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Evaluation of Main Benchmark Results}{8}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}What the Results Do Not Establish}{8}{}\protected@file@percent }
 \citation{lin2014microsoft}
 \citation{young2014image}
 \bibstyle{IEEEtran}
@@ -139,9 +138,10 @@
 \bibcite{kingma2013auto}{23}
 \bibcite{alemi2016deep}{24}
 \bibcite{young2014image}{25}
-\bibcite{lin2014microsoft}{26}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}What the Results Do Not Establish}{9}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Limitations and Future Work}{9}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion}{9}{}\protected@file@percent }
 \newlabel{sec:conclusion}{{VIII}{9}{}{section.8}{}}
 \@writefile{toc}{\contentsline {section}{References}{9}{}\protected@file@percent }
-\gdef \@abspage@last{9}
+\bibcite{lin2014microsoft}{26}
+\gdef \@abspage@last{10}

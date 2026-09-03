@@ -326,35 +326,26 @@ The visual backbone is a pretrained Vision Transformer (ViT-B/16), and the textu
 \subsection{Implementation and Hyperparameters}
 The complete hyperparameter configuration is summarized in Table~\ref{tab:hyperparameters}.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering
-\caption{Complete hyperparameter specification for HEDO-HVSC.}
+\caption{Complete hyperparameter specification for HEDO-HVSC framework.}
 \label{tab:hyperparameters}
-\begin{tabular}{lc}
+\begin{tabular}{lc|lc}
 \toprule
-\textbf{Hyperparameter} & \textbf{Value / Specification} \\
+\textbf{Hyperparameter} & \textbf{Value / Specification} & \textbf{Hyperparameter} & \textbf{Value / Specification} \\
 \midrule
-Image Resolution & $224 \times 224$ pixels \\
-Visual Backbone & ViT-B/16 (Frozen, $d=768, L_I=197$) \\
-Textual Backbone & RoBERTa-base (Frozen, $d=768, L_T=64$) \\
-Model Dimension ($d_{\text{model}}$) & $128$ \\
-Recurrence State Dimension ($d_{\text{state}}$) & $64$ \\
-Chunk Size ($C$) & $16$ tokens \\
-HEDO Integration Step ($\Delta t$) & $0.1$ \\
-HEDO Damping Coefficient ($\beta$) & $0.05$ \\
-HEDO Perturbation Scale ($\gamma$) & $0.1$ \\
-HVSC Latent Dimension ($z_{\text{dim}}$) & $64$ \\
-KL Regularization Weight ($\lambda_{\text{KL}}$) & $0.01$ (FP32) \\
-Optimizer & AdamW ($\beta_1=0.9, \beta_2=0.999$, weight decay $10^{-4}$) \\
-Batch Size & $64$ images ($320$ captions/batch) \\
-Training Epochs & $8$ epochs \\
-Learning Rate Schedule & Cosine Annealing ($\eta_{\text{max}}=2\times 10^{-4}, \eta_{\text{min}}=10^{-6}$) \\
-Gradient Clipping & Norm $1.0$ \\
-Random Seeds & $42, 43, 44$ (12 total runs) \\
-Compute Hardware & NVIDIA Tesla T4 ($16\,\text{GB}$ VRAM) \\
+Image Resolution & $224 \times 224$ pixels & Optimizer & AdamW ($\beta_1=0.9, \beta_2=0.999$, weight decay $10^{-4}$) \\
+Visual Backbone & ViT-B/16 (Frozen, $d=768, L_I=197$) & Batch Size & $64$ images ($320$ captions/batch) \\
+Textual Backbone & RoBERTa-base (Frozen, $d=768, L_T=64$) & Training Epochs & $8$ epochs \\
+Model Dimension ($d_{\text{model}}$) & $128$ & Learning Rate Schedule & Cosine Annealing ($\eta_{\text{max}}=2\times 10^{-4}, \eta_{\text{min}}=10^{-6}$) \\
+Recurrence State Dimension ($d_{\text{state}}$) & $64$ & Gradient Clipping & Norm $1.0$ \\
+Chunk Size ($C$) & $16$ tokens & Random Seeds & $42, 43, 44$ (12 total runs) \\
+HEDO Integration Step ($\Delta t$) & $0.1$ & HVSC Latent Dimension ($z_{\text{dim}}$) & $64$ \\
+HEDO Damping Coefficient ($\beta$) & $0.05$ & KL Regularization Weight ($\lambda_{\text{KL}}$) & $0.01$ (FP32) \\
+HEDO Perturbation Scale ($\gamma$) & $0.1$ & Compute Hardware & NVIDIA Tesla T4 ($16\,\text{GB}$ VRAM) \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Retrieval Evaluation Protocol and Metrics}
 Retrieval accuracy is measured using standard cross-modal ranking metrics:
