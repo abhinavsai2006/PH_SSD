@@ -75,8 +75,8 @@ To investigate these challenges, this paper presents HEDO-HVSC, a multimodal sta
 \label{fig:overall_architecture}
 \end{figure*}
 
-\section{Related Work}
-\label{sec:related_work}
+\section{Literature Survey}
+\label{sec:literature_survey}
 
 \subsection{Vision-Language Metric Learning}
 Cross-modal representation learning aims to bridge the semantic gap between visual perception and natural language. Foundational methods, including VSE++ \cite{faghri2017vse++} and SCAN \cite{lee2018stacked}, established metric learning frameworks utilizing hard negative ranking losses and stacked cross-attention networks. 
@@ -93,6 +93,15 @@ Hamiltonian Neural Networks (HNNs) \cite{greydanus2019hamiltonian} and Lagrangia
 
 \subsection{Variational Representation Learning}
 Variational Autoencoders (VAEs) \cite{kingma2013auto} and the Variational Information Bottleneck (VIB) \cite{alemi2016deep} formalize latent representation learning by optimizing trade-offs between mutual information and compression. In this work, HVSC parameterizes Gaussian latent distributions from recurrent chunk boundary states, using symmetric KL divergence to align cross-modal boundary representations during training.
+
+\subsection{Identified Research Gap}
+While existing paradigms have advanced individual domains, their intersection exposes critical limitations:
+\begin{enumerate}
+    \item \textbf{Quadratic Overhead vs. Unimodal SSMs:} Modern multimodal Transformers incur quadratic attention cost $\mathcal{O}(L^2)$, whereas SSMs have predominantly been investigated for unimodal sequence processing without addressing multimodal cross-entropy metric alignment.
+    \item \textbf{Continuous vs. Discrete Dissipation:} Prior Hamiltonian neural models focus on continuous differential equations; their discrete formulation as parameter-efficient pre-filters for sequence models remains largely unexplored.
+    \item \textbf{Boundary Alignment:} Variational alignment techniques have not been formulated to regularize chunk-boundary hidden states in state-continuous recurrent architectures.
+\end{enumerate}
+Therefore, this work investigates whether a Hamiltonian-inspired dissipative transformation (HEDO) combined with chunk-wise variational state coupling (HVSC) can provide an effective, parameter-efficient multimodal state-space retrieval framework.
 
 \section{Problem Formulation and Theoretical Background}
 \label{sec:problem_formulation}
