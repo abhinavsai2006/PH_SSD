@@ -10,6 +10,8 @@
 \usepackage{cite}
 \usepackage{url}
 \usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{array}
 \usepackage{bm}
 \usepackage{tikz}
 \usepackage{pgfplots}
@@ -326,26 +328,29 @@ The visual backbone is a pretrained Vision Transformer (ViT-B/16), and the textu
 \subsection{Implementation and Hyperparameters}
 The complete hyperparameter configuration is summarized in Table~\ref{tab:hyperparameters}.
 
-\begin{table*}[!t]
+\begin{table}[!t]
 \centering
+\footnotesize
 \caption{Complete hyperparameter specification for HEDO-HVSC framework.}
 \label{tab:hyperparameters}
-\begin{tabular}{lc|lc}
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}p{0.24\columnwidth}>{\raggedright\arraybackslash}p{0.24\columnwidth}|>{\raggedright\arraybackslash}p{0.24\columnwidth}>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Hyperparameter} & \textbf{Value / Specification} & \textbf{Hyperparameter} & \textbf{Value / Specification} \\
+\textbf{Hyperparameter} & \textbf{Value / Spec.} & \textbf{Hyperparameter} & \textbf{Value / Spec.} \\
 \midrule
-Image Resolution & $224 \times 224$ pixels & Optimizer & AdamW ($\beta_1=0.9, \beta_2=0.999$, weight decay $10^{-4}$) \\
-Visual Backbone & ViT-B/16 (Frozen, $d=768, L_I=197$) & Batch Size & $64$ images ($320$ captions/batch) \\
+Image Resolution & $224 \times 224$ pixels & Optimizer & AdamW ($\beta_1=0.9$, $\beta_2=0.999$, weight decay $10^{-4}$) \\
+Visual Backbone & ViT-B/16 (Frozen, $d=768, L_I=197$) & Batch Size & $64$ images ($320$ caps/batch) \\
 Textual Backbone & RoBERTa-base (Frozen, $d=768, L_T=64$) & Training Epochs & $8$ epochs \\
-Model Dimension ($d_{\text{model}}$) & $128$ & Learning Rate Schedule & Cosine Annealing ($\eta_{\text{max}}=2\times 10^{-4}, \eta_{\text{min}}=10^{-6}$) \\
-Recurrence State Dimension ($d_{\text{state}}$) & $64$ & Gradient Clipping & Norm $1.0$ \\
-Chunk Size ($C$) & $16$ tokens & Random Seeds & $42, 43, 44$ (12 total runs) \\
-HEDO Integration Step ($\Delta t$) & $0.1$ & HVSC Latent Dimension ($z_{\text{dim}}$) & $64$ \\
-HEDO Damping Coefficient ($\beta$) & $0.05$ & KL Regularization Weight ($\lambda_{\text{KL}}$) & $0.01$ (FP32) \\
-HEDO Perturbation Scale ($\gamma$) & $0.1$ & Compute Hardware & NVIDIA Tesla T4 ($16\,\text{GB}$ VRAM) \\
+Model Dim ($d_{\text{model}}$) & $128$ & LR Schedule & Cosine ($\eta_{\text{max}}=2\times 10^{-4}$, $\eta_{\text{min}}=10^{-6}$) \\
+State Dim ($d_{\text{state}}$) & $64$ & Grad Clipping & Norm $1.0$ \\
+Chunk Size ($C$) & $16$ tokens & Random Seeds & $42, 43, 44$ ($12$ runs) \\
+HEDO Step ($\Delta t$) & $0.1$ & HVSC Latent Dim & $64$ \\
+HEDO Damping ($\beta$) & $0.05$ & KL Weight ($\lambda_{\text{KL}}$) & $0.01$ (FP32) \\
+HEDO Scale ($\gamma$) & $0.1$ & Compute Hardware & NVIDIA Tesla T4 ($16\,\text{GB}$) \\
 \bottomrule
-\end{tabular}
-\end{table*}
+\end{tabularx}
+\end{table}
 
 \subsection{Retrieval Evaluation Protocol and Metrics}
 Retrieval accuracy is measured using standard cross-modal ranking metrics:
