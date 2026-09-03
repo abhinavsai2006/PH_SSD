@@ -94,6 +94,39 @@ Hamiltonian Neural Networks (HNNs) \cite{greydanus2019hamiltonian} and Lagrangia
 \subsection{Variational Representation Learning}
 Variational Autoencoders (VAEs) \cite{kingma2013auto} and the Variational Information Bottleneck (VIB) \cite{alemi2016deep} formalize latent representation learning by optimizing trade-offs between mutual information and compression. In this work, HVSC parameterizes Gaussian latent distributions from recurrent chunk boundary states, using symmetric KL divergence to align cross-modal boundary representations during training.
 
+\subsection{Comparative Literature Survey}
+Table~\ref{tab:literature_survey} presents a structured taxonomy comparing representative vision-language, state-space, and physics-informed dynamical neural methods across architectural paradigms, primary objectives, and distinct scopes.
+
+\begin{table*}[!t]
+\centering
+\caption{Comparative Literature Survey of Representative Vision-Language, State-Space, and Physics-Informed Neural Methods}
+\label{tab:literature_survey}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabularx}{\textwidth}{lcp{0.14\textwidth}p{0.22\textwidth}p{0.22\textwidth}X}
+\toprule
+\textbf{Method / Work} & \textbf{Year} & \textbf{Modality / Domain} & \textbf{Core Architecture} & \textbf{Main Objective} & \textbf{Limitation / Research Gap} \\
+\midrule
+VSE++ \cite{faghri2017vse++} & 2018 & Image--Text & Visual-semantic embedding & Hard-negative ranking loss & Does not incorporate state-space sequence recurrence \\
+SCAN \cite{lee2018stacked} & 2018 & Image--Text & Stacked cross-attention & Fine-grained image-text fragment alignment & Quadratic $\mathcal{O}(L^2)$ attention-based cross-modal matching \\
+CLIP \cite{radford2021learning} & 2021 & Image--Text & Dual visual-textual encoders & Contrastive image-text representation alignment & Transformer-based representations with quadratic attention \\
+BLIP \cite{li2022blip} & 2022 & Vision--Language & Unified encoder-decoder framework & Multimodal understanding and generation & Relies on multimodal cross-attention components \\
+S4 \cite{gu2021efficiently} & 2022 & General Sequences & Structured State Space (HiPPO) & Efficient sub-quadratic long-range sequence modeling & Not specifically designed for multimodal metric retrieval \\
+S5 \cite{smith2022simplified} & 2023 & General Sequences & Simplified State Space Layer & Parallel prefix scan sequence modeling & Focused on unimodal long-range sequence benchmarks \\
+Mamba \cite{gu2023mamba} & 2023 & General Sequences & Selective State Space Model & Input-dependent selective sequence processing & Not specifically formulated for cross-modal metric learning \\
+SSD / Mamba-2 \cite{dao2024transformers} & 2024 & Sequence Modeling & State-Space Duality & Unify structured attention and state-space recurrence & Focuses on unimodal language and hardware-specific kernel optimization \\
+HNN \cite{greydanus2019hamiltonian} & 2019 & Dynamical Systems & Hamiltonian Neural Network & Physics-informed conservative energy modeling & Formulated for physical dynamics rather than multimodal retrieval \\
+LNN \cite{cranmer2020lagrangian} & 2020 & Dynamical Systems & Lagrangian Neural Network & Energy-conserving Lagrangian dynamics & Not designed for multimodal metric representation learning \\
+Port-Hamiltonian NN \cite{massaroli2019port} & 2019 & Dynamical Systems & Port-Hamiltonian neural ODEs & Incorporate dissipative physical structure & Developed for system control rather than vision-language retrieval \\
+\midrule
+\textbf{HEDO-HVSC (Ours)} & 2026 & Image--Text & HEDO + custom chunk-wise SSD recurrence + HVSC & Multimodal metric retrieval with dissipative inductive bias and boundary regularizer & Evaluated on Flickr8k; clean retrieval is comparable rather than significantly superior \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Existing vision-language approaches primarily rely on static embedding/ranking objectives or cross-attention mechanisms, while state-space models have mainly been investigated for general unimodal sequence modeling. Physics-informed Hamiltonian and port-Hamiltonian neural formulations provide useful dynamical inductive biases but have not previously been adapted to multimodal retrieval representations. The proposed HEDO-HVSC framework investigates this intersection by combining a Hamiltonian-inspired discrete dissipative transformation, state-continuous chunk-wise SSD-style recurrence, and variational boundary-state regularization within a frozen-backbone image-text retrieval setting.
+
 \section{Problem Formulation and Theoretical Background}
 \label{sec:problem_formulation}
 
