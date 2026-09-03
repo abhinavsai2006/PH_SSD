@@ -582,7 +582,7 @@ HEDO-HVSC w/o HVSC & $0.397\text{ M}$ trainable & $2685.66\text{ MB}$ \\
 \end{tabular}
 \end{table}
 
-The trainable modules constitute $<0.21\%$ of total network capacity, confirming lightweight adaptability.
+The trainable modules account for approximately $0.20\%$ of the total parameter count ($0.423\text{ M}$ trainable vs. $209.854\text{ M}$ frozen), confirming lightweight adaptability.
 
 \section{Discussion and Scientific Insights}
 \label{sec:discussion}
@@ -611,9 +611,6 @@ To ensure complete scientific integrity, we explicitly clarify:
     \item \textbf{Joint Fine-Tuning:} Backbones were kept frozen. Joint end-to-end training of visual and language backbones may unlock higher absolute capacity.
     \item \textbf{Hardware Optimization:} The SSD recurrence was implemented in pure PyTorch; compilation into native CUDA kernels will further accelerate inference.
 \end{enumerate}
-
-\subsection{Code and Data Availability}
-The experiments use the publicly available Flickr8k dataset. The full PyTorch source code, configuration files, evaluation scripts, benchmark manifests, and experiment metadata are available at: \url{https://github.com/abhinavsai2006/PH_SSD}.
 
 \section{Conclusion}
 \label{sec:conclusion}
