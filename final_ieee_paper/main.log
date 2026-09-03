@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 21:59
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 22:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -872,51 +872,46 @@ Underfull \hbox (badness 1365) in paragraph at lines 118--120
 
  []
 
-
-Overfull \hbox (173.94475pt too wide) in paragraph at lines 123--124
- [][] 
- []
-
 [3]
-Underfull \hbox (badness 5388) in paragraph at lines 135--136
+Underfull \hbox (badness 5388) in paragraph at lines 128--129
 \OT1/ptm/m/n/10 momentum dis-si-pa-tive up-dates to sup-press high-
  []
 
 
-Underfull \hbox (badness 1558) in paragraph at lines 136--137
+Underfull \hbox (badness 1558) in paragraph at lines 129--130
 \OT1/ptm/b/n/10 Cou-pling (HVSC): \OT1/ptm/m/n/10 Se-quences are par-ti-tioned 
 into
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 159--159
+Underfull \hbox (badness 10000) in paragraph at lines 145--145
  \OT1/ptm/m/it/10 C. Hamiltonian-Inspired En-ergy Dis-si-pa-tion Op-er-a-tor
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 185--186
+Underfull \hbox (badness 10000) in paragraph at lines 178--179
 []\OT1/ptm/b/n/10 Empirical Di-ag-nos-tic Tra-jec-tory: \OT1/ptm/m/n/10 In pre-
 training
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 185--186
+Underfull \hbox (badness 10000) in paragraph at lines 178--179
 \OT1/ptm/m/n/10 di-ag-nos-tic eval-u-a-tion, un-forced multi-step sim-u-la-tion
 
  []
 
 
-Underfull \hbox (badness 5563) in paragraph at lines 185--186
+Underfull \hbox (badness 5563) in paragraph at lines 178--179
 \OT1/ptm/m/n/10 on im-age patch rep-re-sen-ta-tions yielded the tra-jec-tory
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 185--186
+Underfull \hbox (badness 10000) in paragraph at lines 178--179
 \OT1/ptm/m/n/10 while text rep-re-sen-ta-tions yielded $\OMS/cmsy/m/n/10 H 2
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 185--186
+Underfull \hbox (badness 10000) in paragraph at lines 178--179
 \OT1/cmr/m/n/10 [5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 849\OML/cmm/m/it/10 ; \OT1/
 cmr/m/n/10 5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 796\OML/cmm/m/it/10 ; \OT1/cmr/m/
 n/10 5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 774\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 5
@@ -926,23 +921,23 @@ t/10 :\OT1/cmr/m/n/10 892]$\OT1/ptm/m/n/10 . While
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 185--186
+Underfull \hbox (badness 10000) in paragraph at lines 178--179
 \OT1/ptm/m/n/10 HEDO changes rep-re-sen-ta-tion en-ergy sub-stan-tially
  []
 
-
-Overfull \hbox (38.00316pt too wide) in paragraph at lines 189--190
- [][] 
- []
-
 [4]
-Underfull \hbox (badness 3088) in paragraph at lines 221--222
+Underfull \hbox (badness 3088) in paragraph at lines 214--215
 []\OT1/ptm/m/n/10 The ag-gre-gated bound-ary rep-re-sen-ta-tion pa-ram-e-ter-iz
 es
  []
 
-[5]
-Overfull \hbox (31.78995pt too wide) in paragraph at lines 310--319
+
+Overfull \hbox (31.78995pt too wide) in paragraph at lines 303--312
+ [][] 
+ []
+
+
+Overfull \hbox (55.35948pt too wide) in paragraph at lines 316--317
  [][] 
  []
 
@@ -956,16 +951,17 @@ Underfull \hbox (badness 1629) in paragraph at lines 324--325
 \OT1/ptm/m/n/10 RoBERTa-base. Both back-bones are kept strictly frozen
  []
 
-
+[5]
 Overfull \hbox (68.18224pt too wide) in paragraph at lines 333--357
  [][] 
  []
 
-[6]
+
 Overfull \hbox (31.66022pt too wide) detected at line 367
 [][] \OT1/cmr/m/n/10 = []
  []
 
+[6]
 Package pgfplots info on input line 397: Using 'lua backend=false' for axis: x 
 coord trafo unsupported.
 
@@ -975,30 +971,27 @@ m/m/it/10 :\OT1/cmr/m/n/10 61% \OMS/cmsy/m/n/10 !$ \OT1/ptm/m/n/10 Full $\OT1/c
 mr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 93%$
  []
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-Package pgfplots info on input line 488: Using 'lua backend=false' for axis: x 
+Package pgfplots info on input line 491: Using 'lua backend=false' for axis: x 
 coord trafo unsupported.
 [7]
-Overfull \hbox (41.01425pt too wide) in paragraph at lines 580--590
+Overfull \hbox (41.01425pt too wide) in paragraph at lines 583--593
  [][] 
  []
 
 
-Underfull \hbox (badness 5008) in paragraph at lines 599--600
+Underfull \hbox (badness 5008) in paragraph at lines 602--603
 []\OT1/ptm/b/n/10 Clean Re-trieval Equiv-a-lence: \OT1/ptm/m/n/10 Full HEDO-HVS
 C
  []
 
 
-Underfull \hbox (badness 1939) in paragraph at lines 600--601
+Underfull \hbox (badness 1939) in paragraph at lines 603--604
 []\OT1/ptm/b/n/10 Ablation Dy-nam-ics: \OT1/ptm/m/n/10 The w/o HVSC con-fig-u-r
 a-tion
  []
 
 
-Underfull \hbox (badness 4454) in paragraph at lines 600--601
+Underfull \hbox (badness 4454) in paragraph at lines 603--604
 \OT1/ptm/m/n/10 achieves $\OT1/cmr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 4
 3% \OMS/cmsy/m/n/10 ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 29%$
 \OT1/ptm/m/n/10 , in-di-cat-ing that HEDO
@@ -1011,11 +1004,11 @@ L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 26677 strings out of 467871
- 683963 string characters out of 5418376
- 1218718 words of memory out of 5000000
- 55096 multiletter control sequences out of 15000+600000
- 687207 words of font info for 152 fonts, out of 8000000 for 9000
+ 26679 strings out of 467871
+ 684006 string characters out of 5418376
+ 1222754 words of memory out of 5000000
+ 55097 multiletter control sequences out of 15000+600000
+ 688314 words of font info for 153 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,19n,94p,2428b,2742s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
@@ -1055,7 +1048,7 @@ ype1/urw/times/utmb8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/urw/times/utmbi8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/
 type1/urw/times/utmr8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/
 type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (9 pages, 454156 bytes).
+Output written on main.pdf (9 pages, 453610 bytes).
 PDF statistics:
  201 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

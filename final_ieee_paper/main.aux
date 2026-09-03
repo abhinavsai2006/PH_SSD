@@ -50,62 +50,62 @@
 \@writefile{toc}{\contentsline {section}{\numberline {IV}Proposed HEDO-HVSC Architecture}{3}{}\protected@file@percent }
 \newlabel{sec:methodology}{{IV}{3}{}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Architectural Pipeline}{3}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Official Flickr8k dataset partition and modality-specific feature extraction pipeline. The 8,000 photographic images and 40,000 human-annotated captions are partitioned into verified disjoint training (6,000), validation (1,000), and held-out test (1,000) splits with zero cross-split leakage.}}{4}{}\protected@file@percent }
-\newlabel{fig:dataset_pipeline}{{2}{4}{}{figure.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Backbone Feature Extraction}{4}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Hamiltonian-Inspired Energy Dissipation Operator (HEDO)}{4}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Computational flow of the Hamiltonian-Inspired Energy Dissipation Operator (HEDO). Coordinate representations $\mathbf  {q}_0$ initialize conjugate momenta $\mathbf  {p}_0$. Discrete updates execute damped momentum updates ($(1-\beta \Delta t)=0.995$) and discrete coordinate updates before Layer Normalization.}}{4}{}\protected@file@percent }
-\newlabel{fig:hedo_mechanism}{{3}{4}{}{figure.3}{}}
 \newlabel{eq:momentum_update}{{10}{4}{}{equation.10}{}}
 \newlabel{eq:coordinate_update}{{11}{4}{}{equation.11}{}}
 \newlabel{eq:hedo_output}{{12}{4}{}{equation.12}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Computational flow of the Hamiltonian-Inspired Energy Dissipation Operator (HEDO). Coordinate representations $\mathbf  {q}_0$ initialize conjugate momenta $\mathbf  {p}_0$. Discrete updates execute damped momentum updates ($(1-\beta \Delta t)=0.995$) and discrete coordinate updates before Layer Normalization.}}{4}{}\protected@file@percent }
+\newlabel{fig:hedo_mechanism}{{2}{4}{}{figure.2}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-C}1}Discrete Energy Analysis and Inductive Bias}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Custom PyTorch Chunk-Wise SSD-Style Recurrence}{4}{}\protected@file@percent }
 \citation{young2014image}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces State-continuous chunk-wise SSD-style recurrence with boundary state extraction. Recurrent hidden states propagate continuously across chunk boundaries ($\mathbf  {h}_{\text  {start}, k} = \mathbf  {h}_{\text  {end}, k-1}$) with zero state resets, while mask-weighted aggregation prevents zero-padding bias.}}{5}{}\protected@file@percent }
-\newlabel{fig:chunk_recurrence}{{4}{5}{}{figure.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Custom PyTorch Chunk-Wise SSD-Style Recurrence}{5}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces State-continuous chunk-wise SSD-style recurrence with boundary state extraction. Recurrent hidden states propagate continuously across chunk boundaries ($\mathbf  {h}_{\text  {start}, k} = \mathbf  {h}_{\text  {end}, k-1}$) with zero state resets, while mask-weighted aggregation prevents zero-padding bias.}}{5}{}\protected@file@percent }
+\newlabel{fig:chunk_recurrence}{{3}{5}{}{figure.3}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}1}State Continuity Across Chunk Boundaries}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-E}}Chunk-Wise Variational State Coupling (HVSC)}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-E}1}Mask-Weighted Sequence Pooling and Embedding Fusion}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-E}2}Symmetric KL Divergence Regularization}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-E}3}Deterministic Unimodal Retrieval Inference}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-F}}Training Objective}{5}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Comparison of the joint training regime and test-time retrieval inference. During training (top), visual and textual streams parameterize latent Gaussian distributions regularized via symmetric KL divergence $\mathcal  {D}_{\text  {SKL}}$ alongside multi-positive InfoNCE loss. During test retrieval (bottom), stochastic sampling is omitted and deterministic posterior means are evaluated completely independently with zero cross-modal attention or inter-modality state exchange.}}{6}{}\protected@file@percent }
-\newlabel{fig:train_inference}{{5}{6}{}{figure.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Experimental Setup and Dataset Protocol}{5}{}\protected@file@percent }
+\newlabel{sec:experimental_setup}{{V}{5}{}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Dataset and Certified Splits}{5}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Comparison of the joint training regime and test-time retrieval inference. During training (top), visual and textual streams parameterize latent Gaussian distributions regularized via symmetric KL divergence $\mathcal  {D}_{\text  {SKL}}$ alongside multi-positive InfoNCE loss. During test retrieval (bottom), stochastic sampling is omitted and deterministic posterior means are evaluated completely independently with zero cross-modal attention or inter-modality state exchange.}}{6}{}\protected@file@percent }
+\newlabel{fig:train_inference}{{4}{6}{}{figure.4}{}}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces HEDO-HVSC Forward Pass and Training Step}}{6}{}\protected@file@percent }
 \newlabel{alg:hedo_hvsc}{{1}{6}{}{algorithm.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {V}Experimental Setup and Dataset Protocol}{6}{}\protected@file@percent }
-\newlabel{sec:experimental_setup}{{V}{6}{}{section.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Dataset and Certified Splits}{6}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Official Flickr8k dataset split partition and functional roles.}}{6}{}\protected@file@percent }
 \newlabel{tab:dataset_splits}{{I}{6}{}{table.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Backbone Freezing Protocol}{6}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Official Flickr8k dataset partition and modality-specific feature extraction pipeline. The 8,000 photographic images and 40,000 human-annotated captions are partitioned into verified disjoint training (6,000), validation (1,000), and held-out test (1,000) splits with zero cross-split leakage.}}{6}{}\protected@file@percent }
+\newlabel{fig:dataset_pipeline}{{5}{6}{}{figure.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Implementation and Hyperparameters}{6}{}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Complete hyperparameter specification for HEDO-HVSC.}}{6}{}\protected@file@percent }
-\newlabel{tab:hyperparameters}{{II}{6}{}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Retrieval Evaluation Protocol and Metrics}{6}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Complete hyperparameter specification for HEDO-HVSC.}}{7}{}\protected@file@percent }
+\newlabel{tab:hyperparameters}{{II}{7}{}{table.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Controlled 4-model factorial benchmark comparison across 3 independent random seeds ($42, 43, 44$) on the official Flickr8k held-out test split ($N=1{,}000$ images, $5{,}000$ captions). Error bars represent $\pm 1$ standard deviation.}}{7}{}\protected@file@percent }
 \newlabel{fig:benchmark_results}{{6}{7}{}{figure.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Retrieval Evaluation Protocol and Metrics}{7}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {VI}Experimental Results}{7}{}\protected@file@percent }
 \newlabel{sec:results}{{VI}{7}{}{section.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Main Benchmark Performance}{7}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Paired Per-Seed Delta Analysis}{7}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Robustness comparison under pixel-space perturbations on a 100-image test subset. The evaluation exhibits a mixed robustness profile: Full HEDO-HVSC improves over the baseline under severe Gaussian noise ($\sigma =0.10, +0.50\%$), but achieves lower recall under the other tested conditions.}}{7}{}\protected@file@percent }
 \newlabel{fig:robustness}{{7}{7}{}{figure.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Paired Per-Seed Delta Analysis}{7}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Factorial Interaction Effect}{7}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-D}}Robustness Under Input Corruptions}{7}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Cross-modal image-text retrieval performance on the official Flickr8k held-out test split ($1{,}000$ images, $5{,}000$ captions) across $N=3$ independent random seeds ($42, 43, 44$). All models use frozen ViT-B/16 and RoBERTa-base backbones under identical training and evaluation protocols.}}{8}{}\protected@file@percent }
 \newlabel{tab:main_results}{{III}{8}{}{table.3}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Secondary corruption stress test on predefined 100-image test subset under pixel-space perturbations.}}{8}{}\protected@file@percent }
 \newlabel{tab:robustness}{{IV}{8}{}{table.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Empirical inference latency scaling of custom PyTorch chunk-wise SSD block ($d_{\text  {model}}=128, d_{\text  {state}}=64, B=16$).}}{8}{}\protected@file@percent }
+\newlabel{tab:scaling}{{V}{8}{}{table.5}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Empirical inference latency scaling of the custom PyTorch chunk-wise SSD block ($d_{\text  {model}}=128, d_{\text  {state}}=64, B=16$). Measurements exhibit approximately linear empirical latency scaling over the tested sequence lengths.}}{8}{}\protected@file@percent }
 \newlabel{fig:scaling}{{8}{8}{}{figure.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-E}}Computational Scaling Efficiency}{8}{}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Empirical inference latency scaling of custom PyTorch chunk-wise SSD block ($d_{\text  {model}}=128, d_{\text  {state}}=64, B=16$).}}{8}{}\protected@file@percent }
-\newlabel{tab:scaling}{{V}{8}{}{table.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-F}}Parameter Footprint and Memory Analysis}{8}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Detailed parameter allocation and peak training VRAM usage.}}{8}{}\protected@file@percent }
 \newlabel{tab:parameters_breakdown}{{VI}{8}{}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-F}}Parameter Footprint and Memory Analysis}{8}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Discussion and Scientific Insights}{8}{}\protected@file@percent }
 \newlabel{sec:discussion}{{VII}{8}{}{section.7}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Evaluation of Main Benchmark Results}{8}{}\protected@file@percent }
