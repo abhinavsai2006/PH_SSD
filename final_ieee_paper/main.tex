@@ -26,7 +26,7 @@
 \title{Hamiltonian-Inspired Energy Dissipation and Chunk-Wise Variational State Coupling for Efficient Multimodal State-Space Models}
 
 \author{Abhinav~Sai~Maddineni%
-\thanks{Abhinav Sai Maddineni is with the Department of Computer Science and Engineering.}%
+\thanks{Abhinav Sai Maddineni is with the School of Computer Science and Engineering, VIT-AP University, Amaravati, Andhra Pradesh 522237, India (e-mail: yabhinav.24bca7148@vitapstudent.ac.in).}%
 }
 
 \maketitle
@@ -285,7 +285,7 @@ where $\mathbf{s}_{i,j} = \hat{\mathbf{e}}_{I, i}^\top \hat{\mathbf{e}}_{T, j}$ 
 \STATE Extract chunk boundary states $\mathbf{b}_{I, k}, \mathbf{b}_{T, k}$ and validity masks
 \STATE Compute mask-weighted boundary states and parameterize latents (18)--(20)
 \STATE Compute symmetric KL loss $\mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$ in FP32 precision (24)--(25)
-\STATE Sample latents $\mathbf{z}$ and evaluate coupled embeddings $\mathbf{e}_I, \mathbf{e}_T$ (21)--(23)
+\STATE Sample latents $\mathbf{z}$ and evaluate coupled embeddings $\mathbf{e}_I, \mathbf{e}_T$ (22)--(23)
 \STATE Compute multi-positive InfoNCE loss $\mathcal{L}_{\text{InfoNCE}}$ (27)
 \STATE $\mathcal{L}_{\text{total}} \leftarrow \mathcal{L}_{\text{InfoNCE}} + 0.01 \cdot \mathcal{D}_{\text{SKL}}$
 \RETURN $\mathcal{L}_{\text{total}}$
@@ -295,12 +295,12 @@ where $\mathbf{s}_{i,j} = \hat{\mathbf{e}}_{I, i}^\top \hat{\mathbf{e}}_{T, j}$ 
 \section{Experimental Setup and Dataset Protocol}
 \label{sec:experimental_setup}
 
-\subsection{Dataset and Certified Splits}
-Experiments are conducted on the official Flickr8k benchmark dataset \cite{young2014image}, which contains 8,000 photographic images paired with 5 human-written captions each (40,000 total captions). The dataset partitions are summarized in Table~\ref{tab:dataset_splits} and Fig.~\ref{fig:dataset_pipeline}.
+\subsection{Dataset Partition and Provenance Protocol}
+Experiments are conducted on the standard Flickr8k dataset \cite{young2014image}, comprising 8,000 photographic images paired with 5 human-annotated captions each (40,000 total captions). We utilize the predefined 6,000 / 1,000 / 1,000 train / validation / test partition protocol summarized in Table~\ref{tab:dataset_splits} and Fig.~\ref{fig:dataset_pipeline}. Split integrity was strictly verified via image identifier hashing to guarantee zero cross-split overlap ($\text{Train} \cap \text{Val} = \emptyset$, $\text{Train} \cap \text{Test} = \emptyset$, $\text{Val} \cap \text{Test} = \emptyset$).
 
 \begin{table}[!t]
 \centering
-\caption{Official Flickr8k dataset split partition and functional roles.}
+\caption{Predefined Flickr8k dataset split partition and functional benchmark roles.}
 \label{tab:dataset_splits}
 \begin{tabular}{lcccc}
 \toprule
@@ -308,7 +308,7 @@ Experiments are conducted on the official Flickr8k benchmark dataset \cite{young
 \midrule
 Train & $6{,}000$ & $30{,}000$ & $5$ & Model optimization \\
 Validation & $1{,}000$ & $5{,}000$ & $5$ & Checkpoint selection \\
-Held-Out Test & $1{,}000$ & $5{,}000$ & $5$ & Final evaluation \\
+Held-Out Test & $1{,}000$ & $5{,}000$ & $5$ & Certified evaluation \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -316,16 +316,16 @@ Held-Out Test & $1{,}000$ & $5{,}000$ & $5$ & Final evaluation \\
 \begin{figure*}[!t]
 \centering
 \HEDODatasetFigure
-\caption{Official Flickr8k dataset partition and modality-specific feature extraction pipeline. The 8,000 photographic images and 40,000 human-annotated captions are partitioned into verified disjoint training (6,000), validation (1,000), and held-out test (1,000) splits with zero cross-split leakage, followed by independent visual (ViT-B/16) and textual (RoBERTa-base) feature extraction.}
+\caption{Predefined Flickr8k dataset partition and modality-specific feature extraction pipeline. The 8,000 photographic images and 40,000 human-annotated captions are partitioned into verified disjoint training (6,000), validation (1,000), and held-out test (1,000) splits with zero cross-split leakage, followed by independent visual (ViT-B/16) and textual (RoBERTa-base) feature extraction.}
 \label{fig:dataset_pipeline}
 \end{figure*}
 
-Split integrity was verified to confirm zero overlap ($\text{Train} \cap \text{Val} = \emptyset$, $\text{Train} \cap \text{Test} = \emptyset$, $\text{Val} \cap \text{Test} = \emptyset$).
-
 \subsection{Backbone Freezing Protocol}
-The visual backbone is a pretrained Vision Transformer (ViT-B/16), and the textual backbone is a pretrained RoBERTa-base. Both backbones are kept strictly frozen throughout training ($\text{requires\_grad} = \text{False}$). Only linear projection layers, HEDO parameters, SSD recurrent projections, and HVSC modules ($0.330\text{ M}$ to $0.422\text{ M}$ parameters) are optimized.
+The visual backbone is a pretrained Vision Transformer (\texttt{vit\_base\_patch16\_224}, $86.6\text{ M}$ parameters), and the textual backbone is a pretrained \texttt{roberta-base} encoder ($124.6\text{ M}$ parameters). Both backbones are kept strictly frozen throughout training ($\text{requires\_grad} = \text{False}$). Only linear projection layers, HEDO parameters, SSD recurrent projections, and HVSC modules ($0.330\text{ M}$ to $0.422\text{ M}$ parameters) are optimized.
 
-\subsection{Implementation and Hyperparameters}
+\subsection{Reproducibility and Implementation Details}
+The execution environment is configured with Python 3.12, PyTorch 2.10.0 (CUDA 12.8), \texttt{timm} 1.0.26, and HuggingFace \texttt{transformers} 5.0.0 on an NVIDIA Tesla T4 GPU ($16\,\text{GB}$ VRAM). Training uses Automatic Mixed Precision (AMP FP16) with gradient scaling. Checkpoint selection is strictly guided by peak validation Mean Recall (early stopping patience of 3 epochs with $\Delta_{\text{min}}=0.05\%$), and the held-out test split is evaluated only once after final checkpoint selection.
+
 The complete hyperparameter configuration is summarized in Table~\ref{tab:hyperparameters}.
 
 \begin{table}[!t]
@@ -352,8 +352,10 @@ HEDO Scale ($\gamma$) & $0.1$ & Compute Hardware & NVIDIA Tesla T4 ($16\,\text{G
 \end{tabularx}
 \end{table}
 
-\subsection{Retrieval Evaluation Protocol and Metrics}
-Retrieval accuracy is measured using standard cross-modal ranking metrics:
+\subsection{Experimental Protocol and Evaluation Metrics}
+Our benchmark evaluates four factorial configurations across three independent random seeds ($42, 43, 44$): (i) SSD Baseline, (ii) HEDO-HVSC w/o HEDO, (iii) HEDO-HVSC w/o HVSC, and (iv) Full HEDO-HVSC ($12$ total runs).
+
+Cross-modal retrieval accuracy is measured using standard ranking metrics:
 \begin{itemize}
     \item \textbf{Image-to-Text Recall (I2T R@K):} For each image query, rank all $5{,}000$ test captions by cosine similarity. The query is successful at rank $K$ if at least one corresponding caption is in the top $K$.
     \item \textbf{Text-to-Image Recall (T2I R@K):} For each caption query, rank all $1{,}000$ test images by cosine similarity. The query is successful at rank $K$ if the target image is in the top $K$.
@@ -361,7 +363,7 @@ Retrieval accuracy is measured using standard cross-modal ranking metrics:
     \begin{equation}
     \text{MR} = \frac{\text{I2T R@1} + \text{R@5} + \text{R@10} + \text{T2I R@1} + \text{R@5} + \text{R@10}}{6}
     \end{equation}
-    \item \textbf{Median Rank (MedR) and Mean Rank (MeanR):} The median and mean rank of the first correct match across the gallery.
+    \item \textbf{Robustness Subset Protocol:} The 100-image robustness subset ($500$ captions) was fixed a priori from the held-out test manifest and evaluated under identical corruption conditions across all models without cherry-picking.
 \end{itemize}
 
 \section{Experimental Results}
@@ -563,11 +565,11 @@ To empirically characterize the sequence-length scaling of the custom PyTorch SS
 \label{fig:scaling}
 \end{figure}
 
-The latency scales linearly with sequence length over the tested range:
+The linear regression line provides an empirical fit over the evaluated sequence lengths ($L \in [16, 256]$):
 \begin{equation}
 \text{Latency}(L) = 0.149 \cdot L + 0.582\,\text{ms} \quad (R^2 = 0.9998)
 \end{equation}
-The measurements are consistent with the algorithmically linear recurrence of the implemented block and show approximately linear empirical latency over the tested range.
+The linear fit is used strictly as an empirical characterization of the measured range; algorithmic complexity $\mathcal{O}(L)$ follows from the implemented sequential recurrence rather than from empirical regression alone.
 
 \subsection{Parameter Footprint and Memory Analysis}
 Table~\ref{tab:parameters_breakdown} details parameter distribution across all models.
@@ -595,8 +597,8 @@ The trainable modules constitute $<0.21\%$ of total network capacity, confirming
 
 \subsection{Evaluation of Main Benchmark Results}
 \begin{itemize}
-    \item \textbf{Clean Retrieval Equivalence:} Full HEDO-HVSC achieves $48.28\% \pm 0.59\%$ test Mean Recall compared to $48.25\% \pm 0.47\%$ for the baseline (paired difference $+0.03\% \pm 0.20\%$). These results indicate that state-space sequence models with coordinate-momentum transformations provide competitive clean-data retrieval performance.
-    \item \textbf{Ablation Dynamics:} The w/o HVSC configuration achieves $48.43\% \pm 0.29\%$, indicating that HEDO coordinate-momentum updates alone provide effective representation stabilization without requiring additional latent coupling under standard clean conditions.
+    \item \textbf{Clean Retrieval Equivalence:} Full HEDO-HVSC achieves $48.28\% \pm 0.59\%$ test Mean Recall compared to $48.25\% \pm 0.47\%$ for the baseline (paired difference $+0.03\% \pm 0.20\%$). Given the small number of independent seeds ($N=3$), the reported standard deviations are used primarily to characterize run-to-run variability rather than to assert formal statistical significance claims. These results indicate that state-space sequence models with coordinate-momentum transformations provide competitive clean-data retrieval performance.
+    \item \textbf{Ablation Dynamics:} The w/o HVSC configuration achieves the highest mean recall ($48.43\% \pm 0.29\%$) among the four tested configurations, suggesting that the HEDO transformation can provide useful representation regularization under the present clean-data protocol.
     \item \textbf{HVSC Mask Weighting:} The mask-weighted pooling prevents zero-padding from contaminating boundary state representations, ensuring reliable boundary parameterization.
     \item \textbf{Robustness Profile:} Robustness testing demonstrates a mixed profile, where HEDO provides a small advantage ($+0.50\%$) under severe Gaussian noise ($\sigma=0.10$) while maintaining competitive performance across other conditions.
 \end{itemize}
@@ -618,9 +620,12 @@ To ensure complete scientific integrity, we explicitly clarify:
     \item \textbf{Hardware Optimization:} The SSD recurrence was implemented in pure PyTorch; compilation into native CUDA kernels will further accelerate inference.
 \end{enumerate}
 
+\subsection{Code and Data Availability}
+The experiments use the publicly available Flickr8k dataset. The full PyTorch source code, configuration files, evaluation scripts, benchmark manifests, and experiment metadata are available at: \url{https://github.com/abhinavsai2006/PH_SSD}.
+
 \section{Conclusion}
 \label{sec:conclusion}
-In this work, we introduced HEDO-HVSC, a multimodal state-space framework combining a Hamiltonian-inspired discrete dissipative operator (HEDO) with mask-weighted chunk-wise variational state coupling (HVSC). Through an exhaustive 12-run multi-seed benchmark on the official Flickr8k dataset, we demonstrated that HEDO-HVSC achieves retrieval performance comparable to the controlled baseline ($48.28\% \pm 0.59\%$). The measured latency exhibits approximately linear scaling over the tested sequence lengths, consistent with the algorithmically linear recurrent structure. Robustness evaluation shows a small advantage under severe Gaussian noise, while performance across other tested perturbations remains mixed.
+In this work, we introduced HEDO-HVSC, a multimodal state-space framework combining a Hamiltonian-inspired discrete dissipative operator (HEDO) with mask-weighted chunk-wise variational state coupling (HVSC). Through an exhaustive 12-run multi-seed benchmark on the predefined Flickr8k dataset partition, we demonstrated that HEDO-HVSC achieves retrieval performance comparable to the controlled baseline ($48.28\% \pm 0.59\%$). The measured latency exhibits approximately linear scaling over the tested sequence lengths, consistent with the algorithmically linear recurrent structure. Robustness evaluation shows a small advantage under severe Gaussian noise, while performance across other tested perturbations remains mixed.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 22:49
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 23:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -957,60 +957,51 @@ Overfull \hbox (31.78995pt too wide) in paragraph at lines 305--314
  [][] 
  []
 
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 3
+24.
+(C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-Underfull \hbox (badness 4120) in paragraph at lines 326--327
-[]\OT1/ptm/m/n/10 The vi-sual back-bone is a pre-trained Vi-sion Trans-
+ [6]
+Underfull \hbox (badness 2103) in paragraph at lines 356--357
+[]\OT1/ptm/m/n/10 Our bench-mark eval-u-ates four fac-to-rial con-fig-u-ra-tion
+s
  []
 
 
-Underfull \hbox (badness 1629) in paragraph at lines 326--327
-\OT1/ptm/m/n/10 RoBERTa-base. Both back-bones are kept strictly frozen
- []
-
-[6]
-Overfull \hbox (31.66022pt too wide) detected at line 363
+Overfull \hbox (31.66022pt too wide) detected at line 365
 [][] \OT1/cmr/m/n/10 = []
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-Package pgfplots info on input line 393: Using 'lua backend=false' for axis: x 
+[7]
+Package pgfplots info on input line 395: Using 'lua backend=false' for axis: x 
 coord trafo unsupported.
- [7]
-Underfull \hbox (badness 10000) in paragraph at lines 435--436
+
+Underfull \hbox (badness 10000) in paragraph at lines 437--438
 []\OT1/ptm/b/n/10 Seed 44: \OT1/ptm/m/n/10 Base-line $\OT1/cmr/m/n/10 48\OML/cm
 m/m/it/10 :\OT1/cmr/m/n/10 61% \OMS/cmsy/m/n/10 !$ \OT1/ptm/m/n/10 Full $\OT1/c
 mr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 93%$
  []
 
-Package pgfplots info on input line 487: Using 'lua backend=false' for axis: x 
+Package pgfplots info on input line 489: Using 'lua backend=false' for axis: x 
 coord trafo unsupported.
 
-Underfull \vbox (badness 1152) has occurred while \output is active []
-
- [8]
-Overfull \hbox (41.01425pt too wide) in paragraph at lines 579--589
+Overfull \hbox (41.01425pt too wide) in paragraph at lines 581--591
  [][] 
  []
 
-
-Underfull \hbox (badness 5008) in paragraph at lines 598--599
+[8]
+Underfull \hbox (badness 5008) in paragraph at lines 600--601
 []\OT1/ptm/b/n/10 Clean Re-trieval Equiv-a-lence: \OT1/ptm/m/n/10 Full HEDO-HVS
 C
  []
 
 
-Underfull \hbox (badness 1939) in paragraph at lines 599--600
+Underfull \hbox (badness 1939) in paragraph at lines 601--602
 []\OT1/ptm/b/n/10 Ablation Dy-nam-ics: \OT1/ptm/m/n/10 The w/o HVSC con-fig-u-r
 a-tion
- []
-
-
-Underfull \hbox (badness 4454) in paragraph at lines 599--600
-\OT1/ptm/m/n/10 achieves $\OT1/cmr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 4
-3% \OMS/cmsy/m/n/10 ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 29%$
-\OT1/ptm/m/n/10 , in-di-cat-ing that HEDO
  []
 
 [9] (main.bbl) [10] (main.aux)
@@ -1020,11 +1011,11 @@ L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 26969 strings out of 467871
- 688959 string characters out of 5418376
- 1230427 words of memory out of 5000000
- 55385 multiletter control sequences out of 15000+600000
- 684993 words of font info for 150 fonts, out of 8000000 for 9000
+ 27007 strings out of 467871
+ 689540 string characters out of 5418376
+ 1244452 words of memory out of 5000000
+ 55418 multiletter control sequences out of 15000+600000
+ 685508 words of font info for 152 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,19n,94p,2428b,2736s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
@@ -1057,14 +1048,15 @@ MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/mndab/AppData/Local/P
 rograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Users/mndab/AppData
 /Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users
 /mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10
-.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a
-.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8
-a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8
-a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri
-8a.pfb>
-Output written on main.pdf (10 pages, 433169 bytes).
+.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/courier/ucrr
+8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb
+8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb
+i8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utm
+r8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utm
+ri8a.pfb>
+Output written on main.pdf (10 pages, 446514 bytes).
 PDF statistics:
- 194 PDF objects out of 1000 (max. 8388607)
+ 199 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
