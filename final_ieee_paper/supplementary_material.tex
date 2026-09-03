@@ -1,41 +1,102 @@
-# SUPPLEMENTARY MATERIAL: HEDO-HVSC MULTIMODAL STATE-SPACE FRAMEWORK
+\documentclass[journal]{IEEEtran}
 
-\subsection{Section S1: Complete 12-Run Benchmark Test Evaluation Data}
-Table S1 documents every individual seed run across all four factorial model configurations on the official held-out test split of Flickr8k ($1{,}000$ images, $5{,}000$ captions).
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{microtype}
 
-\begin{table*}[h]
-\centering
-\small
-\caption{Complete 12-Run Per-Seed Test Metrics, Validation Mean Recall, Training Wall-Clock Time, and Peak VRAM.}
-\label{tab:supp_per_run_results}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lcccccccccccc}
-\toprule
-\textbf{Model Configuration} & \textbf{Seed} & \textbf{Best Epoch} & \textbf{Val MR (\%)} & \textbf{I2T R@1 (\%)} & \textbf{I2T R@5 (\%)} & \textbf{I2T R@10 (\%)} & \textbf{T2I R@1 (\%)} & \textbf{T2I R@5 (\%)} & \textbf{T2I R@10 (\%)} & \textbf{Test MR (\%)} & \textbf{Train Time (min)} & \textbf{Peak VRAM (MB)} \\
-\midrule
-\multirow{3}{*}{SSD Baseline} & 42 & 8 & 48.03 & 27.00 & 57.60 & 70.10 & 21.24 & 50.16 & 65.18 & 48.55 & 17.51 & 1875.76 \\
- & 43 & 8 & 48.01 & 26.30 & 56.20 & 68.60 & 19.94 & 49.78 & 64.68 & 47.58 & 17.47 & 1878.22 \\
- & 44 & 8 & 47.78 & 26.30 & 58.10 & 71.60 & 20.18 & 49.74 & 65.74 & 48.61 & 17.47 & 1877.78 \\
-\midrule
-\multirow{3}{*}{HEDO-HVSC w/o HEDO} & 42 & 8 & 48.08 & 27.70 & 57.90 & 69.30 & 20.52 & 50.14 & 65.02 & 48.43 & 17.72 & 1878.61 \\
- & 43 & 8 & 48.14 & 25.70 & 55.90 & 69.20 & 19.78 & 50.04 & 65.08 & 47.62 & 17.84 & 1878.37 \\
- & 44 & 8 & 47.67 & 26.70 & 57.40 & 71.60 & 20.58 & 49.66 & 65.72 & 48.61 & 17.90 & 1878.81 \\
-\midrule
-\multirow{3}{*}{HEDO-HVSC w/o HVSC} & 42 & 8 & 48.03 & 27.90 & 56.70 & 69.80 & 21.28 & 50.08 & 64.84 & 48.43 & 17.56 & 1878.99 \\
- & 43 & 8 & 49.16 & 25.80 & 57.10 & 70.20 & 19.98 & 50.28 & 65.04 & 48.07 & 17.56 & 1879.74 \\
- & 44 & 8 & 48.70 & 27.90 & 57.10 & 70.90 & 20.72 & 50.62 & 65.42 & 48.78 & 17.60 & 2685.66 \\
-\midrule
-\multirow{3}{*}{\textbf{Full HEDO-HVSC (Ours)}} & 42 & 8 & 47.86 & 28.20 & 56.50 & 69.90 & 20.88 & 50.14 & 64.84 & 48.41 & 17.81 & 2686.05 \\
- & 43 & 7 & 48.56 & 24.10 & 56.50 & 69.90 & 20.46 & 49.42 & 64.62 & 47.50 & 17.80 & 2686.25 \\
- & 44 & 8 & 48.60 & 27.90 & 57.50 & 71.60 & 20.78 & 50.36 & 65.42 & 48.93 & 17.85 & 2686.25 \\
-\bottomrule
-\end{tabular}%
+\begin{document}
+
+\title{Supplementary Material: Hamiltonian-Inspired Energy Dissipation and Chunk-Wise Variational State Coupling for Efficient Multimodal State-Space Models}
+
+\author{Abhinav~Sai~Maddineni%
+\thanks{Abhinav Sai Maddineni is with the Department of Computer Science and Engineering.}%
 }
+
+\maketitle
+
+\appendices
+
+\section{Complete Per-Seed Benchmark Evaluation}
+\label{sec:supp_per_seed_results}
+To ensure thorough scientific transparency and enable exact experimental reproducibility, this section documents all individual seed runs across the four factorial configurations on the official Flickr8k held-out test set ($1{,}000$ images, $5{,}000$ captions). Table~\ref{tab:supp_per_seed_retrieval} details the complete directional recall metrics (Image-to-Text and Text-to-Image at top-1, top-5, and top-10) alongside Validation and Test Mean Recall. Table~\ref{tab:supp_compute_provenance} summarizes the corresponding training wall-clock time and peak GPU memory allocation.
+
+\begin{table*}[!t]
+\centering
+\caption{Complete 12-Run Per-Seed Test Retrieval Metrics and Validation Mean Recall on Official Flickr8k Test Split. I2T and T2I denote image-to-text and text-to-image retrieval, respectively; all values are reported as percentages (\%).}
+\label{tab:supp_per_seed_retrieval}
+\small
+\begin{tabular}{lcccccccccc}
+\toprule
+\textbf{Model Configuration} & \textbf{Seed} & \textbf{Best Ep.} & \textbf{Val MR} & \textbf{I2T@1} & \textbf{I2T@5} & \textbf{I2T@10} & \textbf{T2I@1} & \textbf{T2I@5} & \textbf{T2I@10} & \textbf{Test MR} \\
+\midrule
+\multirow{3}{*}{SSD Baseline} & 42 & 8 & 48.03 & 27.00 & 57.60 & 70.10 & 21.24 & 50.16 & 65.18 & 48.55 \\
+ & 43 & 8 & 48.01 & 26.30 & 56.20 & 68.60 & 19.94 & 49.78 & 64.68 & 47.58 \\
+ & 44 & 8 & 47.78 & 26.30 & 58.10 & 71.60 & 20.18 & 49.74 & 65.74 & 48.61 \\
+\midrule
+\multirow{3}{*}{HEDO-HVSC w/o HEDO} & 42 & 8 & 48.08 & 27.70 & 57.90 & 69.30 & 20.52 & 50.14 & 65.02 & 48.43 \\
+ & 43 & 8 & 48.14 & 25.70 & 55.90 & 69.20 & 19.78 & 50.04 & 65.08 & 47.62 \\
+ & 44 & 8 & 47.67 & 26.70 & 57.40 & 71.60 & 20.58 & 49.66 & 65.72 & 48.61 \\
+\midrule
+\multirow{3}{*}{HEDO-HVSC w/o HVSC} & 42 & 8 & 48.03 & 27.90 & 56.70 & 69.80 & 21.28 & 50.08 & 64.84 & 48.43 \\
+ & 43 & 8 & 49.16 & 25.80 & 57.10 & 70.20 & 19.98 & 50.28 & 65.04 & 48.07 \\
+ & 44 & 8 & 48.70 & 27.90 & 57.10 & 70.90 & 20.72 & 50.62 & 65.42 & 48.78 \\
+\midrule
+\multirow{3}{*}{\textbf{Full HEDO-HVSC (Ours)}} & 42 & 8 & 47.86 & 28.20 & 56.50 & 69.90 & 20.88 & 50.14 & 64.84 & 48.41 \\
+ & 43 & 7 & 48.56 & 24.10 & 56.50 & 69.90 & 20.46 & 49.42 & 64.62 & 47.50 \\
+ & 44 & 8 & 48.60 & 27.90 & 57.50 & 71.60 & 20.78 & 50.36 & 65.42 & 48.93 \\
+\bottomrule
+\end{tabular}
 \end{table*}
 
-\subsection{Section S2: Complete Hardware and Environment Provenance}
-- GPU Hardware: NVIDIA Tesla T4 GPU (16 GB GDDR6 VRAM, Compute Capability 7.5)
-- Driver Version: 535.104.05, CUDA Version: 12.2
-- Host Platform: Linux / Windows Server x86_64, PyTorch 2.1.0+cu121, Torchvision 0.16.0+cu121
-- Frozen Backbones: `timm` Vision Transformer (`vit_base_patch16_224`, 86.6 M params), HuggingFace Transformers `roberta-base` (124.6 M params)
-- Execution Seed List: 42, 43, 44
+\begin{table}[!t]
+\centering
+\caption{Per-Seed Training Wall-Clock Time and Peak GPU VRAM Footprint across all 12 Benchmark Runs.}
+\label{tab:supp_compute_provenance}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model Configuration} & \textbf{Seed} & \textbf{Best Ep.} & \textbf{Train Time} & \textbf{Peak VRAM} \\
+\midrule
+\multirow{3}{*}{SSD Baseline} & 42 & 8 & $17.51\text{ min}$ & $1875.76\text{ MB}$ \\
+ & 43 & 8 & $17.47\text{ min}$ & $1878.22\text{ MB}$ \\
+ & 44 & 8 & $17.47\text{ min}$ & $1877.78\text{ MB}$ \\
+\midrule
+\multirow{3}{*}{HEDO-HVSC w/o HEDO} & 42 & 8 & $17.72\text{ min}$ & $1878.61\text{ MB}$ \\
+ & 43 & 8 & $17.84\text{ min}$ & $1878.37\text{ MB}$ \\
+ & 44 & 8 & $17.90\text{ min}$ & $1878.81\text{ MB}$ \\
+\midrule
+\multirow{3}{*}{HEDO-HVSC w/o HVSC} & 42 & 8 & $17.56\text{ min}$ & $1878.99\text{ MB}$ \\
+ & 43 & 8 & $17.56\text{ min}$ & $1879.74\text{ MB}$ \\
+ & 44 & 8 & $17.60\text{ min}$ & $2685.66\text{ MB}$ \\
+\midrule
+\multirow{3}{*}{\textbf{Full HEDO-HVSC (Ours)}} & 42 & 8 & $17.81\text{ min}$ & $2686.05\text{ MB}$ \\
+ & 43 & 7 & $17.80\text{ min}$ & $2686.25\text{ MB}$ \\
+ & 44 & 8 & $17.85\text{ min}$ & $2686.25\text{ MB}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Hardware and Execution Environment Provenance}
+\label{sec:supp_hardware_env}
+All 12 training and evaluation runs were executed on a dedicated cloud compute instance under identical software and hardware specifications:
+\begin{itemize}
+    \item \textbf{Accelerator Hardware:} NVIDIA Tesla T4 GPU ($16\,\text{GB}$ GDDR6 VRAM, Compute Capability 7.5).
+    \item \textbf{Host System:} Linux / Windows Server x86\_64 multi-core platform.
+    \item \textbf{Software Stack:} PyTorch 2.1.0+cu121, Torchvision 0.16.0+cu121, CUDA 12.2, Driver 535.104.05.
+    \item \textbf{Pretrained Model Weights:} \texttt{timm} Vision Transformer (\texttt{vit\_base\_patch16\_224}, 86.6 M parameters, frozen), HuggingFace Transformers \texttt{roberta-base} (124.6 M parameters, frozen).
+    \item \textbf{Determinism Protocol:} CUDA deterministic algorithms enabled, random seed explicitly set for Python random, NumPy, and PyTorch (CPU and CUDA).
+\end{itemize}
+
+\section{Additional Implementation Details and Reproducibility}
+\label{sec:supp_reproducibility}
+\begin{itemize}
+    \item \textbf{Optimization Routine:} AdamW optimizer with $\beta_1=0.9, \beta_2=0.999$, weight decay $10^{-4}$, initial learning rate $\eta_{\text{max}}=2\times 10^{-4}$, cosine decay schedule down to $\eta_{\text{min}}=10^{-6}$ over 8 epochs.
+    \item \textbf{Gradient Management:} Global gradient norm clipping at $1.0$ applied before each optimizer update step.
+    \item \textbf{Batch Formation:} 64 images per batch paired with 5 captions each, yielding an effective batch size of 320 image-caption pairs.
+    \item \textbf{Model Checkpointing:} Validation Mean Recall evaluated at the conclusion of every epoch; the highest-performing checkpoint is selected for final evaluation on the certified held-out test split.
+\end{itemize}
+
+\end{document}
