@@ -25,16 +25,10 @@
 
 \title{Hamiltonian-Inspired Energy Dissipation and Chunk-Wise Variational State Coupling for Efficient Multimodal State-Space Models}
 
-\author{
-    \vspace{0.8em}
-    {\large\textbf{Abhinav Sai}}\\[0.45em]
-    {\normalsize School of Computer Science and Engineering}\\[0.2em]
-    {\normalsize VIT-AP University, Amaravati, Andhra Pradesh 522237, India}\\[0.2em]
-    {\small\texttt{abhinav.24bca7148@vitapstudent.ac.in}}\\[0.8em]
-}
+\author{Abhinav~Sai~Maddineni%
+\thanks{Abhinav Sai Maddineni is with the School of Computer Science and Engineering, VIT-AP University, Amaravati, Andhra Pradesh 522237, India (e-mail: abhinav.24bca7148@vitapstudent.ac.in).}}
 
 \maketitle
-\vspace{-0.5em}
 
 \begin{abstract}
 State-Space Models (SSMs), including structured state spaces and State-Space Duality (SSD) architectures, have emerged as computationally efficient sub-quadratic alternatives to quadratic multi-head self-attention. Despite their theoretical appeal in unimodal sequence processing, deploying state-space recurrence within cross-modal vision-language metric learning introduces two practical challenges: (1) sensitivity to representation perturbations and background token noise across sequence representations, and (2) potential misalignment between modality-specific boundary representations, which may affect downstream retrieval alignment. In this work, we propose a multimodal state-space framework comprising two core components: (i) the Hamiltonian-Inspired Energy Dissipation Operator (HEDO), a learned discrete coordinate-momentum transformation with positive damping ($\beta=0.05, \Delta t=0.1, \gamma=0.1$) that introduces a Hamiltonian-inspired dissipative inductive bias, and (ii) Chunk-Wise Variational State Coupling (HVSC), which performs mask-weighted aggregation of chunk boundary states ($C=16, d_{\text{state}}=64$) and regularizes modality-specific Gaussian latent distributions through symmetric Kullback-Leibler (KL) divergence during training while preserving strictly independent, deterministic unimodal inference at test time. We conduct a controlled 12-run factorial multi-seed benchmark ($4\text{ model configurations} \times 3\text{ seeds}: 42, 43, 44$) on the standard Flickr8k dataset with frozen ViT-B/16 and RoBERTa-base backbones. The full HEDO-HVSC architecture achieves a test Mean Recall of $48.28\% \pm 0.59\%$ ($26.73\% \pm 1.87\%$ I2T R@1, $56.83\% \pm 0.47\%$ I2T R@5, $70.47\% \pm 0.80\%$ I2T R@10, $20.71\% \pm 0.18\%$ T2I R@1, $49.97\% \pm 0.40\%$ T2I R@5, $64.96\% \pm 0.34\%$ T2I R@10), demonstrating retrieval performance comparable to the Custom SSD-Style Baseline ($48.25\% \pm 0.47\%$, mean paired delta $+0.03\% \pm 0.20\%$). In corruption stress testing, the full model exhibits a mixed robustness profile, outperforming the baseline by $+0.50\%$ under severe Gaussian noise ($\sigma=0.10$). Furthermore, empirical latency profiling across sequence lengths $L \in [16, 256]$ demonstrates approximately linear empirical latency scaling with algorithmically linear sequence-dependent recurrence.
