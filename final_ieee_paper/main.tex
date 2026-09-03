@@ -277,17 +277,20 @@ Experiments are conducted on the standard Flickr8k benchmark introduced by Hodos
 
 \begin{table}[!t]
 \centering
+\scriptsize
 \caption{Predefined Flickr8k dataset split partition and functional benchmark roles.}
 \label{tab:dataset_splits}
-\begin{tabular}{lcccc}
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}p{0.22\columnwidth}>{\raggedleft\arraybackslash}p{0.14\columnwidth}>{\raggedleft\arraybackslash}p{0.14\columnwidth}>{\centering\arraybackslash}p{0.12\columnwidth}>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Split} & \textbf{Images} & \textbf{Captions} & \textbf{Captions/Image} & \textbf{Role in Benchmark} \\
+\textbf{Split} & \textbf{Images} & \textbf{Caps.} & \textbf{C/Img} & \textbf{Role in Benchmark} \\
 \midrule
 Train & $6{,}000$ & $30{,}000$ & $5$ & Model optimization \\
 Validation & $1{,}000$ & $5{,}000$ & $5$ & Checkpoint selection \\
 Held-Out Test & $1{,}000$ & $5{,}000$ & $5$ & Certified evaluation \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \begin{figure*}[!t]
