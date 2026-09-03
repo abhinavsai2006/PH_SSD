@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 21:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 21:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -360,15 +360,9 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 2
-3.
- (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
 LaTeX Font Info:    Trying to load font information for U+msa on input line 26.
 
-
-(C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+ (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 26.
@@ -377,7 +371,13 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 26.
 (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Underfull \hbox (badness 10000) in paragraph at lines 41--42
+<figures/fig1_architecture.pdf, id=1, 717.64113pt x 392.42609pt>
+File: figures/fig1_architecture.pdf Graphic file (type pdf)
+<use figures/fig1_architecture.pdf>
+Package pdftex.def Info: figures/fig1_architecture.pdf  used on input line 42.
+(pdftex.def)             Requested size: 490.19843pt x 268.05577pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 48--49
 []\OT1/ptm/m/n/10 To mit-i-gate quadratic scal-ing, linear-time se-quence
  []
 
@@ -386,13 +386,6 @@ dab/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}
 
 
 ]
-<figures/fig1_benchmark_results.pdf, id=17, 542.025pt x 325.215pt>
-File: figures/fig1_benchmark_results.pdf Graphic file (type pdf)
-<use figures/fig1_benchmark_results.pdf>
-Package pdftex.def Info: figures/fig1_benchmark_results.pdf  used on input line
- 52.
-(pdftex.def)             Requested size: 231.83954pt x 139.10529pt.
-
 Underfull \hbox (badness 3049) in paragraph at lines 61--62
 []\OT1/ptm/b/n/10 State-Continuous Chunk-Wise SSD-Style Re-cur-
  []
@@ -402,7 +395,7 @@ Underfull \hbox (badness 3250) in paragraph at lines 63--64
 \OT1/ptm/m/n/10 ex-e-cute an ex-haus-tive 12-run fac-to-rial bench-mark
  []
 
-
+[2 <./figures/fig1_architecture.pdf>]
 Underfull \hbox (badness 10000) in paragraph at lines 92--94
 \OT1/ptm/m/n/10 The to-tal en-ergy deriva-tive eval-u-ates to $[] \OT1/cmr/m/n/
 10 =
@@ -414,51 +407,70 @@ Underfull \hbox (badness 1365) in paragraph at lines 92--94
 
  []
 
-[2 <./figures/fig1_benchmark_results.pdf>]
-Underfull \hbox (badness 2951) in paragraph at lines 109--110
+<figures/fig2_dataset_pipeline.pdf, id=234, 609.23611pt x 298.47508pt>
+File: figures/fig2_dataset_pipeline.pdf Graphic file (type pdf)
+<use figures/fig2_dataset_pipeline.pdf>
+Package pdftex.def Info: figures/fig2_dataset_pipeline.pdf  used on input line 
+97.
+(pdftex.def)             Requested size: 246.95892pt x 120.9865pt.
+
+Underfull \hbox (badness 2951) in paragraph at lines 116--117
 []\OT1/ptm/m/n/10 Hamiltonian Neu-ral Net-works (HNNs) [20] and La-
  []
 
+<figures/fig3_hedo_mechanism.pdf, id=235, 609.23611pt x 284.02109pt>
+File: figures/fig3_hedo_mechanism.pdf Graphic file (type pdf)
+<use figures/fig3_hedo_mechanism.pdf>
+Package pdftex.def Info: figures/fig3_hedo_mechanism.pdf  used on input line 12
+3.
+(pdftex.def)             Requested size: 246.95892pt x 115.12758pt.
 
-Underfull \hbox (badness 5388) in paragraph at lines 121--122
+Underfull \hbox (badness 5388) in paragraph at lines 135--136
 \OT1/ptm/m/n/10 momentum dis-si-pa-tive up-dates to sup-press high-
  []
 
 
-Underfull \hbox (badness 1558) in paragraph at lines 122--123
+Underfull \hbox (badness 1558) in paragraph at lines 136--137
 \OT1/ptm/b/n/10 Cou-pling (HVSC): \OT1/ptm/m/n/10 Se-quences are par-ti-tioned 
 into
  []
 
+[3 <./figures/fig2_dataset_pipeline.pdf>]
+<figures/fig4_chunk_recurrence.pdf, id=427, 609.23611pt x 255.1131pt>
+File: figures/fig4_chunk_recurrence.pdf Graphic file (type pdf)
+<use figures/fig4_chunk_recurrence.pdf>
+Package pdftex.def Info: figures/fig4_chunk_recurrence.pdf  used on input line 
+154.
+(pdftex.def)             Requested size: 246.95892pt x 103.40976pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 138--138
+Underfull \hbox (badness 10000) in paragraph at lines 159--159
  \OT1/ptm/m/it/10 C. Hamiltonian-Inspired En-ergy Dis-si-pa-tion Op-er-a-tor
  []
 
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 164--165
+
+Underfull \hbox (badness 10000) in paragraph at lines 185--186
 []\OT1/ptm/b/n/10 Empirical Di-ag-nos-tic Tra-jec-tory: \OT1/ptm/m/n/10 In pre-
 training
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 164--165
+Underfull \hbox (badness 10000) in paragraph at lines 185--186
 \OT1/ptm/m/n/10 di-ag-nos-tic eval-u-a-tion, un-forced multi-step sim-u-la-tion
 
  []
 
 
-Underfull \hbox (badness 5563) in paragraph at lines 164--165
+Underfull \hbox (badness 5563) in paragraph at lines 185--186
 \OT1/ptm/m/n/10 on im-age patch rep-re-sen-ta-tions yielded the tra-jec-tory
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 164--165
+Underfull \hbox (badness 10000) in paragraph at lines 185--186
 \OT1/ptm/m/n/10 while text rep-re-sen-ta-tions yielded $\OMS/cmsy/m/n/10 H 2
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 164--165
+Underfull \hbox (badness 10000) in paragraph at lines 185--186
 \OT1/cmr/m/n/10 [5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 849\OML/cmm/m/it/10 ; \OT1/
 cmr/m/n/10 5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 796\OML/cmm/m/it/10 ; \OT1/cmr/m/
 n/10 5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 774\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 5
@@ -468,23 +480,29 @@ t/10 :\OT1/cmr/m/n/10 892]$\OT1/ptm/m/n/10 . While
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 164--165
+Underfull \hbox (badness 10000) in paragraph at lines 185--186
 \OT1/ptm/m/n/10 HEDO changes rep-re-sen-ta-tion en-ergy sub-stan-tially
  []
 
-
-Underfull \hbox (badness 3088) in paragraph at lines 193--194
+[4 <./figures/fig3_hedo_mechanism.pdf> <./figures/fig4_chunk_recurrence.pdf>]
+Underfull \hbox (badness 3088) in paragraph at lines 214--215
 []\OT1/ptm/m/n/10 The ag-gre-gated bound-ary rep-re-sen-ta-tion pa-ram-e-ter-iz
 es
  []
 
-[4]
-Underfull \hbox (badness 10000) in paragraph at lines 263--264
+<figures/fig5_train_inference.pdf, id=692, 609.23611pt x 370.74509pt>
+File: figures/fig5_train_inference.pdf Graphic file (type pdf)
+<use figures/fig5_train_inference.pdf>
+Package pdftex.def Info: figures/fig5_train_inference.pdf  used on input line 2
+27.
+(pdftex.def)             Requested size: 490.19843pt x 298.31056pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 291--292
 [] []\OT1/ptm/m/n/10 Compute mask-weighted bound-ary states
  []
 
 
-Overfull \hbox (31.78995pt too wide) in paragraph at lines 287--296
+Overfull \hbox (31.78995pt too wide) in paragraph at lines 315--324
  [][] 
  []
 
@@ -492,99 +510,104 @@ Overfull \hbox (31.78995pt too wide) in paragraph at lines 287--296
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-Underfull \hbox (badness 4120) in paragraph at lines 301--302
+Underfull \hbox (badness 4120) in paragraph at lines 329--330
 []\OT1/ptm/m/n/10 The vi-sual back-bone is a pre-trained Vi-sion Trans-
  []
 
 
-Underfull \hbox (badness 1629) in paragraph at lines 301--302
+Underfull \hbox (badness 1629) in paragraph at lines 329--330
 \OT1/ptm/m/n/10 RoBERTa-base. Both back-bones are kept strictly frozen
  []
 
-
-Overfull \hbox (68.18224pt too wide) in paragraph at lines 310--334
+[5]
+Overfull \hbox (68.18224pt too wide) in paragraph at lines 338--362
  [][] 
  []
 
 
-Overfull \hbox (31.66022pt too wide) detected at line 344
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \vbox (badness 4024) has occurred while \output is active []
+
+ [6 <./figures/fig5_train_inference.pdf>]
+Overfull \hbox (31.66022pt too wide) detected at line 372
 [][] \OT1/cmr/m/n/10 = []
  []
 
-[5]
-Underfull \hbox (badness 10000) in paragraph at lines 410--411
+<figures/fig6_benchmark_results.pdf, id=914, 542.025pt x 325.215pt>
+File: figures/fig6_benchmark_results.pdf Graphic file (type pdf)
+<use figures/fig6_benchmark_results.pdf>
+Package pdftex.def Info: figures/fig6_benchmark_results.pdf  used on input line
+ 384.
+(pdftex.def)             Requested size: 239.39923pt x 143.6409pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 445--446
 []\OT1/ptm/b/n/10 Seed 44: \OT1/ptm/m/n/10 Base-line $\OT1/cmr/m/n/10 48\OML/cm
 m/m/it/10 :\OT1/cmr/m/n/10 61% \OMS/cmsy/m/n/10 !$ \OT1/ptm/m/n/10 Full $\OT1/c
 mr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 93%$
  []
 
 
-Underfull \hbox (badness 1365) in paragraph at lines 419--421
-\OT1/ptm/m/n/10 The near-zero in-ter-ac-tion ef-fect ($\OMS/cmsy/m/n/10 ^^@\OT1
-/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 12%$\OT1/ptm/m/n/10 ) in-di-cate
-s that
- []
+LaTeX Warning: `h' float specifier changed to `ht'.
 
+<figures/fig7_robustness_comparison.pdf, id=915, 578.16pt x 325.215pt>
+File: figures/fig7_robustness_comparison.pdf Graphic file (type pdf)
+<use figures/fig7_robustness_comparison.pdf>
+Package pdftex.def Info: figures/fig7_robustness_comparison.pdf  used on input 
+line 478.
+(pdftex.def)             Requested size: 231.83954pt x 130.40625pt.
+[7 <./figures/fig6_benchmark_results.pdf>]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig2_robustness_comparison.pdf, id=118, 578.16pt x 325.215pt>
-File: figures/fig2_robustness_comparison.pdf Graphic file (type pdf)
-<use figures/fig2_robustness_comparison.pdf>
-Package pdftex.def Info: figures/fig2_robustness_comparison.pdf  used on input 
-line 443.
-(pdftex.def)             Requested size: 221.76123pt x 124.73921pt.
+<figures/fig8_sequence_scaling.pdf, id=993, 469.755pt x 303.534pt>
+File: figures/fig8_sequence_scaling.pdf Graphic file (type pdf)
+<use figures/fig8_sequence_scaling.pdf>
+Package pdftex.def Info: figures/fig8_sequence_scaling.pdf  used on input line 
+514.
+(pdftex.def)             Requested size: 231.83954pt x 149.80284pt.
 
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-<figures/fig3_sequence_scaling.pdf, id=119, 469.755pt x 303.534pt>
-File: figures/fig3_sequence_scaling.pdf Graphic file (type pdf)
-<use figures/fig3_sequence_scaling.pdf>
-Package pdftex.def Info: figures/fig3_sequence_scaling.pdf  used on input line 
-479.
-(pdftex.def)             Requested size: 221.76123pt x 143.29088pt.
-
-Overfull \hbox (41.01425pt too wide) in paragraph at lines 497--507
+Overfull \hbox (41.01425pt too wide) in paragraph at lines 532--542
  [][] 
  []
 
-[6 <./figures/fig2_robustness_comparison.pdf> <./figures/fig3_sequence_scaling.
+[8 <./figures/fig7_robustness_comparison.pdf> <./figures/fig8_sequence_scaling.
 pdf>]
-Underfull \hbox (badness 5008) in paragraph at lines 516--517
+Underfull \hbox (badness 5008) in paragraph at lines 551--552
 []\OT1/ptm/b/n/10 Clean Re-trieval Equiv-a-lence: \OT1/ptm/m/n/10 Full HEDO-HVS
 C
  []
 
 
-Underfull \vbox (badness 4048) has occurred while \output is active []
-
-
-Underfull \hbox (badness 1939) in paragraph at lines 517--518
+Underfull \hbox (badness 1939) in paragraph at lines 552--553
 []\OT1/ptm/b/n/10 Ablation Dy-nam-ics: \OT1/ptm/m/n/10 The w/o HVSC con-fig-u-r
 a-tion
  []
 
 
-Underfull \hbox (badness 4454) in paragraph at lines 517--518
+Underfull \hbox (badness 4454) in paragraph at lines 552--553
 \OT1/ptm/m/n/10 achieves $\OT1/cmr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 4
 3% \OMS/cmsy/m/n/10 ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 29%$
 \OT1/ptm/m/n/10 , in-di-cat-ing that HEDO
  []
 
-[7] (main.bbl) [8] (main.aux)
+(main.bbl [9]) [10
+
+] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 4842 strings out of 467871
- 76803 string characters out of 5418376
- 519552 words of memory out of 5000000
- 33625 multiletter control sequences out of 15000+600000
- 685508 words of font info for 152 fonts, out of 8000000 for 9000
+ 4845 strings out of 467871
+ 77848 string characters out of 5418376
+ 519514 words of memory out of 5000000
+ 33633 multiletter control sequences out of 15000+600000
+ 684993 words of font info for 150 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,13n,65p,2446b,466s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,13n,65p,2428b,466s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmbx10.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmbx7.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/pu
@@ -612,14 +635,13 @@ mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C
 amsfonts/cm/cmsy9.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1
 /public/amsfonts/symbols/msam10.pfb><C:/Users/mndab/AppData/Local/Programs/MiKT
 eX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/mndab/AppData/Local
-/Programs/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/mndab/AppData/Loc
-al/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/mndab/AppData/Loc
-al/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/mndab/AppData/Lo
-cal/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/mndab/AppData/Lo
-cal/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (8 pages, 456999 bytes).
+/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/mndab/AppData/Local
+/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/mndab/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/mndab/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (10 pages, 760921 bytes).
 PDF statistics:
- 404 PDF objects out of 1000 (max. 8388607)
+ 1272 PDF objects out of 1440 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 41 words of extra memory for PDF output out of 10000 (max. 10000000)
 
