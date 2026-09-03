@@ -226,7 +226,7 @@ where for diagonal Gaussians $p_I = \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{
 \mathcal{D}_{\text{KL}}(p_I \parallel p_T) = \frac{1}{2} \sum_{j=1}^{d_{\text{latent}}} \Bigg[ &\log \frac{\sigma_{T,j}^2}{\sigma_{I,j}^2} + \frac{\sigma_{I,j}^2 + (\mu_{I,j} - \mu_{T,j})^2}{\sigma_{T,j}^2} - 1 \Bigg]
 \end{align}
 
-\textbf{Test-Time Deterministic Unimodal Inference:} During test-time retrieval (Fig.~\ref{fig:train_inference}), stochastic sampling is omitted, and the posterior mean vectors $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T$ are evaluated deterministically:
+\textbf{Test-Time Deterministic Unimodal Inference:} During test-time retrieval (Fig.~\ref{fig:overall_architecture}), stochastic sampling is omitted, and the posterior mean vectors $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T$ are evaluated deterministically:
 \begin{align}
 \hat{\mathbf{e}}_I &= \text{Normalize}\left( \text{LayerNorm}(\mathbf{h}_{\text{pool}, I} + \alpha \mathbf{W}_{\text{out}} \boldsymbol{\mu}_I) \right) \\
 \hat{\mathbf{e}}_T &= \text{Normalize}\left( \text{LayerNorm}(\mathbf{h}_{\text{pool}, T} + \alpha \mathbf{W}_{\text{out}} \boldsymbol{\mu}_T) \right)
@@ -251,14 +251,14 @@ where $s_{i,j} = \hat{\mathbf{e}}_{I, i}^\top \hat{\mathbf{e}}_{T, j}$ denotes c
 \begin{algorithmic}[1]
 \REQUIRE Image batch $\mathbf{I} \in \mathbb{R}^{B \times 3 \times 224 \times 224}$, text tokens $\mathbf{T} \in \mathbb{Z}^{B \times 64}$, attention masks $\mathbf{M}_T \in \{0, 1\}^{B \times 64}$, positive index mappings
 \ENSURE Total loss $\mathcal{L}_{\text{total}}$, test embeddings $\hat{\mathbf{e}}_I, \hat{\mathbf{e}}_T$
-\STATE Extract frozen representations $\mathbf{X}_I^{(0)}, \mathbf{X}_T^{(0)}$ via (8)--(9)
-\STATE Apply HEDO dissipative transformation if enabled (10)--(13)
-\STATE Execute chunk-wise SSD recurrence with state continuity (15)--(17)
+\STATE Extract frozen representations $\mathbf{X}_I^{(0)}, \mathbf{X}_T^{(0)}$ via (7)--(8)
+\STATE Apply HEDO dissipative transformation if enabled (9)--(13)
+\STATE Execute chunk-wise SSD recurrence with state continuity (14)--(16)
 \STATE Extract chunk boundary states $\mathbf{b}_{I, k}, \mathbf{b}_{T, k}$ and validity masks
-\STATE Compute mask-weighted boundary states and parameterize latents (18)--(20)
-\STATE Compute symmetric KL loss $\mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$ in FP32 precision (24)--(25)
-\STATE Sample latents $\mathbf{z}$ and evaluate coupled embeddings $\mathbf{e}_I, \mathbf{e}_T$ (22)--(23)
-\STATE Compute multi-positive InfoNCE loss $\mathcal{L}_{\text{InfoNCE}}$ (29)
+\STATE Compute mask-weighted boundary states and parameterize latents (17)--(22)
+\STATE Compute symmetric KL loss $\mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$ in FP32 precision (25)--(26)
+\STATE Sample latents $\mathbf{z}$ and evaluate coupled embeddings $\mathbf{e}_I, \mathbf{e}_T$ (22)--(24)
+\STATE Compute multi-positive InfoNCE loss $\mathcal{L}_{\text{InfoNCE}}$ (30)
 \STATE $\mathcal{L}_{\text{total}} \leftarrow \mathcal{L}_{\text{InfoNCE}} + 0.01 \cdot \mathcal{D}_{\text{SKL}}$
 \RETURN $\mathcal{L}_{\text{total}}$
 \end{algorithmic}
