@@ -82,32 +82,45 @@ Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies \
 }
 
 % ------------------------------------------------------------------------------
-% Figure 2: Dataset & Preprocessing Pipeline (Independent Single Column)
+% Figure 2: Dataset & Preprocessing Pipeline (Full-Width figure*)
+% Perfectly symmetric 2-stage architecture: Partition on Left/Top, Processing on Right
 % ------------------------------------------------------------------------------
 \newcommand{\HEDODatasetFigure}{
-\begin{tikzpicture}[node distance=5mm, every node/.style={font=\footnotesize}]
-\node[hvenc, minimum width=78mm, minimum height=8.5mm] (root)
-{\textbf{Official Flickr8k Benchmark Split (Certified Disjoint)}\\8,000 Images $\;\vert\;$ 40,000 Captions $\;\vert\;$ 5 Captions / Image};
+\begin{tikzpicture}[node distance=6mm and 12mm]
+% Stage 1: Overall Dataset
+\node[hvenc, minimum width=150mm, minimum height=9mm] (root)
+{\textbf{Official Flickr8k Benchmark Split (Certified Disjoint)}\\8,000 Total Photographic Images $\;\vert\;$ 40,000 Total Human-Written Captions $\;\vert\;$ 5 Captions / Image};
 
-\node[hvmethod, below left=6mm and -13mm of root, minimum width=23mm] (tr)
-{\textbf{Train (75\%)}\\6,000 Images\\30,000 Caps};
-\node[hvmethod, below=6mm of root, minimum width=23mm] (va)
-{\textbf{Val (12.5\%)}\\1,000 Images\\5,000 Caps};
-\node[hvmethod, below right=6mm and -13mm of root, minimum width=23mm] (te)
-{\textbf{Test (12.5\%)}\\1,000 Images\\5,000 Caps};
+% Sub-Splits
+\node[hvmethod, below left=7mm and 15mm of root, minimum width=42mm, minimum height=11mm] (tr)
+{\textbf{Training Split (75\%)}\\6,000 Images $\;\vert\;$ 30,000 Captions\\Model Optimization};
+
+\node[hvmethod, below=7mm of root, minimum width=42mm, minimum height=11mm] (va)
+{\textbf{Validation Split (12.5\%)}\\1,000 Images $\;\vert\;$ 5,000 Captions\\Checkpoint Selection};
+
+\node[hvmethod, below right=7mm and 15mm of root, minimum width=42mm, minimum height=11mm] (te)
+{\textbf{Held-Out Test Split (12.5\%)}\\1,000 Images $\;\vert\;$ 5,000 Captions\\Certified Final Evaluation};
 
 \draw[flow] (root.south) -| (tr.north);
 \draw[flow] (root.south) -- (va.north);
 \draw[flow] (root.south) -| (te.north);
 
-\node[hvinput, below=6mm of tr, minimum width=36mm, minimum height=13mm] (ip)
-{\textbf{Visual Pipeline}\\$224 \times 224$ Center Crop\\ViT-B/16 Backbone\\$197 \times 768$ Tokens};
+% Stage 2: Modality-Specific Feature Extraction Section (Balanced Centered Blocks)
+\node[hvinput, below=16mm of tr, xshift=15mm, minimum width=62mm, minimum height=14mm] (ip)
+{\textbf{Modality 1: Visual Feature Pipeline}\\$224 \times 224$ Center Crop, ImageNet Normalization\\Frozen ViT-B/16 Backbone $\implies 197 \times 768$ Tokens};
 
-\node[hvinput, below=6mm of te, minimum width=36mm, minimum height=13mm] (tp)
-{\textbf{Textual Pipeline}\\RoBERTa Tokenizer\\Max Length $L_T=64$\\$64 \times 768$ Tokens};
+\node[hvinput, below=16mm of te, xshift=-15mm, minimum width=62mm, minimum height=14mm] (tp)
+{\textbf{Modality 2: Textual Feature Pipeline}\\RoBERTa BPE Tokenizer, Max Length $L_T=64$\\Frozen RoBERTa-base Backbone $\implies 64 \times 768$ Tokens};
 
-\draw[flow] (tr.south) -- (ip.north);
-\draw[flow] (te.south) -- (tp.north);
+% Connectors from split level to feature extraction level
+\coordinate (split_bus) at ($(va.south) + (0, -4.5mm)$);
+\draw[hvline] (tr.south) |- (split_bus);
+\draw[hvline] (va.south) -- (split_bus);
+\draw[hvline] (te.south) |- (split_bus);
+
+\draw[flow] (split_bus -| ip) -- (ip.north);
+\draw[flow] (split_bus -| tp) -- (tp.north);
+
 \end{tikzpicture}
 }
 

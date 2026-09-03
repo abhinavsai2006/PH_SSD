@@ -311,12 +311,12 @@ Held-Out Test & $1{,}000$ & $5{,}000$ & $5$ & Final evaluation \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
 \HEDODatasetFigure
-\caption{Official Flickr8k dataset partition and modality-specific feature extraction pipeline. The 8,000 photographic images and 40,000 human-annotated captions are partitioned into verified disjoint training (6,000), validation (1,000), and held-out test (1,000) splits with zero cross-split leakage.}
+\caption{Official Flickr8k dataset partition and modality-specific feature extraction pipeline. The 8,000 photographic images and 40,000 human-annotated captions are partitioned into verified disjoint training (6,000), validation (1,000), and held-out test (1,000) splits with zero cross-split leakage, followed by independent visual (ViT-B/16) and textual (RoBERTa-base) feature extraction.}
 \label{fig:dataset_pipeline}
-\end{figure}
+\end{figure*}
 
 Split integrity was verified to confirm zero overlap ($\text{Train} \cap \text{Val} = \emptyset$, $\text{Train} \cap \text{Test} = \emptyset$, $\text{Val} \cap \text{Test} = \emptyset$).
 
