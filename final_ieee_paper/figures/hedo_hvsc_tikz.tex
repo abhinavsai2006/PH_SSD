@@ -6,7 +6,7 @@
 
 \tikzset{
   hvblock/.style={draw=black!75, rounded corners=2.5pt, align=center,
-    minimum height=8.5mm, minimum width=36mm, font=\footnotesize, line width=0.55pt},
+    minimum height=8.5mm, minimum width=38mm, font=\footnotesize, line width=0.55pt},
   hvinput/.style={hvblock, fill=gray!8},
   hvenc/.style={hvblock, fill=blue!5, draw=blue!60!black},
   hvmethod/.style={hvblock, fill=green!5, draw=green!60!black},
@@ -25,7 +25,7 @@
 \begin{tikzpicture}[node distance=5mm and 40mm]
 % Column Titles
 \node[font=\bfseries\small, color=blue!70!black] (ititle) {Visual Stream};
-\node[font=\bfseries\small, color=blue!70!black, right=54mm of ititle] (ttitle) {Textual Stream};
+\node[font=\bfseries\small, color=blue!70!black, right=56mm of ititle] (ttitle) {Textual Stream};
 
 % Left Visual Stream
 \node[hvinput, below=3.5mm of ititle] (i0) {Input Image $\mathbf{I}$\\$224 \times 224 \times 3$};
@@ -56,27 +56,27 @@
 \path (i7) -- (t7) coordinate[midway] (mid_embs);
 
 % Section 1: Training Objective (Centered Below Streams)
-\node[hvloss, below=14mm of mid_embs] (tr_box)
+\node[hvloss, below=16mm of mid_embs] (tr_box)
 {\textbf{Training Objective (Joint Optimization)}\\[2pt]
 $\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$};
 
 % Pure Orthogonal Tree Convergence into Training Objective Top
-\coordinate (tr_left_drop) at ($(i7.south) + (0, -5mm)$);
-\coordinate (tr_right_drop) at ($(t7.south) + (0, -5mm)$);
-\coordinate (tr_merge) at ($(tr_box.north) + (0, 5mm)$);
+\coordinate (tr_left_drop) at ($(i7.south) + (0, -6mm)$);
+\coordinate (tr_right_drop) at ($(t7.south) + (0, -6mm)$);
+\coordinate (tr_merge) at ($(tr_box.north) + (0, 6mm)$);
 
 \draw[flow] (i7.south) -- (tr_left_drop);
 \draw[flow] (t7.south) -- (tr_right_drop);
 \draw[hvline] (tr_left_drop) -- (tr_merge -| tr_left_drop) -- (tr_merge -| tr_right_drop) -- (tr_right_drop);
 \draw[flow] (tr_merge) -- (tr_box.north);
 
-% Section 2: Test-Time Retrieval (Completely Independent - NO ARROW from Training)
-\node[hvinfer, below=13mm of tr_box] (te_box)
-{\textbf{Test-Time Retrieval (Strictly Independent)}\\[2pt]
+% Section 2: Test-Time Retrieval (Completely Independent — NO ARROW from Training)
+\node[hvinfer, below=15mm of tr_box] (te_box)
+{\textbf{Test-Time Retrieval (Independent Unimodal Inference)}\\[2pt]
 Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies \mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top$};
 
-\node[below=2.5mm of te_box, font=\scriptsize, color=black!75]
-{Strictly Zero Cross-Modal Attention $\;\vert\;$ Zero Inter-Modality Hidden-State Exchange at Test Time};
+\node[below=4.5mm of te_box, font=\scriptsize, color=black!75] (te_annot)
+{No Cross-Modal Attention $\;\vert\;$ No Inter-Modality Hidden-State Exchange at Test Time};
 
 \end{tikzpicture}
 }
