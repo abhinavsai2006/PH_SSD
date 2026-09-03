@@ -14,7 +14,10 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
-\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds, decorations.pathreplacing}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds}
+
+% Input native TikZ conceptual diagrams
+\input{figures/hedo_hvsc_tikz.tex}
 
 \begin{document}
 
@@ -60,6 +63,13 @@ To investigate these challenges, this paper presents HEDO-HVSC, a multimodal sta
     \item \textbf{Controlled Multi-Seed Factorial Benchmark:} We execute an exhaustive 12-run factorial benchmark ($4\text{ model configurations} \times 3\text{ random seeds}: 42, 43, 44$) on the official Flickr8k dataset with frozen ViT-B/16 and RoBERTa-base backbones, accompanied by secondary corruption testing and empirical latency scaling analysis.
 \end{enumerate}
 
+\begin{figure*}[t]
+\centering
+\HEDOArchitectureFigure
+\caption{Overall architectural pipeline of the proposed HEDO-HVSC multimodal state-space framework. Visual patch sequences ($L_I=197$) and textual token sequences ($L_T=64$) are extracted from frozen ViT-B/16 and RoBERTa-base encoders, projected to $d_{\text{model}}=128$, stabilized via HEDO coordinate-momentum dissipation, and processed through custom chunk-wise SSD recurrence blocks ($C=16, d_{\text{state}}=64$). During training, mask-weighted boundary states parameterize Gaussian latent distributions regularized via symmetric KL divergence $\mathcal{D}_{\text{SKL}}$ alongside multi-positive InfoNCE contrastive alignment. At test time, retrieval evaluates deterministic posterior means strictly unimodally with zero cross-modal communication.}
+\label{fig:overall_architecture}
+\end{figure*}
+
 \section{Related Work}
 \label{sec:related_work}
 
@@ -78,71 +88,6 @@ Hamiltonian Neural Networks (HNNs) \cite{greydanus2019hamiltonian} and Lagrangia
 
 \subsection{Variational Representation Learning}
 Variational Autoencoders (VAEs) \cite{kingma2013auto} and the Variational Information Bottleneck (VIB) \cite{alemi2016deep} formalize latent representation learning by optimizing trade-offs between mutual information and compression. In this work, HVSC parameterizes Gaussian latent distributions from recurrent chunk boundary states, using symmetric KL divergence to align cross-modal boundary representations during training.
-
-\begin{figure*}[t]
-\centering
-\begin{tikzpicture}[
-    scale=0.88, transform shape,
-    font=\sffamily\footnotesize,
-    block/.style={draw=black!70, rounded corners=2pt, fill=blue!8, minimum width=3.4cm, minimum height=0.68cm, align=center, line width=0.6pt},
-    frozblock/.style={draw=orange!80!black, rounded corners=2pt, fill=orange!12, minimum width=3.4cm, minimum height=0.68cm, align=center, line width=0.6pt, font=\sffamily\footnotesize\bfseries},
-    hedoblock/.style={draw=green!60!black, rounded corners=2pt, fill=green!10, minimum width=3.4cm, minimum height=0.75cm, align=center, line width=0.6pt},
-    ssddblock/.style={draw=blue!80!black, rounded corners=2pt, fill=blue!12, minimum width=3.4cm, minimum height=0.75cm, align=center, line width=0.6pt, font=\sffamily\footnotesize\bfseries},
-    hvscblock/.style={draw=purple!80!black, rounded corners=2pt, fill=purple!10, minimum width=3.4cm, minimum height=0.75cm, align=center, line width=0.6pt, font=\sffamily\footnotesize\bfseries},
-    embblock/.style={draw=blue!90!black, rounded corners=2pt, fill=blue!20, minimum width=3.0cm, minimum height=0.65cm, align=center, line width=0.8pt, font=\sffamily\footnotesize\bfseries},
-    lossblock/.style={draw=red!80!black, rounded corners=3pt, fill=red!8, minimum width=4.0cm, minimum height=1.5cm, align=center, line width=0.8pt, dashed},
-    arrow/.style={-{Stealth[scale=0.9]}, line width=0.7pt, color=black!75},
-    darrow/.style={{Stealth[scale=0.8]}-{Stealth[scale=0.8]}, line width=0.7pt, color=purple!80!black, dotted}
-]
-
-% Headers
-\node[font=\sffamily\bfseries\normalsize, color=blue!80!black] at (-3.8, 4.4) {Visual Stream (Image Query / Gallery)};
-\node[font=\sffamily\bfseries\normalsize, color=blue!80!black] at (3.8, 4.4) {Textual Stream (Caption Query / Gallery)};
-
-% Left Visual Stream
-\node[block] (img) at (-3.8, 3.7) {Input Image $\mathbf{I} \in \mathbb{R}^{3 \times 224 \times 224}$};
-\node[frozblock, below=0.35cm of img] (vit) {Frozen ViT-B/16 ($L_I=197, d=768$)};
-\node[hedoblock, below=0.35cm of vit] (hedo_i) {Linear Projection $\to d_{\text{model}}=128$\\HEDO: Dissipative Update (Eq. 10--13)};
-\node[ssddblock, below=0.35cm of hedo_i] (ssd_i) {Custom PyTorch SSD Block\\Chunk Continuity ($C=16, d_{\text{state}}=64$)};
-\node[hvscblock, below=0.35cm of ssd_i] (hvsc_i) {HVSC: Boundary Aggregation\\$\mathbf{h}_{\text{bound}, I} \to \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{\sigma}_I^2)$ (Train) / $\boldsymbol{\mu}_I$ (Test)};
-\node[embblock, below=0.35cm of hvsc_i] (emb_i) {Image Embedding $\hat{\mathbf{e}}_I \in \mathbb{S}^{127}$};
-
-% Right Text Stream
-\node[block] (txt) at (3.8, 3.7) {Input Caption $\mathbf{T} \in \mathbb{Z}^{64}$ + Mask $\mathbf{M}_T$};
-\node[frozblock, below=0.35cm of txt] (rob) {Frozen RoBERTa-base ($L_T=64, d=768$)};
-\node[hedoblock, below=0.35cm of rob] (hedo_t) {Linear Projection $\to d_{\text{model}}=128$\\HEDO: Dissipative Update (Eq. 10--13)};
-\node[ssddblock, below=0.35cm of hedo_t] (ssd_t) {Custom PyTorch SSD Block\\Chunk Continuity ($C=16, d_{\text{state}}=64$)};
-\node[hvscblock, below=0.35cm of ssd_t] (hvsc_t) {HVSC: Boundary Aggregation\\$\mathbf{h}_{\text{bound}, T} \to \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)$ (Train) / $\boldsymbol{\mu}_T$ (Test)};
-\node[embblock, below=0.35cm of hvsc_t] (emb_t) {Text Embedding $\hat{\mathbf{e}}_T \in \mathbb{S}^{127}$};
-
-% Center Loss / Alignment Box
-\node[lossblock] (loss) at (0, -2.6) {\textbf{\color{red!80!black}Metric Alignment}\\[2pt]
-\scriptsize \textbf{Training:} Multi-Positive InfoNCE + $\mathcal{D}_{\text{SKL}}$\\[1pt]
-\scriptsize \textbf{Inference:} Cosine $\hat{\mathbf{e}}_I^\top \hat{\mathbf{e}}_T$ (Independent)};
-
-% Connections Left
-\draw[arrow] (img) -- (vit);
-\draw[arrow] (vit) -- (hedo_i);
-\draw[arrow] (hedo_i) -- (ssd_i);
-\draw[arrow] (ssd_i) -- (hvsc_i);
-\draw[arrow] (hvsc_i) -- (emb_i);
-
-% Connections Right
-\draw[arrow] (txt) -- (rob);
-\draw[arrow] (rob) -- (hedo_t);
-\draw[arrow] (hedo_t) -- (ssd_t);
-\draw[arrow] (ssd_t) -- (hvsc_t);
-\draw[arrow] (hvsc_t) -- (emb_t);
-
-% Cross-connections
-\draw[darrow] (hvsc_i) -- node[above, font=\scriptsize\color{purple!80!black}] {Symmetric KL $\mathcal{D}_{\text{SKL}}$ (Train)} (hvsc_t);
-\draw[arrow] (emb_i.east) -- (loss.west);
-\draw[arrow] (emb_t.west) -- (loss.east);
-
-\end{tikzpicture}
-\caption{Overall architectural pipeline of the proposed HEDO-HVSC multimodal state-space framework. Visual patch sequences ($L_I=197$) and textual token sequences ($L_T=64$) are extracted from frozen ViT-B/16 and RoBERTa-base encoders, projected to $d_{\text{model}}=128$, stabilized via HEDO coordinate-momentum dissipation, and processed through custom chunk-wise SSD recurrence blocks ($C=16, d_{\text{state}}=64$). During training, mask-weighted boundary states parameterize Gaussian latent distributions regularized via symmetric KL divergence $\mathcal{D}_{\text{SKL}}$ alongside multi-positive InfoNCE contrastive alignment. At test time, retrieval evaluates deterministic posterior means strictly unimodally with zero cross-modal communication.}
-\label{fig:overall_architecture}
-\end{figure*}
 
 \section{Problem Formulation and Theoretical Background}
 \label{sec:problem_formulation}
@@ -175,44 +120,7 @@ The total energy derivative evaluates to $\dot{\mathcal{H}} = -\nabla_{\mathbf{p
 
 \begin{figure}[t]
 \centering
-\begin{tikzpicture}[
-    scale=0.82, transform shape,
-    font=\sffamily\footnotesize,
-    mainbox/.style={draw=blue!80!black, rounded corners=2pt, fill=blue!10, minimum width=6.5cm, minimum height=0.7cm, align=center, line width=0.7pt, font=\sffamily\footnotesize\bfseries},
-    splitbox/.style={draw=black!70, rounded corners=2pt, minimum width=2.2cm, minimum height=1.1cm, align=center, line width=0.5pt},
-    prepbox/.style={draw=black!70, rounded corners=2pt, fill=gray!8, minimum width=3.7cm, minimum height=1.8cm, align=center, line width=0.5pt},
-    arrow/.style={-{Stealth[scale=0.85]}, line width=0.6pt, color=black!75}
-]
-
-% Master Box
-\node[mainbox] (master) at (0, 3.8) {Official Flickr8k Benchmark ($8{,}000$ Images, $40{,}000$ Captions, 5 caps/img)};
-
-% Split Boxes
-\node[splitbox, fill=green!12, draw=green!60!black] (train) at (-2.6, 2.3) {\textbf{\color{green!50!black}Train Split (75\%)}\\$6{,}000$ images\\$30{,}000$ captions};
-\node[splitbox, fill=orange!12, draw=orange!70!black] (val) at (0, 2.3) {\textbf{\color{orange!60!black}Val Split (12.5\%)}\\$1{,}000$ images\\$5{,}000$ captions};
-\node[splitbox, fill=purple!12, draw=purple!70!black] (test) at (2.6, 2.3) {\textbf{\color{purple!60!black}Held-Out Test (12.5\%)}\\$1{,}000$ images\\$5{,}000$ captions};
-
-% Preprocessing Boxes
-\node[prepbox] (img_prep) at (-1.9, 0.2) {\textbf{\color{blue!80!black}Visual Preprocessing}\\[2pt]
-\scriptsize 1. Resize \& Center Crop: $224 \times 224 \times 3$\\[1pt]
-\scriptsize 2. ImageNet Normalization (mean/std)\\[1pt]
-\scriptsize 3. $16 \times 16$ Patches $\to L_I=196$ + 1 [CLS]\\[1pt]
-\scriptsize 4. Frozen ViT-B/16 $\to \mathbf{X}_I^{(0)} \in \mathbb{R}^{B \times 197 \times 768}$};
-
-\node[prepbox] (txt_prep) at (2.1, 0.2) {\textbf{\color{blue!80!black}Textual Preprocessing}\\[2pt]
-\scriptsize 1. RoBERTa Byte-Pair Encoding (BPE)\\[1pt]
-\scriptsize 2. Truncate / Pad: Fixed $L_T=64$\\[1pt]
-\scriptsize 3. Attention Mask $\mathbf{M}_T \in \{0, 1\}^{B \times 64}$\\[1pt]
-\scriptsize 4. Frozen RoBERTa $\to \mathbf{X}_T^{(0)} \in \mathbb{R}^{B \times 64 \times 768}$};
-
-% Connectors
-\draw[arrow] (master) -- (train);
-\draw[arrow] (master) -- (val);
-\draw[arrow] (master) -- (test);
-\draw[arrow] (train.south) -- ++(0,-0.2) -| (img_prep.north);
-\draw[arrow] (train.south) -- ++(0,-0.2) -| (txt_prep.north);
-
-\end{tikzpicture}
+\HEDODatasetFigure
 \caption{Official Flickr8k dataset partition and modality-specific feature extraction pipeline. The 8,000 photographic images and 40,000 human-annotated captions are partitioned into verified disjoint training (6,000), validation (1,000), and held-out test (1,000) splits with zero cross-split leakage.}
 \label{fig:dataset_pipeline}
 \end{figure}
@@ -243,40 +151,7 @@ accompanied by a binary attention mask $\mathbf{M}_T \in \{0, 1\}^{B \times L_T}
 
 \begin{figure}[t]
 \centering
-\begin{tikzpicture}[
-    scale=0.82, transform shape,
-    font=\sffamily\footnotesize,
-    node distance=0.45cm and 0.45cm,
-    qbox/.style={draw=blue!80!black, rounded corners=2pt, fill=blue!10, minimum width=2.6cm, minimum height=0.7cm, align=center, line width=0.6pt, font=\sffamily\footnotesize\bfseries},
-    pbox/.style={draw=orange!80!black, rounded corners=2pt, fill=orange!12, minimum width=2.6cm, minimum height=0.7cm, align=center, line width=0.6pt, font=\sffamily\footnotesize\bfseries},
-    stepbox/.style={draw=red!70!black, rounded corners=2pt, fill=red!8, minimum width=3.8cm, minimum height=0.95cm, align=center, line width=0.6pt},
-    cstepbox/.style={draw=green!60!black, rounded corners=2pt, fill=green!10, minimum width=3.8cm, minimum height=0.8cm, align=center, line width=0.6pt},
-    outbox/.style={draw=purple!80!black, rounded corners=2pt, fill=purple!12, minimum width=2.8cm, minimum height=0.85cm, align=center, line width=0.7pt, font=\sffamily\footnotesize\bfseries},
-    arrow/.style={-{Stealth[scale=0.85]}, line width=0.6pt, color=black!75}
-]
-
-\node[qbox] (q0) at (0, 2.5) {Coordinate State $\mathbf{q}_0$\\$\mathbf{q}_0 \in \mathbb{R}^{B \times L \times d_{\text{model}}}$};
-\node[pbox] (p0) at (0, 0.5) {Momentum State $\mathbf{p}_0$\\$\mathbf{p}_0 = \tanh(\mathbf{W}_p \mathbf{q}_0)$};
-
-\node[stepbox] (p_step) at (4.0, 0.5) {\textbf{\color{red!70!black}Dissipative Momentum Step}\\[1pt]
-\scriptsize $\mathbf{p}_{t+1} = \mathbf{p}_t(1 - \beta \Delta t) - \Delta t \tanh(\mathbf{W}_q \mathbf{q}_t)$\\[1pt]
-\tiny Damping Factor $(1 - \beta \Delta t) = 0.995 < 1$};
-
-\node[cstepbox] (q_step) at (4.0, 2.5) {\textbf{\color{green!60!black}Discrete Coordinate Update}\\[1pt]
-\scriptsize $\mathbf{q}_{t+1} = \mathbf{q}_t + \gamma \Delta t \, \mathbf{p}_{t+1}$\\[1pt]
-\tiny Perturbation Scale $\gamma=0.1, \Delta t=0.1$};
-
-\node[outbox] (out) at (7.6, 1.5) {Layer Normalization\\[1pt]
-\scriptsize $\text{HEDO}(\mathbf{q}) = \text{LN}(\mathbf{q}_{t+1})$\\[1pt]
-\tiny Energy: $\mathcal{H}_{\text{raw}} \to \mathcal{H}_{\text{HEDO}}$};
-
-\draw[arrow] (q0) -- node[left, font=\scriptsize\color{orange!80!black}] {$\mathbf{W}_p$} (p0);
-\draw[arrow] (p0) -- (p_step);
-\draw[arrow] (q0) -- (q_step);
-\draw[arrow] (p_step) -- (q_step);
-\draw[arrow] (q_step) -| (out);
-
-\end{tikzpicture}
+\HEDOMechanismFigure
 \caption{Computational flow of the Hamiltonian-Inspired Energy Dissipation Operator (HEDO). Coordinate representations $\mathbf{q}_0$ initialize conjugate momenta $\mathbf{p}_0$. Discrete updates execute damped momentum updates ($(1-\beta\Delta t)=0.995$) and discrete coordinate updates before Layer Normalization.}
 \label{fig:hedo_mechanism}
 \end{figure}
@@ -311,45 +186,7 @@ Because $\|\tanh(\cdot)\|_2 \le \sqrt{d_{\text{model}}}$, the contraction factor
 
 \begin{figure}[t]
 \centering
-\begin{tikzpicture}[
-    scale=0.68, transform shape,
-    font=\sffamily\footnotesize,
-    chunkbox/.style={draw=blue!80!black, rounded corners=2pt, fill=blue!8, minimum width=2.2cm, minimum height=1.6cm, align=center, line width=0.6pt},
-    aggbox/.style={draw=purple!80!black, rounded corners=2pt, fill=purple!10, minimum width=7.0cm, minimum height=0.65cm, align=center, line width=0.7pt, font=\sffamily\footnotesize\bfseries},
-    arrow/.style={-{Stealth[scale=0.85]}, line width=0.6pt, color=black!75},
-    statearrow/.style={-{Stealth[scale=0.9]}, line width=1.0pt, color=red!70!black}
-]
-
-\node[chunkbox] (c1) at (-2.8, 1.8) {\textbf{\color{blue!80!black}Chunk $k=1$ ($C=16$)}\\[1pt]
-\scriptsize Tokens $[\mathbf{x}_1, \dots, \mathbf{x}_{16}]$\\[1pt]
-\scriptsize Init: $\mathbf{h}_{\text{start}, 1} = \mathbf{0}$\\[1pt]
-\scriptsize $\mathbf{h}_t = \mathbf{A}\mathbf{h}_{t-1} + \mathbf{u}_t$\\[1pt]
-\textbf{\color{orange!80!black}\scriptsize Bound: $\mathbf{b}_1 = \mathbf{h}_{\text{end}, 1}$}};
-
-\node[chunkbox] (c2) at (0, 1.8) {\textbf{\color{blue!80!black}Chunk $k=2$ ($C=16$)}\\[1pt]
-\scriptsize Tokens $[\mathbf{x}_{17}, \dots, \mathbf{x}_{32}]$\\[1pt]
-\textbf{\color{red!70!black}\scriptsize $\mathbf{h}_{\text{start}, 2} = \mathbf{h}_{\text{end}, 1}$}\\[1pt]
-\scriptsize $\mathbf{h}_t = \mathbf{A}\mathbf{h}_{t-1} + \mathbf{u}_t$\\[1pt]
-\textbf{\color{orange!80!black}\scriptsize Bound: $\mathbf{b}_2 = \mathbf{h}_{\text{end}, 2}$}};
-
-\node[chunkbox] (ck) at (2.8, 1.8) {\textbf{\color{blue!80!black}Chunk $k=K$ ($C=16$)}\\[1pt]
-\scriptsize Tokens $[\mathbf{x}_{(K-1)C+1}, \dots]$\\[1pt]
-\textbf{\color{red!70!black}\scriptsize $\mathbf{h}_{\text{start}, K} = \mathbf{h}_{\text{end}, K-1}$}\\[1pt]
-\scriptsize $\mathbf{h}_t = \mathbf{A}\mathbf{h}_{t-1} + \mathbf{u}_t$\\[1pt]
-\textbf{\color{orange!80!black}\scriptsize Bound: $\mathbf{b}_K = \mathbf{h}_{\text{end}, K}$}};
-
-\node[aggbox] (agg) at (0, 0.2) {Mask-Weighted Boundary Aggregation: $\mathbf{h}_{\text{bound}} = \frac{\sum_{k=1}^K m_k \mathbf{b}_k}{\sum_{k=1}^K m_k + \epsilon} \in \mathbb{R}^{B \times d_{\text{state}}}$ (Zero Padding Bias)};
-
-% State continuity arrows
-\draw[statearrow] (c1.east) -- node[above, font=\tiny\bfseries\color{red!70!black}] {NO RESET} (c2.west);
-\draw[statearrow] (c2.east) -- node[above, font=\tiny\bfseries\color{red!70!black}] {NO RESET} (ck.west);
-
-% Downward to aggregation
-\draw[arrow] (c1.south) -- ++(0,-0.35) -| (-2.8, 0.55);
-\draw[arrow] (c2.south) -- (0, 0.55);
-\draw[arrow] (ck.south) -- ++(0,-0.35) -| (2.8, 0.55);
-
-\end{tikzpicture}
+\HEDOChunkFigure
 \caption{State-continuous chunk-wise SSD-style recurrence with boundary state extraction. Recurrent hidden states propagate continuously across chunk boundaries ($\mathbf{h}_{\text{start}, k} = \mathbf{h}_{\text{end}, k-1}$) with zero state resets, while mask-weighted aggregation prevents zero-padding bias.}
 \label{fig:chunk_recurrence}
 \end{figure}
@@ -394,37 +231,7 @@ During training, latent representations are sampled via the reparameterization t
 
 \begin{figure*}[t]
 \centering
-\begin{tikzpicture}[
-    scale=0.88, transform shape,
-    font=\sffamily\footnotesize,
-    stream/.style={draw=blue!70!black, rounded corners=2pt, fill=blue!8, minimum width=4.0cm, minimum height=0.7cm, align=center, line width=0.6pt},
-    optbox/.style={draw=red!80!black, rounded corners=2pt, fill=red!8, minimum width=6.0cm, minimum height=0.85cm, align=center, line width=0.7pt},
-    infstream/.style={draw=green!60!black, rounded corners=2pt, fill=green!10, minimum width=4.0cm, minimum height=0.7cm, align=center, line width=0.6pt},
-    infopt/.style={draw=blue!80!black, rounded corners=2pt, fill=blue!12, minimum width=6.0cm, minimum height=0.75cm, align=center, line width=0.7pt, font=\sffamily\footnotesize\bfseries},
-    arrow/.style={-{Stealth[scale=0.85]}, line width=0.6pt, color=black!75}
-]
-
-% Top: Training Section
-\node[font=\sffamily\bfseries\normalsize, color=blue!80!black] at (0, 3.5) {A. Training Phase: Stochastic Reparameterization \& Joint Dual-Loss Alignment};
-\node[stream] (tr_i) at (-3.8, 2.6) {Visual Pipeline $\to \mathbf{z}_I \sim \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{\sigma}_I^2)$\\Latent Coupled Embedding $\mathbf{e}_I$};
-\node[stream] (tr_t) at (3.8, 2.6) {Textual Pipeline $\to \mathbf{z}_T \sim \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)$\\Latent Coupled Embedding $\mathbf{e}_T$};
-\node[optbox] (tr_loss) at (0, 1.3) {\textbf{\color{red!80!black}Joint Objective: $\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$}\\[1pt]
-\scriptsize Multi-Positive Contrastive Ranking (5:1) + Symmetric FP32 KL Regularization};
-
-\draw[arrow] (tr_i.south) -- ++(0,-0.3) -| (-2.0, 1.75);
-\draw[arrow] (tr_t.south) -- ++(0,-0.3) -| (2.0, 1.75);
-
-% Bottom: Inference Section
-\node[font=\sffamily\bfseries\normalsize, color=green!60!black] at (0, 0.0) {B. Test-Time Retrieval: Deterministic Unimodal Evaluation (Zero Cross-Modal Leakage)};
-\node[infstream] (inf_i) at (-3.8, -0.9) {\textbf{Image Query $\mathbf{I}$ (Deterministic $\boldsymbol{\mu}_I$)}\\$\hat{\mathbf{e}}_I = \text{Norm}(\mathbf{h}_{\text{pool}, I} + \alpha \mathbf{W}_{\text{out}}\boldsymbol{\mu}_I)$};
-\node[infstream] (inf_t) at (3.8, -0.9) {\textbf{Text Gallery $\mathbf{T}$ (Deterministic $\boldsymbol{\mu}_T$)}\\$\hat{\mathbf{e}}_T = \text{Norm}(\mathbf{h}_{\text{pool}, T} + \alpha \mathbf{W}_{\text{out}}\boldsymbol{\mu}_T)$};
-\node[infopt] (inf_eval) at (0, -2.2) {Cosine Similarity Matrix $\mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top \to$ R@1, R@5, R@10, MedR\\[1pt]
-\scriptsize \color{black!70} Strictly Independent Encoders $\cdot$ Zero Cross-Modal Attention $\cdot$ Zero Inter-Modality Recurrence};
-
-\draw[arrow] (inf_i.south) -- ++(0,-0.3) -| (-2.0, -1.8);
-\draw[arrow] (inf_t.south) -- ++(0,-0.3) -| (2.0, -1.8);
-
-\end{tikzpicture}
+\HEDOInferenceFigure
 \caption{Comparison of the joint training regime and test-time retrieval inference. During training (top), visual and textual streams parameterize latent Gaussian distributions regularized via symmetric KL divergence $\mathcal{D}_{\text{SKL}}$ alongside multi-positive InfoNCE loss. During test retrieval (bottom), stochastic sampling is omitted and deterministic posterior means are evaluated completely independently with zero cross-modal attention or inter-modality state exchange.}
 \label{fig:train_inference}
 \end{figure*}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 21:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 21:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -773,7 +773,7 @@ z/libraries\tikzlibrarybackgrounds.code.tex
 File: tikzlibrarybackgrounds.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@layerbox@background=\box71
 \pgf@layerboxsaved@background=\box72
-)
+) (figures/hedo_hvsc_tikz.tex)
 (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
 tex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
@@ -781,20 +781,20 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 ) (main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
 
 -- Lines per column: 58 (exact).
 
@@ -826,18 +826,18 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 Package pgfplots notification 'compat/show suggested version=true': document ha
 s been generated with the most recent feature set (\pgfplotsset{compat=1.18}).
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 30.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 33.
 
 (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 30.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 33.
 
 
 (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Underfull \hbox (badness 10000) in paragraph at lines 45--46
+Underfull \hbox (badness 10000) in paragraph at lines 48--49
 []\OT1/ptm/m/n/10 To mit-i-gate quadratic scal-ing, linear-time se-quence
  []
 
@@ -846,77 +846,77 @@ dab/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}
 
 
 ]
-Underfull \hbox (badness 3049) in paragraph at lines 58--59
+Underfull \hbox (badness 3049) in paragraph at lines 61--62
 []\OT1/ptm/b/n/10 State-Continuous Chunk-Wise SSD-Style Re-cur-
  []
 
 
-Underfull \hbox (badness 3250) in paragraph at lines 60--61
+Underfull \hbox (badness 3250) in paragraph at lines 63--64
 \OT1/ptm/m/n/10 ex-e-cute an ex-haus-tive 12-run fac-to-rial bench-mark
  []
 
 
-Underfull \hbox (badness 2951) in paragraph at lines 77--78
+Underfull \hbox (badness 2951) in paragraph at lines 87--88
 []\OT1/ptm/m/n/10 Hamiltonian Neu-ral Net-works (HNNs) [20] and La-
  []
 
-LaTeX Font Info:    Trying to load font information for OT1+phv on input line 9
-9.
-(C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1phv.fd
-File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
-)
 [2]
-Underfull \hbox (badness 10000) in paragraph at lines 173--175
+Underfull \hbox (badness 10000) in paragraph at lines 118--120
 \OT1/ptm/m/n/10 The to-tal en-ergy deriva-tive eval-u-ates to $[] \OT1/cmr/m/n/
 10 =
  []
 
 
-Underfull \hbox (badness 1365) in paragraph at lines 173--175
+Underfull \hbox (badness 1365) in paragraph at lines 118--120
 \OT1/ptm/m/n/10 In our ar-chi-tec-ture, we adapt these con-tin-u-ous phys-i-cal
 
  []
 
 
-Underfull \hbox (badness 5388) in paragraph at lines 227--228
+Overfull \hbox (173.94475pt too wide) in paragraph at lines 123--124
+ [][] 
+ []
+
+[3]
+Underfull \hbox (badness 5388) in paragraph at lines 135--136
 \OT1/ptm/m/n/10 momentum dis-si-pa-tive up-dates to sup-press high-
  []
 
 
-Underfull \hbox (badness 1558) in paragraph at lines 228--229
+Underfull \hbox (badness 1558) in paragraph at lines 136--137
 \OT1/ptm/b/n/10 Cou-pling (HVSC): \OT1/ptm/m/n/10 Se-quences are par-ti-tioned 
 into
  []
 
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 284--284
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--159
  \OT1/ptm/m/it/10 C. Hamiltonian-Inspired En-ergy Dis-si-pa-tion Op-er-a-tor
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 310--311
+Underfull \hbox (badness 10000) in paragraph at lines 185--186
 []\OT1/ptm/b/n/10 Empirical Di-ag-nos-tic Tra-jec-tory: \OT1/ptm/m/n/10 In pre-
 training
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 310--311
+Underfull \hbox (badness 10000) in paragraph at lines 185--186
 \OT1/ptm/m/n/10 di-ag-nos-tic eval-u-a-tion, un-forced multi-step sim-u-la-tion
 
  []
 
 
-Underfull \hbox (badness 5563) in paragraph at lines 310--311
+Underfull \hbox (badness 5563) in paragraph at lines 185--186
 \OT1/ptm/m/n/10 on im-age patch rep-re-sen-ta-tions yielded the tra-jec-tory
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 310--311
+Underfull \hbox (badness 10000) in paragraph at lines 185--186
 \OT1/ptm/m/n/10 while text rep-re-sen-ta-tions yielded $\OMS/cmsy/m/n/10 H 2
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 310--311
+Underfull \hbox (badness 10000) in paragraph at lines 185--186
 \OT1/cmr/m/n/10 [5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 849\OML/cmm/m/it/10 ; \OT1/
 cmr/m/n/10 5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 796\OML/cmm/m/it/10 ; \OT1/cmr/m/
 n/10 5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 774\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 5
@@ -926,51 +926,50 @@ t/10 :\OT1/cmr/m/n/10 892]$\OT1/ptm/m/n/10 . While
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 310--311
+Underfull \hbox (badness 10000) in paragraph at lines 185--186
 \OT1/ptm/m/n/10 HEDO changes rep-re-sen-ta-tion en-ergy sub-stan-tially
  []
 
+
+Overfull \hbox (38.00316pt too wide) in paragraph at lines 189--190
+ [][] 
+ []
+
 [4]
-Underfull \hbox (badness 3088) in paragraph at lines 384--385
+Underfull \hbox (badness 3088) in paragraph at lines 221--222
 []\OT1/ptm/m/n/10 The ag-gre-gated bound-ary rep-re-sen-ta-tion pa-ram-e-ter-iz
 es
  []
 
-
-Overfull \hbox (31.78995pt too wide) in paragraph at lines 503--512
+[5]
+Overfull \hbox (31.78995pt too wide) in paragraph at lines 310--319
  [][] 
  []
 
 
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[5]
-Underfull \hbox (badness 4120) in paragraph at lines 517--518
+Underfull \hbox (badness 4120) in paragraph at lines 324--325
 []\OT1/ptm/m/n/10 The vi-sual back-bone is a pre-trained Vi-sion Trans-
  []
 
 
-Underfull \hbox (badness 1629) in paragraph at lines 517--518
+Underfull \hbox (badness 1629) in paragraph at lines 324--325
 \OT1/ptm/m/n/10 RoBERTa-base. Both back-bones are kept strictly frozen
  []
 
 
-Overfull \hbox (68.18224pt too wide) in paragraph at lines 526--550
+Overfull \hbox (68.18224pt too wide) in paragraph at lines 333--357
  [][] 
  []
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-Overfull \hbox (31.66022pt too wide) detected at line 560
+[6]
+Overfull \hbox (31.66022pt too wide) detected at line 367
 [][] \OT1/cmr/m/n/10 = []
  []
 
-Package pgfplots info on input line 590: Using 'lua backend=false' for axis: x 
+Package pgfplots info on input line 397: Using 'lua backend=false' for axis: x 
 coord trafo unsupported.
-[6]
-Underfull \hbox (badness 10000) in paragraph at lines 632--633
+
+Underfull \hbox (badness 10000) in paragraph at lines 439--440
 []\OT1/ptm/b/n/10 Seed 44: \OT1/ptm/m/n/10 Base-line $\OT1/cmr/m/n/10 48\OML/cm
 m/m/it/10 :\OT1/cmr/m/n/10 61% \OMS/cmsy/m/n/10 !$ \OT1/ptm/m/n/10 Full $\OT1/c
 mr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 93%$
@@ -979,47 +978,44 @@ mr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 93%$
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-Package pgfplots info on input line 681: Using 'lua backend=false' for axis: x 
+Package pgfplots info on input line 488: Using 'lua backend=false' for axis: x 
 coord trafo unsupported.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 [7]
-Overfull \hbox (41.01425pt too wide) in paragraph at lines 773--783
+Overfull \hbox (41.01425pt too wide) in paragraph at lines 580--590
  [][] 
  []
 
 
-Underfull \hbox (badness 5008) in paragraph at lines 792--793
+Underfull \hbox (badness 5008) in paragraph at lines 599--600
 []\OT1/ptm/b/n/10 Clean Re-trieval Equiv-a-lence: \OT1/ptm/m/n/10 Full HEDO-HVS
 C
  []
 
 
-Underfull \hbox (badness 1939) in paragraph at lines 793--794
+Underfull \hbox (badness 1939) in paragraph at lines 600--601
 []\OT1/ptm/b/n/10 Ablation Dy-nam-ics: \OT1/ptm/m/n/10 The w/o HVSC con-fig-u-r
 a-tion
  []
 
 
-Underfull \hbox (badness 4454) in paragraph at lines 793--794
+Underfull \hbox (badness 4454) in paragraph at lines 600--601
 \OT1/ptm/m/n/10 achieves $\OT1/cmr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 4
 3% \OMS/cmsy/m/n/10 ^^F \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 29%$
 \OT1/ptm/m/n/10 , in-di-cat-ing that HEDO
  []
 
-(main.bbl [8]) [9] (main.aux)
+[8] (main.bbl) [9] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 26773 strings out of 467871
- 686419 string characters out of 5418376
- 1225868 words of memory out of 5000000
- 55184 multiletter control sequences out of 15000+600000
- 701911 words of font info for 170 fonts, out of 8000000 for 9000
+ 26677 strings out of 467871
+ 683963 string characters out of 5418376
+ 1218718 words of memory out of 5000000
+ 55096 multiletter control sequences out of 15000+600000
+ 687207 words of font info for 152 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,19n,94p,2428b,2742s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
@@ -1030,41 +1026,38 @@ type1/public/amsfonts/cm/cmbx8.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTe
 X/fonts/type1/public/amsfonts/cm/cmbx9.pfb><C:/Users/mndab/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/mndab/AppData/Loc
 al/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><C:/Users/mnda
-b/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/U
-sers/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi5.p
-fb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm
-/cmmi6.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
-fonts/cm/cmmi7.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/pu
-blic/amsfonts/cm/cmmi8.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/
-type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTe
-X/fonts/type1/public/amsfonts/cm/cmmib10.pfb><C:/Users/mndab/AppData/Local/Prog
-rams/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb><C:/Users/mndab/AppD
-ata/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/mn
-dab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/U
-sers/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pf
-b><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
-cmr7.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
-nts/cm/cmr8.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/publi
-c/amsfonts/cm/cmr9.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type
-1/public/amsfonts/cm/cmsy10.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/f
-onts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users/mndab/AppData/Local/Programs/
-MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/mndab/AppData/Local/P
-rograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/mndab/AppData
-/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/mndab
-/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Use
-rs/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam
-10.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
-s/symbols/msbm10.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/
-public/amsfonts/symbols/msbm7.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX
-/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiK
-TeX/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Users/mndab/AppData/Local/Programs/
-MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/mndab/AppData/Local/Programs/
-MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/mndab/AppData/Local/Programs
-/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/mndab/AppData/Local/Programs
-/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (9 pages, 487499 bytes).
+b/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex8.pfb><
+C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmm
+i10.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
+ts/cm/cmmi5.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/publi
+c/amsfonts/cm/cmmi6.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/typ
+e1/public/amsfonts/cm/cmmi7.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/f
+onts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/mndab/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/mndab/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmmib10.pfb><C:/Users/mndab/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb><C:/Use
+rs/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb
+><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
+mr5.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
+ts/cm/cmr6.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/amsfonts/cm/cmr7.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1
+/public/amsfonts/cm/cmr8.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/font
+s/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/mndab/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/mndab/AppData/Local/Prog
+rams/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/mndab/AppData/Lo
+cal/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/mndab/Ap
+pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/
+mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C
+:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols
+/msam10.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
+sfonts/symbols/msbm10.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/urw/times/utmb8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/urw/times/utmbi8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/
+type1/urw/times/utmr8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/
+type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (9 pages, 454156 bytes).
 PDF statistics:
- 216 PDF objects out of 1000 (max. 8388607)
+ 201 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
