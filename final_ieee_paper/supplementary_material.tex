@@ -21,18 +21,18 @@
 
 \section{Complete Per-Seed Benchmark Evaluation}
 \label{sec:supp_per_seed_results}
-To ensure thorough scientific transparency and enable exact experimental reproducibility, this section documents all individual seed runs across the four factorial configurations on the official Flickr8k held-out test set ($1{,}000$ images, $5{,}000$ captions). Table~\ref{tab:supp_per_seed_retrieval} details the complete directional recall metrics (Image-to-Text and Text-to-Image at top-1, top-5, and top-10) alongside Validation and Test Mean Recall. Table~\ref{tab:supp_compute_provenance} summarizes the corresponding training wall-clock time and peak GPU memory allocation.
+To ensure thorough scientific transparency and enable exact experimental reproducibility, this section documents all individual seed runs across the four factorial configurations on the standard Flickr8k held-out test set ($1{,}000$ images, $5{,}000$ captions). Table~\ref{tab:supp_per_seed_retrieval} details the complete directional recall metrics (Image-to-Text and Text-to-Image at top-1, top-5, and top-10) alongside Validation and Test Mean Recall. Table~\ref{tab:supp_compute_provenance} summarizes the corresponding training wall-clock time and peak GPU memory allocation.
 
 \begin{table*}[!t]
 \centering
-\caption{Complete 12-Run Per-Seed Test Retrieval Metrics and Validation Mean Recall on Official Flickr8k Test Split. I2T and T2I denote image-to-text and text-to-image retrieval, respectively; all values are reported as percentages (\%).}
+\caption{Complete 12-Run Per-Seed Test Retrieval Metrics and Validation Mean Recall on the Standard Flickr8k Test Split. I2T and T2I denote image-to-text and text-to-image retrieval, respectively; all values are reported as percentages (\%).}
 \label{tab:supp_per_seed_retrieval}
 \small
 \begin{tabular}{lcccccccccc}
 \toprule
 \textbf{Model Configuration} & \textbf{Seed} & \textbf{Best Ep.} & \textbf{Val MR} & \textbf{I2T@1} & \textbf{I2T@5} & \textbf{I2T@10} & \textbf{T2I@1} & \textbf{T2I@5} & \textbf{T2I@10} & \textbf{Test MR} \\
 \midrule
-\multirow{3}{*}{SSD Baseline} & 42 & 8 & 48.03 & 27.00 & 57.60 & 70.10 & 21.24 & 50.16 & 65.18 & 48.55 \\
+\multirow{3}{*}{Custom SSD-Style Baseline} & 42 & 8 & 48.03 & 27.00 & 57.60 & 70.10 & 21.24 & 50.16 & 65.18 & 48.55 \\
  & 43 & 8 & 48.01 & 26.30 & 56.20 & 68.60 & 19.94 & 49.78 & 64.68 & 47.58 \\
  & 44 & 8 & 47.78 & 26.30 & 58.10 & 71.60 & 20.18 & 49.74 & 65.74 & 48.61 \\
 \midrule
@@ -60,7 +60,7 @@ To ensure thorough scientific transparency and enable exact experimental reprodu
 \toprule
 \textbf{Model Configuration} & \textbf{Seed} & \textbf{Best Ep.} & \textbf{Train Time} & \textbf{Peak VRAM} \\
 \midrule
-\multirow{3}{*}{SSD Baseline} & 42 & 8 & $17.51\text{ min}$ & $1875.76\text{ MB}$ \\
+\multirow{3}{*}{Custom SSD-Style Baseline} & 42 & 8 & $17.51\text{ min}$ & $1875.76\text{ MB}$ \\
  & 43 & 8 & $17.47\text{ min}$ & $1878.22\text{ MB}$ \\
  & 44 & 8 & $17.47\text{ min}$ & $1877.78\text{ MB}$ \\
 \midrule

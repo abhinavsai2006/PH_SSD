@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 23:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 23:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -893,6 +893,17 @@ Underfull \hbox (badness 2799) in paragraph at lines 120--122
  []
 
 
+Underfull \hbox (badness 1546) in paragraph at lines 120--122
+\OT1/ptm/m/n/10 de-cay for the pro-posed dis-crete learned HEDO up-date.
+ []
+
+
+Underfull \hbox (badness 1365) in paragraph at lines 120--122
+\OT1/ptm/m/n/10 In our ar-chi-tec-ture, we adapt these con-tin-u-ous phys-i-cal
+
+ []
+
+
 Underfull \hbox (badness 1558) in paragraph at lines 131--132
 \OT1/ptm/b/n/10 Cou-pling (HVSC): \OT1/ptm/m/n/10 Se-quences are par-ti-tioned 
 into
@@ -947,6 +958,9 @@ es
  []
 
 [5]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
 Overfull \hbox (31.78995pt too wide) in paragraph at lines 305--314
  [][] 
  []
@@ -956,13 +970,20 @@ LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 3
 (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
+Underfull \hbox (badness 4120) in paragraph at lines 324--325
+[]\OT1/ptm/m/n/10 The vi-sual back-bone is a pre-trained Vi-sion Trans-
+ []
+
 [6]
 Underfull \hbox (badness 2103) in paragraph at lines 356--357
 []\OT1/ptm/m/n/10 Our bench-mark eval-u-ates four fac-to-rial con-fig-u-ra-tion
 s
  []
 
-[7]
+
+Underfull \vbox (badness 5726) has occurred while \output is active []
+
+ [7]
 Overfull \hbox (31.66022pt too wide) detected at line 365
 [][] \OT1/cmr/m/n/10 = []
  []
@@ -976,45 +997,41 @@ m/m/it/10 :\OT1/cmr/m/n/10 61% \OMS/cmsy/m/n/10 !$ \OT1/ptm/m/n/10 Full $\OT1/c
 mr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 93%$
  []
 
+
+Overfull \hbox (2.0765pt too wide) in paragraph at lines 459--469
+ [][] 
+ []
+
 Package pgfplots info on input line 489: Using 'lua backend=false' for axis: x 
 coord trafo unsupported.
-
+[8]
 Underfull \hbox (badness 1472) in paragraph at lines 513--514
 \OT1/ptm/m/n/10 with batch size $\OML/cmm/m/it/10 B \OT1/cmr/m/n/10 = 16$ \OT1/
 ptm/m/n/10 (Ta-ble V[] and Fig. 8[]). For
  []
 
-[8]
-Overfull \hbox (41.01425pt too wide) in paragraph at lines 581--591
- [][] 
- []
 
-
-Underfull \hbox (badness 5008) in paragraph at lines 600--601
+Underfull \hbox (badness 5008) in paragraph at lines 611--612
 []\OT1/ptm/b/n/10 Clean Re-trieval Equiv-a-lence: \OT1/ptm/m/n/10 Full HEDO-HVS
 C
  []
 
+[9] (main.bbl [10]) [11
 
-Underfull \hbox (badness 1939) in paragraph at lines 601--602
-[]\OT1/ptm/b/n/10 Ablation Dy-nam-ics: \OT1/ptm/m/n/10 The w/o HVSC con-fig-u-r
-a-tion
- []
-
-[9] (main.bbl) [10] (main.aux)
+] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 27008 strings out of 467871
- 689548 string characters out of 5418376
- 1224981 words of memory out of 5000000
+ 27009 strings out of 467871
+ 689561 string characters out of 5418376
+ 1223925 words of memory out of 5000000
  55419 multiletter control sequences out of 15000+600000
- 685508 words of font info for 152 fonts, out of 8000000 for 9000
+ 686615 words of font info for 153 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,19n,94p,2428b,2736s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,19n,94p,2427b,2736s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmbx10.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmbx7.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/pu
@@ -1051,9 +1068,9 @@ rograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Users/mndab/AppData
 i8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utm
 r8a.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utm
 ri8a.pfb>
-Output written on main.pdf (10 pages, 448094 bytes).
+Output written on main.pdf (11 pages, 454661 bytes).
 PDF statistics:
- 199 PDF objects out of 1000 (max. 8388607)
+ 202 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
