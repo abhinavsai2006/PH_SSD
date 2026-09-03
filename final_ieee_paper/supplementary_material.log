@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 23:33
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 23:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -310,7 +310,7 @@ Package microtype Info: No adjustment of character kerning.
 File: mt-ptm.cfg 2006/04/20 v1.7 microtype config. file: Times (RS)
 )
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 2
-0.
+1.
 
 (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
@@ -319,7 +319,7 @@ File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msa on input line 26.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 27.
 
 
 (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
@@ -328,7 +328,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 26.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 27.
 
 
 (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
@@ -337,17 +337,17 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 (C:\Users\mndab\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
-Overfull \hbox (5.75938pt too wide) in paragraph at lines 33--54
+Overfull \hbox (5.75938pt too wide) in paragraph at lines 34--55
  [][] 
  []
 
 
-Overfull \hbox (57.17142pt too wide) in paragraph at lines 61--82
+Overfull \hbox (57.17142pt too wide) in paragraph at lines 62--83
  [][] 
  []
 
 
-Underfull \hbox (badness 3281) in paragraph at lines 91--92
+Underfull \hbox (badness 3281) in paragraph at lines 92--93
 []\OT1/ptm/b/n/10 (+20) Pretrained Model Weights: \OT1/pcr/m/n/10 timm \OT1/ptm
 /m/n/10 (+20) Vi-sion Trans-
  []
@@ -368,7 +368,7 @@ L3 programming layer <2025-12-24>
 Here is how much of TeX's memory you used:
  5438 strings out of 467871
  88767 string characters out of 5418376
- 545819 words of memory out of 5000000
+ 545788 words of memory out of 5000000
  34167 multiletter control sequences out of 15000+600000
  671423 words of font info for 184 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -384,7 +384,7 @@ type1/public/amsfonts/cm/cmr7.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX
 ta/Local/Programs/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/mndab/App
 Data/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/mndab/App
 Data/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb>
-Output written on supplementary_material.pdf (2 pages, 120057 bytes).
+Output written on supplementary_material.pdf (2 pages, 119884 bytes).
 PDF statistics:
  60 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
