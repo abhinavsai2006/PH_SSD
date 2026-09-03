@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  4 SEP 2026 00:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  4 SEP 2026 00:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -884,7 +884,7 @@ Underfull \hbox (badness 6808) in paragraph at lines 68--69
 
 
 Underfull \hbox (badness 2951) in paragraph at lines 85--86
-[]\OT1/ptm/m/n/10 Hamiltonian Neu-ral Net-works (HNNs) [21] and La-
+[]\OT1/ptm/m/n/10 Hamiltonian Neu-ral Net-works (HNNs) [20] and La-
  []
 
 [2]
@@ -920,38 +920,38 @@ Underfull \hbox (badness 10000) in paragraph at lines 158--158
  []
 
 [3]
-Underfull \hbox (badness 3492) in paragraph at lines 169--170
+Underfull \hbox (badness 3492) in paragraph at lines 165--166
 []\OT1/ptm/m/n/10 The dis-crete dis-si-pa-tive up-date in-te-grates coordinate-
 
  []
 
 
-Underfull \vbox (badness 1122) has occurred while \output is active []
+Underfull \vbox (badness 1189) has occurred while \output is active []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 180--181
+Underfull \hbox (badness 10000) in paragraph at lines 176--177
 []\OT1/ptm/b/n/10 Empirical Di-ag-nos-tic Tra-jec-tory: \OT1/ptm/m/n/10 In pre-
 training
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 180--181
+Underfull \hbox (badness 10000) in paragraph at lines 176--177
 \OT1/ptm/m/n/10 di-ag-nos-tic eval-u-a-tion, un-forced multi-step sim-u-la-tion
 
  []
 
 
-Underfull \hbox (badness 5563) in paragraph at lines 180--181
+Underfull \hbox (badness 5563) in paragraph at lines 176--177
 \OT1/ptm/m/n/10 on im-age patch rep-re-sen-ta-tions yielded the tra-jec-tory
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 180--181
+Underfull \hbox (badness 10000) in paragraph at lines 176--177
 \OT1/ptm/m/n/10 while text rep-re-sen-ta-tions yielded $\OMS/cmsy/m/n/10 H 2
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 180--181
+Underfull \hbox (badness 10000) in paragraph at lines 176--177
 \OT1/cmr/m/n/10 [5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 849\OML/cmm/m/it/10 ; \OT1/
 cmr/m/n/10 5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 796\OML/cmm/m/it/10 ; \OT1/cmr/m/
 n/10 5\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 774\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 5
@@ -961,75 +961,75 @@ t/10 :\OT1/cmr/m/n/10 892]$\OT1/ptm/m/n/10 . While HEDO
  []
 
 
-Underfull \hbox (badness 2837) in paragraph at lines 180--181
+Underfull \hbox (badness 2837) in paragraph at lines 176--177
 \OT1/ptm/m/n/10 changes rep-re-sen-ta-tion en-ergy sub-stan-tially, the dis-cre
 te
  []
 
 [4]
-Underfull \hbox (badness 3088) in paragraph at lines 211--212
+Underfull \hbox (badness 3088) in paragraph at lines 207--208
 []\OT1/ptm/m/n/10 The ag-gre-gated bound-ary rep-re-sen-ta-tion pa-ram-e-ter-iz
 es
  []
 
 
-Overfull \hbox (12.28482pt too wide) detected at line 236
+Overfull \hbox (12.28482pt too wide) detected at line 232
 []
  []
 
 
-Overfull \hbox (31.78995pt too wide) in paragraph at lines 286--295
+Overfull \hbox (31.78995pt too wide) in paragraph at lines 282--291
  [][] 
  []
 
 
-Underfull \hbox (badness 1642) in paragraph at lines 305--306
+Underfull \hbox (badness 1642) in paragraph at lines 301--302
 \OT1/ptm/m/n/10 (\OT1/pcr/m/n/10 timm/vit_base_patch16_224\OT1/ptm/m/n/10 , $\O
 T1/cmr/m/n/10 85\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 80[]$ \OT1/ptm/m/n/10 pa-ram-
 e-ters,
  []
 
 [5]
-Underfull \hbox (badness 2103) in paragraph at lines 337--338
+Underfull \hbox (badness 2103) in paragraph at lines 333--334
 []\OT1/ptm/m/n/10 Our bench-mark eval-u-ates four fac-to-rial con-fig-u-ra-tion
 s
  []
 
 
-Overfull \hbox (31.66022pt too wide) detected at line 346
+Overfull \hbox (31.66022pt too wide) detected at line 342
 [][] \OT1/cmr/m/n/10 = []
  []
 
 [6]
-Package pgfplots info on input line 376: Using 'lua backend=false' for axis: x 
+Package pgfplots info on input line 372: Using 'lua backend=false' for axis: x 
 coord trafo unsupported.
 
-Underfull \hbox (badness 10000) in paragraph at lines 418--419
+Underfull \hbox (badness 10000) in paragraph at lines 414--415
 []\OT1/ptm/b/n/10 Seed 44: \OT1/ptm/m/n/10 Base-line $\OT1/cmr/m/n/10 48\OML/cm
 m/m/it/10 :\OT1/cmr/m/n/10 61% \OMS/cmsy/m/n/10 !$ \OT1/ptm/m/n/10 Full $\OT1/c
 mr/m/n/10 48\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 93%$
  []
 
 
-Overfull \hbox (2.0765pt too wide) in paragraph at lines 440--450
+Overfull \hbox (2.0765pt too wide) in paragraph at lines 436--446
  [][] 
  []
 
-Package pgfplots info on input line 470: Using 'lua backend=false' for axis: x 
+Package pgfplots info on input line 466: Using 'lua backend=false' for axis: x 
 coord trafo unsupported.
 
-Underfull \hbox (badness 1472) in paragraph at lines 494--495
+Underfull \hbox (badness 1472) in paragraph at lines 490--491
 \OT1/ptm/m/n/10 with batch size $\OML/cmm/m/it/10 B \OT1/cmr/m/n/10 = 16$ \OT1/
 ptm/m/n/10 (Ta-ble V[] and Fig. 5[]). For
  []
 
 [7]
-Overfull \hbox (2.68185pt too wide) in paragraph at lines 565--583
+Overfull \hbox (2.68185pt too wide) in paragraph at lines 561--579
  [][] 
  []
 
 
-Underfull \hbox (badness 5008) in paragraph at lines 592--593
+Underfull \hbox (badness 5008) in paragraph at lines 588--589
 []\OT1/ptm/b/n/10 Clean Re-trieval Equiv-a-lence: \OT1/ptm/m/n/10 Full HEDO-HVS
 C
  []
@@ -1043,13 +1043,13 @@ L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 26787 strings out of 467871
- 686167 string characters out of 5418376
- 1228768 words of memory out of 5000000
- 55196 multiletter control sequences out of 15000+600000
+ 26786 strings out of 467871
+ 686155 string characters out of 5418376
+ 1228764 words of memory out of 5000000
+ 55195 multiletter control sequences out of 15000+600000
  687130 words of font info for 155 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,19n,94p,2427b,2736s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,19n,94p,2410b,2736s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmbx10.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmbx7.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/pu
@@ -1084,7 +1084,7 @@ ers/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Us
 ers/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/U
 sers/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/U
 sers/mndab/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (10 pages, 428796 bytes).
+Output written on main.pdf (10 pages, 430492 bytes).
 PDF statistics:
  194 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
