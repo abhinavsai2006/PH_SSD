@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 23:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.27)  3 SEP 2026 23:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -368,7 +368,7 @@ L3 programming layer <2025-12-24>
 Here is how much of TeX's memory you used:
  5428 strings out of 467871
  88666 string characters out of 5418376
- 545805 words of memory out of 5000000
+ 545777 words of memory out of 5000000
  34166 multiletter control sequences out of 15000+600000
  670084 words of font info for 179 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -384,7 +384,7 @@ type1/public/amsfonts/cm/cmr7.pfb><C:/Users/mndab/AppData/Local/Programs/MiKTeX
 ta/Local/Programs/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/mndab/App
 Data/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/mndab/App
 Data/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb>
-Output written on supplementary_material.pdf (2 pages, 119639 bytes).
+Output written on supplementary_material.pdf (2 pages, 119629 bytes).
 PDF statistics:
  60 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
