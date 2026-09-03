@@ -1,30 +1,31 @@
 % ==============================================================================
 % HEDO-HVSC CONCEPTUAL DIAGRAMS — 100% NATIVE LATEX TIKZ
 % Clean, uncrowded architecture diagrams with zero text-in-node bloat
-% Strict geometric alignment, no overlapping boxes, restrained professional IEEE colors
+% Strict geometric alignment, explicit top-down junction topology, no side-entry errors
 % ==============================================================================
 
 \tikzset{
-  hvblock/.style={draw=black!70, rounded corners=2.5pt, align=center,
+  hvblock/.style={draw=black!75, rounded corners=2.5pt, align=center,
     minimum height=8mm, minimum width=36mm, font=\footnotesize, line width=0.55pt},
   hvinput/.style={hvblock, fill=gray!8},
   hvenc/.style={hvblock, fill=blue!5, draw=blue!60!black},
   hvmethod/.style={hvblock, fill=green!5, draw=green!60!black},
   hvstate/.style={hvblock, fill=orange!8, draw=orange!70!black},
-  hvloss/.style={hvblock, fill=red!5, draw=red!60!black, minimum width=76mm, minimum height=11mm},
-  hvinfer/.style={hvblock, fill=blue!5, draw=blue!60!black, minimum width=76mm, minimum height=11mm},
+  hvloss/.style={hvblock, fill=red!5, draw=red!60!black, minimum width=80mm, minimum height=11mm},
+  hvinfer/.style={hvblock, fill=blue!5, draw=blue!60!black, minimum width=80mm, minimum height=11mm},
   hvarrow/.style={-{Stealth[scale=0.85]}, line width=0.6pt, color=black!80},
+  hvline/.style={line width=0.6pt, color=black!80},
 }
 
 % ------------------------------------------------------------------------------
 % Figure 1: Overall Architecture Pipeline (Full-Width figure*)
-% Zero box collision: Training and Test boxes stacked vertically along centerline
+% Explicit Top Junction Entry for both Training Objective and Test Retrieval
 % ------------------------------------------------------------------------------
 \newcommand{\HEDOArchitectureFigure}{
-\begin{tikzpicture}[node distance=5mm and 34mm]
+\begin{tikzpicture}[node distance=5mm and 36mm]
 % Column Titles
 \node[font=\bfseries\small, color=blue!70!black] (ititle) {Visual Stream};
-\node[font=\bfseries\small, color=blue!70!black, right=50mm of ititle] (ttitle) {Textual Stream};
+\node[font=\bfseries\small, color=blue!70!black, right=54mm of ititle] (ttitle) {Textual Stream};
 
 % Left Visual Stream
 \node[hvinput, below=3.5mm of ititle] (i0) {Input Image $\mathbf{I}$\\$224 \times 224 \times 3$};
@@ -46,26 +47,41 @@
 \node[hvmethod, below=of t5] (t6) {\textbf{HVSC Latent Distribution}\\$\mathbf{z}_T \sim \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)$};
 \node[hvenc, below=of t6] (t7) {\textbf{Text Embedding $\hat{\mathbf{e}}_T$}\\$\hat{\mathbf{e}}_T \in \mathbb{S}^{127}$};
 
-% Connectors in streams
+% Vertical Connectors inside streams
 \foreach \a/\b in {i0/i1,i1/i2,i2/i3,i3/i4,i4/i5,i5/i6,i6/i7,
                    t0/t1,t1/t2,t2/t3,t3/t4,t4/t5,t5/t6,t6/t7}
-  \draw[hvarrow] (\a) -- (\b);
+  \draw[hvarrow] (\a.south) -- (\b.north);
 
-% Midpoint reference between streams
+% Centered Vertical Stack for Convergence Blocks
 \path (i7) -- (t7) coordinate[midway] (mid_embs);
 
 % Section 1: Training Objective (Centered Below Streams)
-\node[hvloss, below=8mm of mid_embs] (tr_box)
+\node[hvloss, below=12mm of mid_embs] (tr_box)
 {\textbf{Training Objective (Joint Optimization)}\\[2pt]
 $\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$};
 
-\draw[hvarrow] (i7.south) |- (tr_box.west);
-\draw[hvarrow] (t7.south) |- (tr_box.east);
+% Top-Down Bus for Training Convergence
+\coordinate (tr_left) at ($(i7.south) + (0, -4.5mm)$);
+\coordinate (tr_right) at ($(t7.south) + (0, -4.5mm)$);
+\coordinate (tr_join) at ($(tr_box.north) + (0, 3.5mm)$);
+
+\draw[hvline] (i7.south) -- (tr_left) -- (tr_join);
+\draw[hvline] (t7.south) -- (tr_right) -- (tr_join);
+\draw[hvarrow] (tr_join) -- (tr_box.north);
 
 % Section 2: Test-Time Retrieval (Stacked Below Training Objective)
-\node[hvinfer, below=6mm of tr_box] (te_box)
+\node[hvinfer, below=12mm of tr_box] (te_box)
 {\textbf{Test-Time Retrieval (Strictly Independent)}\\[2pt]
 Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies \mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top$};
+
+% Top-Down Bus for Test Convergence
+\coordinate (te_join) at ($(te_box.north) + (0, 4.5mm)$);
+\coordinate (te_bus_left) at ($(te_join) + (-32mm, 0)$);
+\coordinate (te_bus_right) at ($(te_join) + (32mm, 0)$);
+
+\draw[hvline] (tr_box.south -| i7) -- (te_bus_left) -- (te_join);
+\draw[hvline] (tr_box.south -| t7) -- (te_bus_right) -- (te_join);
+\draw[hvarrow] (te_join) -- (te_box.north);
 
 \node[below=2.5mm of te_box, font=\scriptsize, color=black!75]
 {Strictly Zero Cross-Modal Attention $\;\vert\;$ Zero Inter-Modality Hidden-State Exchange at Test Time};
@@ -125,13 +141,13 @@ Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies \
 \node[hvenc, below=of c, minimum width=72mm] (ln)
 {\textbf{Layer Normalization}\\$\text{HEDO}(\mathbf{q}) = \text{LayerNorm}(\mathbf{q}_{t+1})$};
 
-\foreach \a/\b in {q/p,p/m,m/c,c/ln} \draw[hvarrow] (\a) -- (\b);
+\foreach \a/\b in {q/p,p/m,m/c,c/ln} \draw[hvarrow] (\a.south) -- (\b.north);
 \end{tikzpicture}
 }
 
 % ------------------------------------------------------------------------------
 % Figure 4: State-Continuous Chunk-Wise SSD Recurrence (Independent Single Column)
-% Direct straight vertical routing into aggregation box
+% Direct Horizontal Collection Bus routing into the TOP (agg.north)
 % ------------------------------------------------------------------------------
 \newcommand{\HEDOChunkFigure}{
 \begin{tikzpicture}[node distance=4mm and 6mm, every node/.style={font=\footnotesize}]
@@ -144,22 +160,32 @@ Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies \
 \node[hvstate, right=7mm of c2, minimum width=22mm, minimum height=14mm] (ck)
 {\textbf{Chunk $K$}\\$x_{(K-1)C+1}, \dots, x_L$\\$\mathbf{h}_{\text{start}, K} = \mathbf{h}_{\text{end}, K-1}$\\$\mathbf{b}_K = \mathbf{h}_{\text{end}, K}$};
 
+% Horizontal State Continuity Arrows
 \draw[hvarrow] (c1.east) -- node[above, font=\tiny, color=black!80] {state cont.} (c2.west);
 \draw[hvarrow] (c2.east) -- node[above, font=\tiny, color=black!80] {state cont.} (ck.west);
 
-\node[hvmethod, below=7mm of c2, minimum width=78mm, minimum height=10mm] (agg)
+% Target Aggregation Box Below
+\node[hvmethod, below=12mm of c2, minimum width=78mm, minimum height=10mm] (agg)
 {\textbf{Mask-Weighted Boundary Aggregation}\\[2pt]
 $\displaystyle \mathbf{h}_{\text{bound}} = \frac{\sum_{k=1}^K m_k \mathbf{b}_k}{\sum_{k=1}^K m_k + \epsilon} \in \mathbb{R}^{B \times d_{\text{state}}}$};
 
-\draw[hvarrow] (c1.south) |- (agg.west);
-\draw[hvarrow] (c2.south) -- (agg.north);
-\draw[hvarrow] (ck.south) |- (agg.east);
+% Top-Down Bus Topology for Boundary Extraction
+\coordinate (j1) at ($(c1.south) + (0, -4mm)$);
+\coordinate (j2) at ($(c2.south) + (0, -4mm)$);
+\coordinate (jk) at ($(ck.south) + (0, -4mm)$);
+
+\draw[hvline] (c1.south) -- (j1);
+\draw[hvline] (c2.south) -- (j2);
+\draw[hvline] (ck.south) -- (jk);
+\draw[hvline] (j1) -- (jk);
+\draw[hvarrow] (j2) -- (agg.north);
+
 \end{tikzpicture}
 }
 
 % ------------------------------------------------------------------------------
 % Figure 5: Training vs. Test-Time Inference Flow (Full-Width figure*)
-% Straight orthogonal routing with clean semantic distinction
+% Top-Down Central Bus into top anchors (tr_loss.north, te_eval.north)
 % ------------------------------------------------------------------------------
 \newcommand{\HEDOInferenceFigure}{
 \begin{tikzpicture}[node distance=5mm and 28mm]
@@ -172,15 +198,21 @@ $\displaystyle \mathbf{h}_{\text{bound}} = \frac{\sum_{k=1}^K m_k \mathbf{b}_k}{
 \node[hvmethod, below=3.5mm of tr_title, xshift=44mm, minimum width=46mm] (tz)
 {\textbf{Textual Encoder Pipeline}\\$\mathbf{z}_T \sim \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)$\\Latent Embedding $\mathbf{e}_T$};
 
-\node[hvloss, below=6mm of tr_title, yshift=-11mm, minimum width=96mm, minimum height=12mm] (tr_loss)
+\node[hvloss, below=6mm of tr_title, yshift=-13mm, minimum width=96mm, minimum height=12mm] (tr_loss)
 {\textbf{Joint Optimization Objective}\\[2pt]
 $\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$};
 
-\draw[hvarrow] (iz.south) |- (tr_loss.west);
-\draw[hvarrow] (tz.south) |- (tr_loss.east);
+% Top-Down Bus for Training Loss Entry
+\coordinate (v_bus) at ($(iz.south) + (0, -4.5mm)$);
+\coordinate (t_bus) at ($(tz.south) + (0, -4.5mm)$);
+\coordinate (tr_mid) at ($(tr_loss.north) + (0, 3.5mm)$);
+
+\draw[hvline] (iz.south) -- (v_bus) -- (tr_mid);
+\draw[hvline] (tz.south) -- (t_bus) -- (tr_mid);
+\draw[hvarrow] (tr_mid) -- (tr_loss.north);
 
 % Bottom Test Inference Section
-\node[font=\bfseries\small, color=green!60!black, below=12mm of tr_loss] (te_title) {B. Test-Time Retrieval: Deterministic Unimodal Evaluation (Strictly Independent)};
+\node[font=\bfseries\small, color=green!60!black, below=14mm of tr_loss] (te_title) {B. Test-Time Retrieval: Deterministic Unimodal Evaluation (Strictly Independent)};
 
 \node[hvinput, below=3.5mm of te_title, xshift=-44mm, minimum width=46mm] (iq)
 {\textbf{Query Image $\mathbf{I}$}\\Deterministic Mean $\boldsymbol{\mu}_I$\\Unit Embedding $\hat{\mathbf{e}}_I \in \mathbb{S}^{127}$};
@@ -188,11 +220,18 @@ $\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf
 \node[hvinput, below=3.5mm of te_title, xshift=44mm, minimum width=46mm] (tg)
 {\textbf{Text Gallery $\mathcal{T}$}\\Deterministic Mean $\boldsymbol{\mu}_T$\\Unit Embedding $\hat{\mathbf{e}}_T \in \mathbb{S}^{127}$};
 
-\node[hvinfer, below=6mm of te_title, yshift=-11mm, minimum width=96mm, minimum height=12mm] (te_eval)
+\node[hvinfer, below=6mm of te_title, yshift=-13mm, minimum width=96mm, minimum height=12mm] (te_eval)
 {\textbf{Cosine Similarity Ranking: $\mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top \implies$ Recall @ $K$ (1, 5, 10)}\\[2pt]
 \scriptsize Strictly Independent Dual Encoders $\;\vert\;$ Zero Cross-Modal Interaction at Retrieval Time};
 
-\draw[hvarrow] (iq.south) |- (te_eval.west);
-\draw[hvarrow] (tg.south) |- (te_eval.east);
+% Top-Down Bus for Test Evaluation Entry
+\coordinate (iq_bus) at ($(iq.south) + (0, -4.5mm)$);
+\coordinate (tg_bus) at ($(tg.south) + (0, -4.5mm)$);
+\coordinate (te_mid) at ($(te_eval.north) + (0, 3.5mm)$);
+
+\draw[hvline] (iq.south) -- (iq_bus) -- (te_mid);
+\draw[hvline] (tg.south) -- (tg_bus) -- (te_mid);
+\draw[hvarrow] (te_mid) -- (te_eval.north);
+
 \end{tikzpicture}
 }
