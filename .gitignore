@@ -1,0 +1,46 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyTorch Checkpoints and Large Weights (> 100MB)
+*.pt
+*.pth
+*.bin
+*.onnx
+*.weights
+checkpoints/
+
+# NumPy array dumps
+*.npy
+*.npz
+
+# Raw Dataset directories
+data/
+data/*
+
+# Experiment and benchmark runtime outputs
+HEDO_HVSC_REPAIRED_BENCHMARK/checkpoints/
+HEDO_HVSC_REPAIRED_BENCHMARK/*.npy
+research_outputs/
+results/
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+
+# Environment & OS files
+.env
+.venv
+env/
+venv/
+.DS_Store
+Thumbs.db
+
+# LaTeX build residue
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
