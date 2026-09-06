@@ -390,7 +390,10 @@ print("✓ [AUDIT 11/12] Final Pre-Benchmark Scientific Gate (14 Invariants) PAS
 # 12. Notebook AST Syntax & Integrity Audit
 # ----------------------------------------------------------------------
 for target_nb in [r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED.ipynb",
-                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1).ipynb"]:
+                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1).ipynb",
+                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1).ipynb",
+                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1).ipynb",
+                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1).ipynb"]:
     assert os.path.isfile(target_nb), f"Repaired notebook missing: {target_nb}"
     with open(target_nb, "r", encoding="utf-8") as f:
         nb = json.load(f)
@@ -405,7 +408,7 @@ for target_nb in [r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED.ipynb",
             except SyntaxError as e:
                 raise AssertionError(f"Syntax error in notebook cell {idx} of {target_nb}: {e}")
 
-print(f"✓ [AUDIT 12/12] All 24 cells in both notebook variants parsed with zero syntax errors.")
+print(f"✓ [AUDIT 12/12] All 24 cells in all notebook variants parsed with zero syntax errors.")
 
 print("\n" + "=" * 80)
 print("🎉 ALL 12 CRITICAL SCIENTIFIC AUDITS PASSED!")
