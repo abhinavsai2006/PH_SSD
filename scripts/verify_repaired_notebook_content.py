@@ -6,7 +6,14 @@ try:
 except Exception:
     pass
 
-for nb_name in ["HEDO_HVSC_Research_Master_REPAIRED.ipynb", "HEDO_HVSC_Research_Master_REPAIRED(1).ipynb", "HEDO_HVSC_Research_Master_REPAIRED(1)(1).ipynb", "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1).ipynb", "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1).ipynb"]:
+for nb_name in [
+    "HEDO_HVSC_Research_Master_REPAIRED.ipynb",
+    "HEDO_HVSC_Research_Master_REPAIRED(1).ipynb",
+    "HEDO_HVSC_Research_Master_REPAIRED(1)(1).ipynb",
+    "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1).ipynb",
+    "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1).ipynb",
+    "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2).ipynb"
+]:
     print("=" * 80)
     print(f"AUDITING NOTEBOOK: {nb_name}")
     print("=" * 80)
@@ -36,19 +43,26 @@ for nb_name in ["HEDO_HVSC_Research_Master_REPAIRED.ipynb", "HEDO_HVSC_Research_
     assert "captions_per_image=5" in full_text, "Missing captions_per_image=5 in batch sampler"
     print(f"✓ [PASS] BATCH_SIZE=40, captions_per_image=5 (8 images x 5 captions).")
 
-    # 3. Real verification at gate (NO dummy config_lock_pass = True)
+    # 3. Multi-Positive InfoNCE Loss Geometry (8 unique images x 40 captions)
+    assert "unique_z_img = z_img.index_select(0, unique_idx_tensor)" in full_text, "Missing autograd-preserving unique image selection!"
+    assert "sim_matrix = torch.matmul(unique_z_img, z_txt.T) * scale" in full_text, "Missing (8, 40) similarity computation!"
+    assert "MULTI-POSITIVE INFONCE GEOMETRY: PASS" in full_text, "Missing multi-positive geometry pass assertion!"
+    assert "MULTI_POSITIVE_LOSS_GEOMETRY = bool(multi_positive_geometry_pass)" in full_text, "Missing MULTI_POSITIVE_LOSS_GEOMETRY definition!"
+    print("✓ [PASS] Multi-positive InfoNCE (8 unique images x 40 captions) geometry verified.")
+
+    # 4. Real verification at gate (NO dummy config_lock_pass = True)
     assert "config_lock_pass = True\n" not in full_text, "Found forbidden dummy config_lock_pass = True!"
     assert "config_lock_pass = (len(config_mismatches) == 0)" in full_text, "Missing real config_lock_pass comparison!"
     print("✓ [PASS] Real Configuration Lock assertion at pre-benchmark gate verified.")
 
-    # 4. Final Pre-Benchmark Gate (Exact 14 Checks) & Real test extraction smoke test
+    # 5. Final Pre-Benchmark Gate (Exact 14 Checks) & Real test extraction smoke test
     assert "FINAL PRE-BENCHMARK SCIENTIFIC GATE" in full_text, "Missing exact gate header"
     gate_checks = [
-        "DATASET COUNTS", "LEAKAGE", "CAPTION MAPPING", "MULTI-POSITIVE LOSS",
-        "RETRIEVAL EVALUATOR", "SSD STATE CONTINUITY", "SSD PADDING INVARIANCE",
+        "DATASET COUNTS", "LEAKAGE", "CAPTION MAPPING", "RETRIEVAL EVALUATOR",
+        "MULTI-POSITIVE GEOMETRY", "SSD CONTINUITY", "PADDING INVARIANCE",
         "DETERMINISTIC INFERENCE", "FULL TEST EXTRACTION", "CHECKPOINT LOGIC",
         "CONFIGURATION LOCK", "TEST/VALIDATION SEPARATION", "HEDO DIAGNOSTICS",
-        "HVSC NUMERICAL STABILITY"
+        "HVSC STABILITY"
     ]
     for gc in gate_checks:
         assert gc in full_text, f"Missing gate check: {gc}"
@@ -56,7 +70,7 @@ for nb_name in ["HEDO_HVSC_Research_Master_REPAIRED.ipynb", "HEDO_HVSC_Research_
     assert "extraction_smoke = extract_all_embeddings(sample_model, test_loader, device=DEVICE)" in full_text, "Missing real test extraction smoke test at gate!"
     print(f"✓ [PASS] Real test_loader extraction smoke test executed at pre-gate.")
 
-    # 5. Separation of Test Information
+    # 6. Separation of Test Information
     assert "val_metrics = evaluate_retrieval(model, val_loader)" in full_text
     assert "test_eval_results = evaluate_retrieval(model, test_loader)" in full_text
     print("✓ [PASS] Strict isolation of test set (evaluated strictly once post-best-checkpoint).")

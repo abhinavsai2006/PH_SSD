@@ -1037,32 +1037,188 @@ print("=" * 70)
 class SymmetricMultiPositiveInfoNCELoss(nn.Module):
     """
     Numerically stable symmetric multi-positive InfoNCE loss.
-    Supports Image -> K positive captions and Caption -> 1 positive image.
-    Uses logit_scale parameter clamped to max 100.0.
+    Correct Geometry:
+        unique_z_img: [num_unique_images, D] (e.g. 8, 128)
+        z_txt:        [num_captions, D]      (e.g. 40, 128)
+        sim_matrix:   [num_unique_images, num_captions] (e.g. 8, 40)
+    Image -> Text: 5 positive captions per unique image
+    Text -> Image: 1 positive unique image per caption
     """
     def __init__(self):
         super().__init__()
 
     def forward(self, z_img, z_txt, image_ids, logit_scale):
+        # 1. Determine first occurrence of every unique image ID preserving autograd
+        unique_indices = []
+        unique_image_ids = []
+        seen = set()
+        for idx, iid in enumerate(image_ids):
+            if iid not in seen:
+                seen.add(iid)
+                unique_indices.append(idx)
+                unique_image_ids.append(iid)
+
+        unique_idx_tensor = torch.tensor(
+            unique_indices,
+            device=z_img.device,
+            dtype=torch.long
+        )
+        unique_z_img = z_img.index_select(0, unique_idx_tensor)
+
+        # Image count assertions
+        assert len(unique_image_ids) == unique_z_img.shape[0], (
+            f"Unique image count {len(unique_image_ids)} != unique_z_img shape {unique_z_img.shape[0]}"
+        )
+        assert z_txt.shape[0] == len(image_ids), (
+            f"Caption count {z_txt.shape[0]} != image_ids length {len(image_ids)}"
+        )
+
+        # 2. Similarity matrix: [num_unique_images, num_captions]
         scale = logit_scale.clamp(max=100.0)
-        sim_matrix = torch.matmul(z_img, z_txt.T) * scale
+        sim_matrix = torch.matmul(unique_z_img, z_txt.T) * scale
 
-        pos_mask = torch.tensor([[id_i == id_j for id_j in image_ids] for id_i in image_ids], device=z_img.device, dtype=torch.float32)
+        # 3. Positive mask for Image -> Text: [num_unique_images, num_captions]
+        pos_mask_i2t = torch.tensor(
+            [[uid == cid for cid in image_ids] for uid in unique_image_ids],
+            device=z_img.device,
+            dtype=torch.float32
+        )
 
-        # Image-to-Text
-        pos_mask_i2t = pos_mask / pos_mask.sum(dim=1, keepdim=True).clamp(min=1.0)
+        # 4. Image-to-Text Loss: average log probs of positive captions per unique image
+        pos_counts_i2t = pos_mask_i2t.sum(dim=1, keepdim=True).clamp(min=1.0)
+        pos_mask_i2t_norm = pos_mask_i2t / pos_counts_i2t
         log_softmax_i2t = F.log_softmax(sim_matrix, dim=1)
-        loss_i2t = -(log_softmax_i2t * pos_mask_i2t).sum(dim=1).mean()
+        loss_i2t = -(log_softmax_i2t * pos_mask_i2t_norm).sum(dim=1).mean()
 
-        # Text-to-Image
-        pos_mask_t2i = pos_mask.T / pos_mask.T.sum(dim=1, keepdim=True).clamp(min=1.0)
+        # 5. Text-to-Image Loss: sim_matrix.T has shape [num_captions, num_unique_images]
+        # pos_mask_t2i has shape [num_captions, num_unique_images] (1 positive image per caption)
+        pos_mask_t2i = pos_mask_i2t.T
+        pos_counts_t2i = pos_mask_t2i.sum(dim=1, keepdim=True).clamp(min=1.0)
+        pos_mask_t2i_norm = pos_mask_t2i / pos_counts_t2i
         log_softmax_t2i = F.log_softmax(sim_matrix.T, dim=1)
-        loss_t2i = -(log_softmax_t2i * pos_mask_t2i).sum(dim=1).mean()
+        loss_t2i = -(log_softmax_t2i * pos_mask_t2i_norm).sum(dim=1).mean()
 
         return 0.5 * (loss_i2t + loss_t2i)
 
 infonce_criterion = SymmetricMultiPositiveInfoNCELoss()
 print("✓ Symmetric Multi-Positive InfoNCE loss compiled.")
+
+# ==============================================================================
+# DEDICATED LOSS-GEOMETRY & GRADIENT FLOW SANITY TEST
+# ==============================================================================
+synth_image_ids = [
+    "A","A","A","A","A",
+    "B","B","B","B","B"
+]
+synth_z_img = torch.randn(10, 128, requires_grad=True, device=DEVICE)
+synth_z_txt = torch.randn(10, 128, requires_grad=True, device=DEVICE)
+synth_logit_scale = torch.tensor(math.log(1.0 / 0.07), requires_grad=True, device=DEVICE).exp()
+
+synth_loss = infonce_criterion(synth_z_img, synth_z_txt, synth_image_ids, synth_logit_scale)
+
+synth_unique_ids = []
+seen_synth = set()
+for iid in synth_image_ids:
+    if iid not in seen_synth:
+        seen_synth.add(iid)
+        synth_unique_ids.append(iid)
+
+assert len(synth_unique_ids) == 2, f"Expected 2 unique images, got {len(synth_unique_ids)}"
+assert synth_z_txt.shape[0] == 10, f"Expected 10 captions, got {synth_z_txt.shape[0]}"
+
+synth_pos_mask_i2t = torch.tensor([[uid == cid for cid in synth_image_ids] for uid in synth_unique_ids])
+assert synth_pos_mask_i2t.shape == (2, 10), f"Expected (2, 10), got {synth_pos_mask_i2t.shape}"
+assert (synth_pos_mask_i2t.sum(dim=1) == 5).all(), "I2T positives must be 5 for each unique image!"
+assert (synth_pos_mask_i2t.T.sum(dim=1) == 1).all(), "T2I positives must be 1 for each caption!"
+
+synth_loss.backward()
+assert torch.isfinite(synth_loss), "Synthetic loss must be finite!"
+assert synth_z_img.grad is not None, "Gradient must flow to z_img!"
+assert synth_z_txt.grad is not None, "Gradient must flow to z_txt!"
+print("✓ Dedicated synthetic loss-geometry & autograd test passed.")
+
+# ==============================================================================
+# LIVE TRAINING BATCH MULTI-POSITIVE INFONCE GEOMETRY TEST
+# ==============================================================================
+sample_batch = next(iter(train_loader))
+assert len(sample_batch["image_id"]) == 40, f"Expected 40 image_id entries, got {len(sample_batch['image_id'])}"
+assert len(set(sample_batch["image_id"])) == 8, f"Expected 8 unique images, got {len(set(sample_batch['image_id']))}"
+
+sample_imgs = sample_batch["image"].to(DEVICE)
+sample_input_ids = sample_batch["input_ids"].to(DEVICE)
+sample_att_mask = sample_batch["attention_mask"].to(DEVICE)
+sample_batch_ids = sample_batch["image_id"]
+
+sample_feats_img = vision_backbone(sample_imgs)
+sample_feats_txt = language_backbone(sample_input_ids, sample_att_mask)
+
+sample_model.zero_grad()
+sample_z_img, sample_z_txt, sample_kl = sample_model(sample_feats_img, sample_feats_txt, sample_att_mask)
+assert sample_z_img.shape[0] == 40, f"Expected raw z_img shape 40, got {sample_z_img.shape[0]}"
+assert sample_z_txt.shape[0] == 40, f"Expected raw z_txt shape 40, got {sample_z_txt.shape[0]}"
+
+sample_logit_scale = sample_model.logit_scale.exp().clamp(max=100.0)
+batch_infonce_loss = infonce_criterion(sample_z_img, sample_z_txt, sample_batch_ids, sample_logit_scale)
+total_sample_loss = batch_infonce_loss + 1e-4 * sample_kl
+total_sample_loss.backward()
+
+# Verify gradient flow to all required model components
+grad_checks = {
+    "img_proj": sample_model.img_proj.weight.grad is not None,
+    "ssd_img": any(p.grad is not None for p in sample_model.ssd_img.parameters()),
+    "head_img": sample_model.head_img.weight.grad is not None,
+    "head_txt": sample_model.head_txt.weight.grad is not None,
+    "logit_scale": sample_model.logit_scale.grad is not None,
+}
+if sample_model.use_hedo:
+    grad_checks["hedo_img"] = any(p.grad is not None for p in sample_model.hedo_img.parameters())
+if sample_model.use_hvsc:
+    grad_checks["hvsc"] = any(p.grad is not None for p in sample_model.hvsc.parameters())
+
+all_grads_pass = all(grad_checks.values())
+assert all_grads_pass, f"Gradient flow failed for: {[k for k, v in grad_checks.items() if not v]}"
+
+# Geometry inspection
+live_unique_ids = []
+seen_live = set()
+for iid in sample_batch_ids:
+    if iid not in seen_live:
+        seen_live.add(iid)
+        live_unique_ids.append(iid)
+
+assert len(live_unique_ids) == 8, f"Expected 8 unique images in live batch, got {len(live_unique_ids)}"
+live_pos_mask_i2t = torch.tensor([[uid == cid for cid in sample_batch_ids] for uid in live_unique_ids])
+assert live_pos_mask_i2t.shape == (8, 40), f"Expected live similarity shape (8, 40), got {live_pos_mask_i2t.shape}"
+assert (live_pos_mask_i2t.sum(dim=1) == 5).all(), "Every image in batch must have exactly 5 positive captions!"
+assert (live_pos_mask_i2t.T.sum(dim=1) == 1).all(), "Every caption in batch must have exactly 1 positive image!"
+
+print("=" * 60)
+print("MULTI-POSITIVE INFONCE GEOMETRY")
+print("=" * 60)
+print(f"Raw image embeddings       : {sample_z_img.shape[0]}")
+print(f"Unique image embeddings    : {len(live_unique_ids)}")
+print(f"Text embeddings            : {sample_z_txt.shape[0]}")
+print(f"Similarity matrix          : (8, 40)")
+print(f"I2T positives/image        : 5")
+print(f"T2I positives/caption      : 1")
+print(f"Gradient flow              : {'PASS' if all_grads_pass else 'FAIL'}")
+print("=" * 60)
+
+multi_positive_geometry_pass = bool(
+    sample_z_img.shape[0] == 40 and
+    len(live_unique_ids) == 8 and
+    sample_z_txt.shape[0] == 40 and
+    live_pos_mask_i2t.shape == (8, 40) and
+    bool((live_pos_mask_i2t.sum(dim=1) == 5).all()) and
+    bool((live_pos_mask_i2t.T.sum(dim=1) == 1).all()) and
+    all_grads_pass and
+    torch.isfinite(batch_infonce_loss).item()
+)
+
+if multi_positive_geometry_pass:
+    print("MULTI-POSITIVE INFONCE GEOMETRY: PASS")
+else:
+    raise RuntimeError("MULTI-POSITIVE INFONCE GEOMETRY: FAIL")
 '''))
 
     # =========================================================================
@@ -1319,8 +1475,8 @@ leakage_pass = bool(train_imgs_official.isdisjoint(dev_imgs_official) and
 caption_mapping_pass = bool(len(train_df) == 30000 and len(val_df) == 5000 and len(test_df) == 5000 and
                             all(len(cap_to_img_map[iid]) == 5 for iid in (train_imgs_official | dev_imgs_official | test_imgs_official)))
 
-# 4. Multi-positive loss mask
-pos_mask_pass = bool((pos_mask.diag() == 1.0).all() and (pos_mask == pos_mask.T).all() and (expected_cross == 0.0).all())
+# 4. Multi-Positive InfoNCE Loss Geometry & Autograd (Critical Fix 8 & 8x40 Geometry Audit)
+MULTI_POSITIVE_LOSS_GEOMETRY = bool(multi_positive_geometry_pass)
 
 # 5. Retrieval evaluator
 evaluator_pass = bool(np.all(np.array(i2t_perfect_ranks) == 0) and np.all(np.array(t2i_perfect_ranks) == 0))
@@ -1395,17 +1551,17 @@ checks = [
     ("DATASET COUNTS",            dataset_counts_pass),
     ("LEAKAGE",                   leakage_pass),
     ("CAPTION MAPPING",           caption_mapping_pass),
-    ("MULTI-POSITIVE LOSS",       pos_mask_pass),
     ("RETRIEVAL EVALUATOR",       evaluator_pass),
-    ("SSD STATE CONTINUITY",      ssd_continuity_pass),
-    ("SSD PADDING INVARIANCE",    ssd_padding_pass),
+    ("MULTI-POSITIVE GEOMETRY",   MULTI_POSITIVE_LOSS_GEOMETRY),
+    ("SSD CONTINUITY",            ssd_continuity_pass),
+    ("PADDING INVARIANCE",        ssd_padding_pass),
     ("DETERMINISTIC INFERENCE",   det_inference_pass),
     ("FULL TEST EXTRACTION",      full_extraction_pass),
     ("CHECKPOINT LOGIC",          checkpoint_logic_pass),
     ("CONFIGURATION LOCK",        config_lock_pass),
     ("TEST/VALIDATION SEPARATION",test_val_sep_pass),
     ("HEDO DIAGNOSTICS",          hedo_diag_pass),
-    ("HVSC NUMERICAL STABILITY",  hvsc_stability_pass)
+    ("HVSC STABILITY",            hvsc_stability_pass)
 ]
 
 print("=" * 60)
@@ -2581,8 +2737,12 @@ print("✓ REPAIRED BENCHMARK PIPELINE EXECUTION COMPLETED SUCCESSFULLY!")
     with open(out_path_copy4, "w", encoding="utf-8") as f:
         json.dump(notebook_dict, f, indent=2)
 
+    out_path_copy5 = os.path.join(WORKSPACE_DIR, "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2).ipynb")
+    with open(out_path_copy5, "w", encoding="utf-8") as f:
+        json.dump(notebook_dict, f, indent=2)
+
     print("=" * 80)
-    print(f"SUCCESS: Generated {out_path}, {out_path_copy}, {out_path_copy2}, {out_path_copy3}, and {out_path_copy4}")
+    print(f"SUCCESS: Generated {out_path}, {out_path_copy}, {out_path_copy2}, {out_path_copy3}, {out_path_copy4}, and {out_path_copy5}")
     print(f"Total Cells: {len(cells)}")
     print("=" * 80)
 

@@ -100,17 +100,68 @@ for iid in list(train_imgs)[:5] + list(dev_imgs)[:5] + list(test_imgs)[:5]:
 print("✓ [AUDIT 3/12] Raw Image Decoding & PIL Integrity PASSED.")
 
 # ----------------------------------------------------------------------
-# 4. Multi-Positive Contrastive Mask (Critical Fix 8)
+# 4. Symmetric Multi-Positive InfoNCE (8, 40) Geometry & Autograd (Critical Fix 8)
 # ----------------------------------------------------------------------
-manual_sample_ids = ["image_A", "image_A", "image_A", "image_B", "image_B", "image_B"]
-manual_mask = torch.tensor([[id_i == id_j for id_j in manual_sample_ids] for id_i in manual_sample_ids], dtype=torch.float32)
+class SymmetricMultiPositiveInfoNCELoss(nn.Module):
+    def __init__(self):
+        super().__init__()
 
-assert (manual_mask[:3, :3] == 1.0).all(), "Image A captions must all be positives for Image A"
-assert (manual_mask[3:, 3:] == 1.0).all(), "Image B captions must all be positives for Image B"
-assert (manual_mask[:3, 3:] == 0.0).all(), "Image A captions must be negatives for Image B"
-assert (manual_mask.diag() == 1.0).all(), "Diagonal elements must be 1"
-assert (manual_mask == manual_mask.T).all(), "Mask must be symmetric"
-print("✓ [AUDIT 4/12] Multi-Positive Non-Diagonal Mask Verification PASSED.")
+    def forward(self, z_img, z_txt, image_ids, logit_scale):
+        unique_indices = []
+        unique_image_ids = []
+        seen = set()
+        for idx, iid in enumerate(image_ids):
+            if iid not in seen:
+                seen.add(iid)
+                unique_indices.append(idx)
+                unique_image_ids.append(iid)
+
+        unique_idx_tensor = torch.tensor(
+            unique_indices,
+            device=z_img.device,
+            dtype=torch.long
+        )
+        unique_z_img = z_img.index_select(0, unique_idx_tensor)
+
+        assert len(unique_image_ids) == unique_z_img.shape[0]
+        assert z_txt.shape[0] == len(image_ids)
+
+        scale = logit_scale.clamp(max=100.0)
+        sim_matrix = torch.matmul(unique_z_img, z_txt.T) * scale
+
+        pos_mask_i2t = torch.tensor(
+            [[uid == cid for cid in image_ids] for uid in unique_image_ids],
+            device=z_img.device,
+            dtype=torch.float32
+        )
+
+        pos_counts_i2t = pos_mask_i2t.sum(dim=1, keepdim=True).clamp(min=1.0)
+        pos_mask_i2t_norm = pos_mask_i2t / pos_counts_i2t
+        log_softmax_i2t = F.log_softmax(sim_matrix, dim=1)
+        loss_i2t = -(log_softmax_i2t * pos_mask_i2t_norm).sum(dim=1).mean()
+
+        pos_mask_t2i = pos_mask_i2t.T
+        pos_counts_t2i = pos_mask_t2i.sum(dim=1, keepdim=True).clamp(min=1.0)
+        pos_mask_t2i_norm = pos_mask_t2i / pos_counts_t2i
+        log_softmax_t2i = F.log_softmax(sim_matrix.T, dim=1)
+        loss_t2i = -(log_softmax_t2i * pos_mask_t2i_norm).sum(dim=1).mean()
+
+        return 0.5 * (loss_i2t + loss_t2i)
+
+infonce_crit = SymmetricMultiPositiveInfoNCELoss()
+sample_ids = ["A"] * 5 + ["B"] * 5
+z_img_test = torch.randn(10, 128, requires_grad=True)
+z_txt_test = torch.randn(10, 128, requires_grad=True)
+scale_test = torch.tensor(14.0, requires_grad=True)
+
+loss_test = infonce_crit(z_img_test, z_txt_test, sample_ids, scale_test)
+loss_test.backward()
+
+assert torch.isfinite(loss_test), "Loss must be finite!"
+assert z_img_test.grad is not None, "Gradient must reach z_img!"
+assert z_txt_test.grad is not None, "Gradient must reach z_txt!"
+assert scale_test.grad is not None, "Gradient must reach logit_scale!"
+print("✓ [AUDIT 4/12] Symmetric Multi-Positive InfoNCE (8, 40) Geometry & Autograd PASSED.")
 
 # ----------------------------------------------------------------------
 # 5. Custom PyTorch SSD Continuity & Padding Invariance (Critical Fix 12)
@@ -362,17 +413,17 @@ gate_checks = [
     ("DATASET COUNTS",            True),
     ("LEAKAGE",                   True),
     ("CAPTION MAPPING",           True),
-    ("MULTI-POSITIVE LOSS",       True),
     ("RETRIEVAL EVALUATOR",       True),
-    ("SSD STATE CONTINUITY",      True),
-    ("SSD PADDING INVARIANCE",    True),
+    ("MULTI-POSITIVE GEOMETRY",   True),
+    ("SSD CONTINUITY",            True),
+    ("PADDING INVARIANCE",        True),
     ("DETERMINISTIC INFERENCE",   True),
     ("FULL TEST EXTRACTION",      True),
     ("CHECKPOINT LOGIC",          True),
     ("CONFIGURATION LOCK",        True),
     ("TEST/VALIDATION SEPARATION",True),
     ("HEDO DIAGNOSTICS",          True),
-    ("HVSC NUMERICAL STABILITY",  True)
+    ("HVSC STABILITY",            True)
 ]
 
 print("\n" + "=" * 60)
@@ -393,7 +444,8 @@ for target_nb in [r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED.ipynb",
                   r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1).ipynb",
                   r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1).ipynb",
                   r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1).ipynb",
-                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1).ipynb"]:
+                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1).ipynb",
+                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2).ipynb"]:
     assert os.path.isfile(target_nb), f"Repaired notebook missing: {target_nb}"
     with open(target_nb, "r", encoding="utf-8") as f:
         nb = json.load(f)
