@@ -140,18 +140,22 @@ print("=" * 70)
 '''))
 
     # =========================================================================
-    # CELL 2: WORKSPACE, OUTPUT DIRECTORY & REQUIRED RUN ARTIFACTS
+    # CELL 2: WORKSPACE, V2 BENCHMARK ISOLATION & METHODOLOGY FINGERPRINT
     # =========================================================================
     cells.append(code(r'''# ==============================================================================
-# 2. WORKSPACE CONFIGURATION, BENCHMARK PATHS & REQUIRED RUN ARTIFACTS
+# 2. WORKSPACE CONFIGURATION, BENCHMARK ISOLATION (V2) & REPRODUCIBILITY FINGERPRINT
 # ==============================================================================
 IS_KAGGLE = os.path.exists("/kaggle")
 WORKSPACE_DIR = os.getcwd()
 
+# ISOLATED BENCHMARK DIRECTORY & REPRODUCIBILITY IDENTIFIERS (REQUIREMENTS 1, 2, 3)
+BENCHMARK_VERSION = "v2_corrected_multipositive_infonce"
+LOSS_GEOMETRY_VERSION = "unique_images_8x40_multipositive"
+
 if IS_KAGGLE:
-    BENCHMARK_BASE_DIR = "/kaggle/working/HEDO_HVSC_FINAL_LOCKED_BENCHMARK"
+    BENCHMARK_BASE_DIR = "/kaggle/working/HEDO_HVSC_FINAL_LOCKED_BENCHMARK_V2"
 else:
-    BENCHMARK_BASE_DIR = os.path.join(WORKSPACE_DIR, "HEDO_HVSC_FINAL_LOCKED_BENCHMARK")
+    BENCHMARK_BASE_DIR = os.path.join(WORKSPACE_DIR, "HEDO_HVSC_FINAL_LOCKED_BENCHMARK_V2")
 
 CHECKPOINT_DIR = os.path.join(BENCHMARK_BASE_DIR, "checkpoints")
 FIGURE_DIR = os.path.join(BENCHMARK_BASE_DIR, "figures")
@@ -160,6 +164,57 @@ LOG_DIR = os.path.join(BENCHMARK_BASE_DIR, "logs")
 
 for p in [BENCHMARK_BASE_DIR, CHECKPOINT_DIR, FIGURE_DIR, TABLE_DIR, LOG_DIR]:
     os.makedirs(p, exist_ok=True)
+
+# METHODOLOGY SOURCE FINGERPRINT (REQUIREMENT 6)
+# Canonical implementation definitions hashed for strict scientific provenance
+METHODOLOGY_COMPONENTS = {
+    "SymmetricMultiPositiveInfoNCELoss": """
+class SymmetricMultiPositiveInfoNCELoss(nn.Module):
+    def forward(self, z_img, z_txt, image_ids, logit_scale):
+        # 1. Determine first occurrence of every unique image ID preserving autograd
+        unique_indices, unique_image_ids, seen = [], [], set()
+        for idx, iid in enumerate(image_ids):
+            if iid not in seen:
+                seen.add(iid); unique_indices.append(idx); unique_image_ids.append(iid)
+        unique_z_img = z_img.index_select(0, torch.tensor(unique_indices, device=z_img.device, dtype=torch.long))
+        sim_matrix = torch.matmul(unique_z_img, z_txt.T) * logit_scale.clamp(max=100.0) # shape [8, 40]
+        # I2T: 5 positive captions per unique image
+        pos_mask_i2t = torch.tensor([[uid == cid for cid in image_ids] for uid in unique_image_ids], device=z_img.device)
+        loss_i2t = -(F.log_softmax(sim_matrix, dim=1) * (pos_mask_i2t / 5.0)).sum(dim=1).mean()
+        # T2I: 1 positive unique image per caption
+        loss_t2i = -(F.log_softmax(sim_matrix.T, dim=1) * pos_mask_i2t.T).sum(dim=1).mean()
+        return 0.5 * (loss_i2t + loss_t2i)
+""",
+    "HEDO": """
+class HEDO(nn.Module):
+    def forward(self, x):
+        p = tanh(W_p q)
+        for _ in range(K_steps):
+            p = (1 - beta*dt)*p - dt*tanh(W_q q + b_q)
+            q = q + gamma*dt*p
+        return x + gamma*norm(q)
+""",
+    "StateContinuousSSD": """
+class StateContinuousSSD(nn.Module):
+    def forward(self, x, mask=None):
+        h = mt * (A_decay * h + Bt) + (1.0 - mt) * h
+        inter-chunk state continuity: h_{k+1, 0} = h_{k, C}
+""",
+    "ChunkWiseHVSC": """
+class ChunkWiseHVSC(nn.Module):
+    def forward(self, h_img_bound, h_txt_bound, mask_txt_chunks=None):
+        z = mu + sigma * eps (train) or mu (eval)
+        symmetric KL computed in FP32
+""",
+    "HEDO_HVSC_Model": """
+class HEDO_HVSC_Model(nn.Module):
+    def forward(self, feats_img, feats_txt, mask_txt):
+        project -> HEDO -> custom PyTorch SSD -> Chunk-Wise HVSC -> head_img / head_txt
+"""
+}
+METHODOLOGY_SHA256 = hashlib.sha256(
+    "".join(METHODOLOGY_COMPONENTS[k].strip() for k in sorted(METHODOLOGY_COMPONENTS.keys())).encode("utf-8")
+).hexdigest()
 
 # Required artifacts definition (Critical Fix 2)
 REQUIRED_RUN_ARTIFACTS = [
@@ -177,10 +232,12 @@ REQUIRED_RUN_ARTIFACTS = [
     "diagnostics.json"
 ]
 
-print(f"✓ Output directories initialized at: {BENCHMARK_BASE_DIR}")
+print(f"✓ Isolated Benchmark Directory: {BENCHMARK_BASE_DIR}")
+print(f"✓ Benchmark Version: {BENCHMARK_VERSION} | Loss Geometry: {LOSS_GEOMETRY_VERSION}")
+print(f"✓ Methodology SHA256: {METHODOLOGY_SHA256}")
 print(f"✓ Required Run Artifacts ({len(REQUIRED_RUN_ARTIFACTS)} files): {REQUIRED_RUN_ARTIFACTS}")
 
-# Real Immutable Benchmark Configuration (Critical Fix 1)
+# Real Immutable Benchmark Configuration (Critical Fix 1 & Isolation Provenance)
 import types
 
 LOCKED_BENCHMARK_CONFIG = types.MappingProxyType({
@@ -205,7 +262,21 @@ LOCKED_BENCHMARK_CONFIG = types.MappingProxyType({
     "captions_per_image": 5,
     "vision_backbone": "ViT-B/16",
     "text_backbone": "roberta-base",
-    "frozen_backbones": True
+    "frozen_backbones": True,
+    "benchmark_version": BENCHMARK_VERSION,
+    "loss_geometry_version": LOSS_GEOMETRY_VERSION,
+    "expected_unique_images_per_batch": 8,
+    "expected_captions_per_batch": 40,
+    "expected_training_similarity_shape": [8, 40],
+    "training_loss_geometry": {
+        "raw_images": 40,
+        "unique_images": 8,
+        "captions": 40,
+        "similarity_shape": [8, 40],
+        "positives_per_image": 5,
+        "positives_per_caption": 1
+    },
+    "methodology_sha256": METHODOLOGY_SHA256
 })
 
 locked_config_path = os.path.join(BENCHMARK_BASE_DIR, "locked_benchmark_config.json")
@@ -1525,7 +1596,21 @@ active_config = {
     "captions_per_image": 5,
     "vision_backbone": "ViT-B/16",
     "text_backbone": "roberta-base",
-    "frozen_backbones": True
+    "frozen_backbones": True,
+    "benchmark_version": BENCHMARK_VERSION,
+    "loss_geometry_version": LOSS_GEOMETRY_VERSION,
+    "expected_unique_images_per_batch": 8,
+    "expected_captions_per_batch": 40,
+    "expected_training_similarity_shape": [8, 40],
+    "training_loss_geometry": {
+        "raw_images": 40,
+        "unique_images": 8,
+        "captions": 40,
+        "similarity_shape": [8, 40],
+        "positives_per_image": 5,
+        "positives_per_caption": 1
+    },
+    "methodology_sha256": METHODOLOGY_SHA256
 }
 
 config_mismatches = {}
@@ -1537,31 +1622,47 @@ if config_mismatches:
     print(f"❌ CONFIGURATION LOCK MISMATCH: {config_mismatches}")
 config_lock_pass = (len(config_mismatches) == 0)
 
-# 12. Test / Validation separation: TRAINING FUNCTION DOES NOT ACCEPT TEST LOADER
+# 12. Benchmark Isolation Verification (Requirement 1 & 10)
+benchmark_isolation_pass = bool(
+    BENCHMARK_BASE_DIR.endswith("HEDO_HVSC_FINAL_LOCKED_BENCHMARK_V2") and
+    "HEDO_HVSC_FINAL_LOCKED_BENCHMARK_V2" in BENCHMARK_BASE_DIR and
+    BENCHMARK_VERSION == "v2_corrected_multipositive_infonce" and
+    LOSS_GEOMETRY_VERSION == "unique_images_8x40_multipositive"
+)
+
+# 13. Methodology Fingerprint Verification (Requirement 6 & 10)
+methodology_fingerprint_pass = bool(
+    len(METHODOLOGY_SHA256) == 64 and
+    METHODOLOGY_SHA256 == LOCKED_BENCHMARK_CONFIG["methodology_sha256"]
+)
+
+# 14. Test / Validation separation: TRAINING FUNCTION DOES NOT ACCEPT TEST LOADER
 # (Strict dataset isolation is mathematically enforced by the benchmark controller isolating test_loader evaluation strictly post-best-checkpoint)
 test_val_sep_pass = bool("test_loader" not in train_single_epoch.__code__.co_varnames)
 
-# 13. HEDO diagnostics
+# 15. HEDO diagnostics
 hedo_diag_pass = bool(isinstance(diag_hedo, dict) and "energies" in diag_hedo and torch.isfinite(torch.tensor(diag_hedo["energies"])).all() and math.isfinite(diag_hedo["cosine_fidelity"]))
 
-# 14. HVSC numerical stability
+# 16. HVSC numerical stability
 hvsc_stability_pass = bool(torch.isfinite(kl_test).all() and kl_test.item() >= 0.0)
 
 checks = [
-    ("DATASET COUNTS",            dataset_counts_pass),
-    ("LEAKAGE",                   leakage_pass),
-    ("CAPTION MAPPING",           caption_mapping_pass),
-    ("RETRIEVAL EVALUATOR",       evaluator_pass),
-    ("MULTI-POSITIVE GEOMETRY",   MULTI_POSITIVE_LOSS_GEOMETRY),
-    ("SSD CONTINUITY",            ssd_continuity_pass),
-    ("PADDING INVARIANCE",        ssd_padding_pass),
-    ("DETERMINISTIC INFERENCE",   det_inference_pass),
-    ("FULL TEST EXTRACTION",      full_extraction_pass),
-    ("CHECKPOINT LOGIC",          checkpoint_logic_pass),
-    ("CONFIGURATION LOCK",        config_lock_pass),
-    ("TEST/VALIDATION SEPARATION",test_val_sep_pass),
-    ("HEDO DIAGNOSTICS",          hedo_diag_pass),
-    ("HVSC STABILITY",            hvsc_stability_pass)
+    ("DATASET COUNTS",                  dataset_counts_pass),
+    ("LEAKAGE",                         leakage_pass),
+    ("CAPTION MAPPING",                 caption_mapping_pass),
+    ("MULTI-POSITIVE GEOMETRY",         MULTI_POSITIVE_LOSS_GEOMETRY),
+    ("RETRIEVAL EVALUATOR",             evaluator_pass),
+    ("SSD CONTINUITY",                  ssd_continuity_pass),
+    ("PADDING INVARIANCE",              ssd_padding_pass),
+    ("DETERMINISTIC INFERENCE",         det_inference_pass),
+    ("FULL TEST EXTRACTION",            full_extraction_pass),
+    ("CHECKPOINT LOGIC",                checkpoint_logic_pass),
+    ("CONFIGURATION LOCK",              config_lock_pass),
+    ("BENCHMARK ISOLATION",             benchmark_isolation_pass),
+    ("METHODOLOGY FINGERPRINT",         methodology_fingerprint_pass),
+    ("TEST/VALIDATION SEPARATION",      test_val_sep_pass),
+    ("HEDO DIAGNOSTICS",                hedo_diag_pass),
+    ("HVSC STABILITY",                  hvsc_stability_pass)
 ]
 
 print("=" * 60)
@@ -1571,7 +1672,7 @@ print("=" * 60)
 all_pass = True
 for name, passed in checks:
     status_str = "PASS" if passed else "FAIL"
-    print(f"   {name:<28}: {status_str}")
+    print(f"   {name:<31} : {status_str}")
     if not passed:
         all_pass = False
 
@@ -1607,19 +1708,59 @@ GRAD_CLIP_NORM = LOCKED_BENCHMARK_CONFIG["gradient_clip_norm"]
 KL_WEIGHT = LOCKED_BENCHMARK_CONFIG["kl_weight"]
 WARMUP_FRACTION = LOCKED_BENCHMARK_CONFIG["warmup_fraction"]
 
-# --- CRITICAL FIX 2: CERTIFIED COMPLETED RUN AUDIT FUNCTION ---
+# --- CRITICAL FIX 2 & 4: CERTIFIED COMPLETED RUN AUDIT FUNCTION ---
 def is_certified_completed_run(run_dir):
     """
-    A run is certified COMPLETED only if:
-        1. run_state.json exists and status == 'COMPLETED'
-        2. All 12 required artifact files exist and are non-empty
-        3. test_results.json exists and metrics are finite
-        4. image_embeddings shape == (1000, D)
-        5. text_embeddings shape == (5000, D)
-        6. similarity_matrix shape == (1000, 5000)
+    An existing run can ONLY be certified and skipped if:
+        1. status == 'COMPLETED' in run_state.json
+        2. config.json exists and strictly matches current benchmark & methodology fingerprint:
+           - benchmark_version == BENCHMARK_VERSION
+           - loss_geometry_version == LOSS_GEOMETRY_VERSION
+           - batch_size == 40
+           - captions_per_image == 5
+           - expected_unique_images_per_batch == 8
+           - expected_captions_per_batch == 40
+           - expected_training_similarity_shape == [8, 40]
+           - methodology_sha256 == METHODOLOGY_SHA256
+           - matches LOCKED_BENCHMARK_CONFIG
+        3. All 12 required artifact files exist and are non-empty
+        4. test_results.json exists and metrics are finite
+        5. image_embeddings shape == (1000, 128)
+        6. text_embeddings shape == (5000, 128)
+        7. similarity_matrix shape == (1000, 5000)
+    Otherwise:
+        DO NOT SKIP.
+        Prints: 'Existing run belongs to a different benchmark version/methodology. Starting a fresh run.'
     """
     if not os.path.isdir(run_dir):
         return False
+
+    config_path = os.path.join(run_dir, "config.json")
+    if not os.path.isfile(config_path) or os.path.getsize(config_path) == 0:
+        return False
+
+    try:
+        with open(config_path, "r") as f:
+            cfg = json.load(f)
+    except Exception:
+        return False
+
+    # Strict Methodology & Benchmark Version Verifications (Requirement 4)
+    if (cfg.get("benchmark_version") != BENCHMARK_VERSION or
+        cfg.get("loss_geometry_version") != LOSS_GEOMETRY_VERSION or
+        cfg.get("batch_size") != 40 or
+        cfg.get("captions_per_image") != 5 or
+        cfg.get("expected_unique_images_per_batch") != 8 or
+        cfg.get("expected_captions_per_batch") != 40 or
+        list(cfg.get("expected_training_similarity_shape", [])) != [8, 40] or
+        cfg.get("methodology_sha256") != METHODOLOGY_SHA256):
+        print(f"⚠️ Existing run in {os.path.basename(run_dir)} belongs to a different benchmark version/methodology. Starting a fresh run.")
+        return False
+
+    for k, v in LOCKED_BENCHMARK_CONFIG.items():
+        if k in cfg and cfg[k] != v:
+            print(f"⚠️ Configuration mismatch on key '{k}' in {os.path.basename(run_dir)}. Starting a fresh run.")
+            return False
 
     for fname in REQUIRED_RUN_ARTIFACTS:
         fpath = os.path.join(run_dir, fname)
@@ -1630,6 +1771,8 @@ def is_certified_completed_run(run_dir):
         with open(os.path.join(run_dir, "run_state.json"), "r") as f:
             state = json.load(f)
         if state.get("status") != "COMPLETED":
+            return False
+        if state.get("benchmark_version") != BENCHMARK_VERSION:
             return False
     except Exception:
         return False
@@ -1649,7 +1792,7 @@ def is_certified_completed_run(run_dir):
         txt_embs = np.load(os.path.join(run_dir, "text_embeddings.npy"))
         sim_mat = np.load(os.path.join(run_dir, "similarity_matrix.npy"))
 
-        if img_embs.shape[0] != 1000 or txt_embs.shape[0] != 5000 or sim_mat.shape != (1000, 5000):
+        if img_embs.shape != (1000, 128) or txt_embs.shape != (5000, 128) or sim_mat.shape != (1000, 5000):
             return False
         if not (np.isfinite(img_embs).all() and np.isfinite(txt_embs).all() and np.isfinite(sim_mat).all()):
             return False
@@ -1668,6 +1811,20 @@ def create_run_config(cfg, seed):
         "use_hvsc": cfg["use_hvsc"],
         "seed": seed,
         "random_seed": seed,
+        "benchmark_version": BENCHMARK_VERSION,
+        "loss_geometry_version": LOSS_GEOMETRY_VERSION,
+        "expected_unique_images_per_batch": 8,
+        "expected_captions_per_batch": 40,
+        "expected_training_similarity_shape": [8, 40],
+        "training_loss_geometry": {
+            "raw_images": 40,
+            "unique_images": 8,
+            "captions": 40,
+            "similarity_shape": [8, 40],
+            "positives_per_image": 5,
+            "positives_per_caption": 1
+        },
+        "methodology_sha256": METHODOLOGY_SHA256,
         "pytorch_version": str(torch.__version__),
         "cuda_version": str(torch.version.cuda) if torch.cuda.is_available() else "N/A",
         "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU"
@@ -1730,6 +1887,8 @@ else:
 
 print("=" * 70)
 print("🚀 LAUNCHING 12-RUN FACTORIAL BENCHMARK (PHASE B LOCKED)")
+print(f"   Benchmark Directory: {BENCHMARK_BASE_DIR}")
+print(f"   Benchmark Version  : {BENCHMARK_VERSION}")
 print(f"   Configs: {len(BENCHMARK_CONFIGS)} | Seeds: {BENCHMARK_SEEDS} | Total Runs: 12")
 print("=" * 70)
 
@@ -1742,19 +1901,31 @@ for cfg in BENCHMARK_CONFIGS:
         latest_ckpt_path = os.path.join(run_ckpt_dir, "latest.pt")
         run_state_path = os.path.join(run_ckpt_dir, "run_state.json")
 
-        # CRITICAL FIX 2 & 6: Inspect certification status before skipping
+        # CRITICAL FIX 2, 4, 5: Inspect certification status and benchmark version before skipping
         if is_certified_completed_run(run_ckpt_dir):
             existing = [r for r in master_records if r.get("tag") == cfg["tag"] and r.get("seed") == seed]
             if existing:
-                print(f"✓ Certified Run [{cfg['name']}] (Seed {seed}) already completed. Mean Recall: {existing[0]['mean_recall']:.2f}%")
+                print(f"✓ Certified Run [{cfg['name']}] (Seed {seed}) already completed under {BENCHMARK_VERSION}. Mean Recall: {existing[0]['mean_recall']:.2f}%")
                 continue
         else:
-            if os.path.exists(run_state_path):
-                print(f"⚠️ Existing run {run_tag} is incomplete/corrupt — rerunning cleanly.")
+            if os.path.exists(run_ckpt_dir):
+                for old_f in os.listdir(run_ckpt_dir):
+                    try:
+                        os.remove(os.path.join(run_ckpt_dir, old_f))
+                    except Exception:
+                        pass
+                print(f"🧹 Cleaned stale/incompatible artifacts in {run_tag} — initializing fresh run.")
 
         # Mark run as RUNNING
         with open(run_state_path, "w") as f:
-            json.dump({"status": "RUNNING", "start_time": time.time(), "tag": run_tag}, f, indent=2)
+            json.dump({
+                "status": "RUNNING",
+                "start_time": time.time(),
+                "tag": run_tag,
+                "benchmark_version": BENCHMARK_VERSION,
+                "loss_geometry_version": LOSS_GEOMETRY_VERSION,
+                "methodology_sha256": METHODOLOGY_SHA256
+            }, f, indent=2)
 
         print(f"\n---> Training: {cfg['name']} | Seed: {seed}")
         set_all_seeds(seed)
@@ -1907,14 +2078,17 @@ for cfg in BENCHMARK_CONFIGS:
         with open(os.path.join(run_ckpt_dir, "test_results.json"), "w") as f:
             json.dump(record, f, indent=2)
 
-        # Mark run as COMPLETED with explicit convergence status (Critical Fix 3)
+        # Mark run as COMPLETED with explicit convergence status and methodology fingerprint
         with open(run_state_path, "w") as f:
             json.dump({
                 "status": "COMPLETED",
                 "completed_time": time.time(),
                 "tag": run_tag,
                 "best_epoch": best_ckpt["epoch"],
-                "convergence_status": convergence_status
+                "convergence_status": convergence_status,
+                "benchmark_version": BENCHMARK_VERSION,
+                "loss_geometry_version": LOSS_GEOMETRY_VERSION,
+                "methodology_sha256": METHODOLOGY_SHA256
             }, f, indent=2)
 
         master_records = [r for r in master_records if not (r.get("tag") == cfg["tag"] and r.get("seed") == seed)]
@@ -2481,7 +2655,37 @@ for rtag in EXPECTED_RUN_TAGS:
     with open(os.path.join(rdir, "run_state.json"), "r") as f:
         rstate = json.load(f)
     assert rstate.get("status") == "COMPLETED", f"Run {rtag} status != COMPLETED"
+    assert rstate.get("benchmark_version") == BENCHMARK_VERSION, f"Run {rtag} benchmark_version mismatch"
+    assert rstate.get("loss_geometry_version") == LOSS_GEOMETRY_VERSION, f"Run {rtag} loss_geometry_version mismatch"
     disk_audit_results["convergence_status"][rtag] = rstate.get("convergence_status", "CONVERGED")
+
+    # 2b. Strict Configuration & Methodology Fingerprint Audit (Requirements 7 & 8)
+    with open(os.path.join(rdir, "config.json"), "r") as f:
+        rcfg = json.load(f)
+
+    expected_cfg = next(c for c in BENCHMARK_CONFIGS if c["tag"] == rtag.rsplit("_seed_", 1)[0])
+    expected_seed = int(rtag.rsplit("_seed_", 1)[1])
+
+    assert rcfg.get("benchmark_version") == BENCHMARK_VERSION, f"Benchmark version mismatch in {rtag}: {rcfg.get('benchmark_version')} vs {BENCHMARK_VERSION}"
+    assert rcfg.get("loss_geometry_version") == LOSS_GEOMETRY_VERSION, f"Loss geometry mismatch in {rtag}: {rcfg.get('loss_geometry_version')} vs {LOSS_GEOMETRY_VERSION}"
+    assert rcfg.get("batch_size") == 40, f"Batch size mismatch in {rtag}"
+    assert rcfg.get("captions_per_image") == 5, f"Captions per image mismatch in {rtag}"
+    assert rcfg.get("expected_unique_images_per_batch") == 8, f"Unique images per batch mismatch in {rtag}"
+    assert rcfg.get("expected_captions_per_batch") == 40, f"Captions per batch mismatch in {rtag}"
+    assert list(rcfg.get("expected_training_similarity_shape", [])) == [8, 40], f"Training similarity shape mismatch in {rtag}"
+    assert rcfg.get("methodology_sha256") == METHODOLOGY_SHA256, f"Methodology SHA mismatch in {rtag}"
+    assert rcfg.get("use_hedo") == expected_cfg["use_hedo"], f"use_hedo mismatch in {rtag}"
+    assert rcfg.get("use_hvsc") == expected_cfg["use_hvsc"], f"use_hvsc mismatch in {rtag}"
+    assert rcfg.get("seed") == expected_seed, f"seed mismatch in {rtag}"
+
+    # Verify training_loss_geometry metadata (Requirement 8)
+    tlg = rcfg.get("training_loss_geometry", {})
+    assert tlg.get("raw_images") == 40, f"raw_images mismatch in {rtag}"
+    assert tlg.get("unique_images") == 8, f"unique_images mismatch in {rtag}"
+    assert tlg.get("captions") == 40, f"captions mismatch in {rtag}"
+    assert list(tlg.get("similarity_shape", [])) == [8, 40], f"similarity_shape mismatch in {rtag}"
+    assert tlg.get("positives_per_image") == 5, f"positives_per_image mismatch in {rtag}"
+    assert tlg.get("positives_per_caption") == 1, f"positives_per_caption mismatch in {rtag}"
 
     # 3. Load embeddings & similarity matrix from disk
     img_embs = np.load(os.path.join(rdir, "image_embeddings.npy"))
@@ -2741,8 +2945,12 @@ print("✓ REPAIRED BENCHMARK PIPELINE EXECUTION COMPLETED SUCCESSFULLY!")
     with open(out_path_copy5, "w", encoding="utf-8") as f:
         json.dump(notebook_dict, f, indent=2)
 
+    out_path_copy6 = os.path.join(WORKSPACE_DIR, "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2)(1).ipynb")
+    with open(out_path_copy6, "w", encoding="utf-8") as f:
+        json.dump(notebook_dict, f, indent=2)
+
     print("=" * 80)
-    print(f"SUCCESS: Generated {out_path}, {out_path_copy}, {out_path_copy2}, {out_path_copy3}, {out_path_copy4}, and {out_path_copy5}")
+    print(f"SUCCESS: Generated {out_path}, {out_path_copy}, {out_path_copy2}, {out_path_copy3}, {out_path_copy4}, {out_path_copy5}, and {out_path_copy6}")
     print(f"Total Cells: {len(cells)}")
     print("=" * 80)
 

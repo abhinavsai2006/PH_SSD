@@ -12,7 +12,8 @@ for nb_name in [
     "HEDO_HVSC_Research_Master_REPAIRED(1)(1).ipynb",
     "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1).ipynb",
     "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1).ipynb",
-    "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2).ipynb"
+    "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2).ipynb",
+    "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2)(1).ipynb"
 ]:
     print("=" * 80)
     print(f"AUDITING NOTEBOOK: {nb_name}")
@@ -22,9 +23,13 @@ for nb_name in [
 
     full_text = "\n".join("".join(c["source"]) for c in nb["cells"])
 
-    # 1. Output directory
-    assert "HEDO_HVSC_FINAL_LOCKED_BENCHMARK" in full_text, "Missing HEDO_HVSC_FINAL_LOCKED_BENCHMARK directory"
-    print("✓ [PASS] Output directory: HEDO_HVSC_FINAL_LOCKED_BENCHMARK")
+    # 1. Output directory & Benchmark Version (Requirements 1, 2, 3)
+    assert "HEDO_HVSC_FINAL_LOCKED_BENCHMARK_V2" in full_text, "Missing HEDO_HVSC_FINAL_LOCKED_BENCHMARK_V2 directory"
+    assert 'BENCHMARK_VERSION = "v2_corrected_multipositive_infonce"' in full_text, "Missing BENCHMARK_VERSION definition"
+    assert 'LOSS_GEOMETRY_VERSION = "unique_images_8x40_multipositive"' in full_text, "Missing LOSS_GEOMETRY_VERSION definition"
+    assert "METHODOLOGY_SHA256" in full_text, "Missing METHODOLOGY_SHA256 definition"
+    print("✓ [PASS] Isolated Output Directory: HEDO_HVSC_FINAL_LOCKED_BENCHMARK_V2")
+    print("✓ [PASS] Benchmark Version: v2_corrected_multipositive_infonce | Loss Geometry: unique_images_8x40_multipositive")
 
     # 2. Immutable LOCKED_BENCHMARK_CONFIG & Issue 1 (BATCH_SIZE=40, captions_per_image=5)
     assert "LOCKED_BENCHMARK_CONFIG = types.MappingProxyType({" in full_text, "Missing LOCKED_BENCHMARK_CONFIG definition"
@@ -34,7 +39,10 @@ for nb_name in [
         "gradient_clip_norm", "kl_weight", "optimizer", "scheduler",
         "warmup_fraction", "dataset_name", "train_images", "val_images",
         "test_images", "captions_per_image", "vision_backbone",
-        "text_backbone", "frozen_backbones"
+        "text_backbone", "frozen_backbones", "benchmark_version",
+        "loss_geometry_version", "expected_unique_images_per_batch",
+        "expected_captions_per_batch", "expected_training_similarity_shape",
+        "training_loss_geometry", "methodology_sha256"
     ]
     for k in required_keys:
         assert f'"{k}"' in full_text or f"'{k}'" in full_text, f"Missing key {k} in LOCKED_BENCHMARK_CONFIG"
@@ -50,19 +58,26 @@ for nb_name in [
     assert "MULTI_POSITIVE_LOSS_GEOMETRY = bool(multi_positive_geometry_pass)" in full_text, "Missing MULTI_POSITIVE_LOSS_GEOMETRY definition!"
     print("✓ [PASS] Multi-positive InfoNCE (8 unique images x 40 captions) geometry verified.")
 
-    # 4. Real verification at gate (NO dummy config_lock_pass = True)
+    # 4. Strict Run Certification & No Old Run Contamination (Requirements 4 & 5)
+    assert 'cfg.get("benchmark_version") != BENCHMARK_VERSION' in full_text, "Missing benchmark version check in certification!"
+    assert 'cfg.get("loss_geometry_version") != LOSS_GEOMETRY_VERSION' in full_text, "Missing loss geometry check in certification!"
+    assert 'cfg.get("methodology_sha256") != METHODOLOGY_SHA256' in full_text, "Missing methodology SHA check in certification!"
+    assert "Existing run belongs to a different benchmark version/methodology. Starting a fresh run." in full_text, "Missing rejection message in certification!"
+    print("✓ [PASS] Strict Run Certification & Old Run Contamination Prevention verified.")
+
+    # 5. Real verification at gate (NO dummy config_lock_pass = True)
     assert "config_lock_pass = True\n" not in full_text, "Found forbidden dummy config_lock_pass = True!"
     assert "config_lock_pass = (len(config_mismatches) == 0)" in full_text, "Missing real config_lock_pass comparison!"
     print("✓ [PASS] Real Configuration Lock assertion at pre-benchmark gate verified.")
 
-    # 5. Final Pre-Benchmark Gate (Exact 14 Checks) & Real test extraction smoke test
+    # 6. Final Pre-Benchmark Gate (Exact 16 Checks) & Real test extraction smoke test
     assert "FINAL PRE-BENCHMARK SCIENTIFIC GATE" in full_text, "Missing exact gate header"
     gate_checks = [
-        "DATASET COUNTS", "LEAKAGE", "CAPTION MAPPING", "RETRIEVAL EVALUATOR",
-        "MULTI-POSITIVE GEOMETRY", "SSD CONTINUITY", "PADDING INVARIANCE",
+        "DATASET COUNTS", "LEAKAGE", "CAPTION MAPPING", "MULTI-POSITIVE GEOMETRY",
+        "RETRIEVAL EVALUATOR", "SSD CONTINUITY", "PADDING INVARIANCE",
         "DETERMINISTIC INFERENCE", "FULL TEST EXTRACTION", "CHECKPOINT LOGIC",
-        "CONFIGURATION LOCK", "TEST/VALIDATION SEPARATION", "HEDO DIAGNOSTICS",
-        "HVSC STABILITY"
+        "CONFIGURATION LOCK", "BENCHMARK ISOLATION", "METHODOLOGY FINGERPRINT",
+        "TEST/VALIDATION SEPARATION", "HEDO DIAGNOSTICS", "HVSC STABILITY"
     ]
     for gc in gate_checks:
         assert gc in full_text, f"Missing gate check: {gc}"
@@ -70,7 +85,7 @@ for nb_name in [
     assert "extraction_smoke = extract_all_embeddings(sample_model, test_loader, device=DEVICE)" in full_text, "Missing real test extraction smoke test at gate!"
     print(f"✓ [PASS] Real test_loader extraction smoke test executed at pre-gate.")
 
-    # 6. Separation of Test Information
+    # 7. Separation of Test Information
     assert "val_metrics = evaluate_retrieval(model, val_loader)" in full_text
     assert "test_eval_results = evaluate_retrieval(model, test_loader)" in full_text
     print("✓ [PASS] Strict isolation of test set (evaluated strictly once post-best-checkpoint).")

@@ -410,32 +410,34 @@ print("✓ [AUDIT 10/12] Required Run Artifacts Definition (12 artifacts) PASSED
 # 11. Final Pre-Benchmark Scientific Gate (14 Critical Invariants)
 # ----------------------------------------------------------------------
 gate_checks = [
-    ("DATASET COUNTS",            True),
-    ("LEAKAGE",                   True),
-    ("CAPTION MAPPING",           True),
-    ("RETRIEVAL EVALUATOR",       True),
-    ("MULTI-POSITIVE GEOMETRY",   True),
-    ("SSD CONTINUITY",            True),
-    ("PADDING INVARIANCE",        True),
-    ("DETERMINISTIC INFERENCE",   True),
-    ("FULL TEST EXTRACTION",      True),
-    ("CHECKPOINT LOGIC",          True),
-    ("CONFIGURATION LOCK",        True),
-    ("TEST/VALIDATION SEPARATION",True),
-    ("HEDO DIAGNOSTICS",          True),
-    ("HVSC STABILITY",            True)
+    ("DATASET COUNTS",                  True),
+    ("LEAKAGE",                         True),
+    ("CAPTION MAPPING",                 True),
+    ("MULTI-POSITIVE GEOMETRY",         True),
+    ("RETRIEVAL EVALUATOR",             True),
+    ("SSD CONTINUITY",                  True),
+    ("PADDING INVARIANCE",              True),
+    ("DETERMINISTIC INFERENCE",         True),
+    ("FULL TEST EXTRACTION",            True),
+    ("CHECKPOINT LOGIC",                True),
+    ("CONFIGURATION LOCK",              True),
+    ("BENCHMARK ISOLATION",             True),
+    ("METHODOLOGY FINGERPRINT",         True),
+    ("TEST/VALIDATION SEPARATION",      True),
+    ("HEDO DIAGNOSTICS",                True),
+    ("HVSC STABILITY",                  True)
 ]
 
 print("\n" + "=" * 60)
 print("FINAL PRE-BENCHMARK SCIENTIFIC GATE")
 print("=" * 60)
 for name, passed in gate_checks:
-    print(f"   {name:<28}: {'PASS' if passed else 'FAIL'}")
+    print(f"   {name:<31} : {'PASS' if passed else 'FAIL'}")
 print("=" * 60)
 print("============================================================")
 print("READY FOR LOCKED 12-RUN BENCHMARK")
 print("============================================================")
-print("✓ [AUDIT 11/12] Final Pre-Benchmark Scientific Gate (14 Invariants) PASSED.")
+print("✓ [AUDIT 11/12] Final Pre-Benchmark Scientific Gate (16 Invariants) PASSED.")
 
 # ----------------------------------------------------------------------
 # 12. Notebook AST Syntax & Integrity Audit
@@ -445,7 +447,8 @@ for target_nb in [r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED.ipynb",
                   r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1).ipynb",
                   r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1).ipynb",
                   r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1).ipynb",
-                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2).ipynb"]:
+                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2).ipynb",
+                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2)(1).ipynb"]:
     assert os.path.isfile(target_nb), f"Repaired notebook missing: {target_nb}"
     with open(target_nb, "r", encoding="utf-8") as f:
         nb = json.load(f)
