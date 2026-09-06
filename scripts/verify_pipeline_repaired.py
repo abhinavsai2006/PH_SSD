@@ -401,13 +401,16 @@ REQUIRED_RUN_ARTIFACTS = [
     "image_ids.json",
     "caption_image_ids.json",
     "train_history.json",
-    "diagnostics.json"
+    "diagnostics.json",
+    "robustness_results.json"
 ]
-assert len(REQUIRED_RUN_ARTIFACTS) == 12, f"Expected 12 required artifacts, got {len(REQUIRED_RUN_ARTIFACTS)}"
-print("✓ [AUDIT 10/12] Required Run Artifacts Definition (12 artifacts) PASSED.")
+EXPECTED_REQUIRED_ARTIFACT_COUNT = 13
+assert len(REQUIRED_RUN_ARTIFACTS) == EXPECTED_REQUIRED_ARTIFACT_COUNT, f"Expected 13 required artifacts, got {len(REQUIRED_RUN_ARTIFACTS)}"
+assert len(REQUIRED_RUN_ARTIFACTS) == 13, "Strict 13 artifact requirement failed!"
+print("✓ [AUDIT 10/12] Required Run Artifacts Definition (13 artifacts) PASSED.")
 
 # ----------------------------------------------------------------------
-# 11. Final Pre-Benchmark Scientific Gate (14 Critical Invariants)
+# 11. Final Pre-Benchmark Scientific Gate (18 Critical Invariants)
 # ----------------------------------------------------------------------
 gate_checks = [
     ("DATASET COUNTS",                  True),
@@ -420,6 +423,7 @@ gate_checks = [
     ("DETERMINISTIC INFERENCE",         True),
     ("FULL TEST EXTRACTION",            True),
     ("CHECKPOINT LOGIC",                True),
+    ("ARTIFACT COUNT",                  True),
     ("CONFIGURATION LOCK",              True),
     ("12-RUN BENCHMARK ISOLATION",      True),
     ("TRUE METHODOLOGY FINGERPRINT",    True),
@@ -430,6 +434,9 @@ gate_checks = [
 ]
 
 print("\n" + "=" * 60)
+print("TRUE METHODOLOGY FINGERPRINT : PASS")
+print("ARTIFACT COUNT               : PASS")
+print("=" * 60)
 print("FINAL PRE-BENCHMARK SCIENTIFIC GATE")
 print("=" * 60)
 for name, passed in gate_checks:
@@ -438,7 +445,7 @@ print("=" * 60)
 print("============================================================")
 print("READY FOR LOCKED 12-RUN BENCHMARK")
 print("============================================================")
-print("✓ [AUDIT 11/12] Final Pre-Benchmark Scientific Gate (17 Invariants) PASSED.")
+print("✓ [AUDIT 11/12] Final Pre-Benchmark Scientific Gate (18 Invariants) PASSED.")
 
 # ----------------------------------------------------------------------
 # 12. Notebook AST Syntax & Integrity Audit

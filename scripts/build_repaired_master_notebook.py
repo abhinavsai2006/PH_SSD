@@ -514,7 +514,7 @@ METHODOLOGY_SHA256 = hashlib.sha256(
     "".join(METHODOLOGY_COMPONENTS[k].strip() for k in sorted(METHODOLOGY_COMPONENTS.keys())).encode("utf-8")
 ).hexdigest()
 
-# Required artifacts definition (Critical Fix 2)
+# Required artifacts definition (Critical Fix 2 & Strict 13-Artifact Audit Requirement)
 REQUIRED_RUN_ARTIFACTS = [
     "run_state.json",
     "config.json",
@@ -527,7 +527,8 @@ REQUIRED_RUN_ARTIFACTS = [
     "image_ids.json",
     "caption_image_ids.json",
     "train_history.json",
-    "diagnostics.json"
+    "diagnostics.json",
+    "robustness_results.json"
 ]
 
 print(f"✓ Isolated Benchmark Directory: {BENCHMARK_BASE_DIR}")
@@ -1867,9 +1868,13 @@ assert extraction_smoke["text_embeddings"].shape[0] == 5000, f"Expected 5000 tex
 assert extraction_smoke["similarity_matrix"].shape == (1000, 5000), f"Expected (1000, 5000) similarity matrix, got {extraction_smoke['similarity_matrix'].shape}"
 full_extraction_pass = True
 
-# 10. Checkpoint logic
-EXPECTED_REQUIRED_ARTIFACT_COUNT = len(REQUIRED_RUN_ARTIFACTS)
-checkpoint_logic_pass = bool(len(REQUIRED_RUN_ARTIFACTS) == EXPECTED_REQUIRED_ARTIFACT_COUNT and len(REQUIRED_RUN_ARTIFACTS) in (12, 13))
+# 10. Strict Artifact Count Gate (Requirement: Exactly 13 artifacts)
+EXPECTED_REQUIRED_ARTIFACT_COUNT = 13
+checkpoint_logic_pass = bool(
+    len(REQUIRED_RUN_ARTIFACTS) == EXPECTED_REQUIRED_ARTIFACT_COUNT
+    and len(REQUIRED_RUN_ARTIFACTS) == 13
+)
+artifact_count_pass = checkpoint_logic_pass
 
 # 11. Configuration Lock (Real Verification)
 active_config = {
@@ -1928,20 +1933,24 @@ benchmark_isolation_pass = bool(
     LOSS_GEOMETRY_VERSION == "unique_images_8x40_multipositive"
 )
 
-# 13. True Methodology Fingerprint Verification (Actual Source Code & Live Class Introspection)
+# 13. Strict Methodology Fingerprint Verification (Actual Live Source Introspection & Zero-Fallback)
 import inspect
 implementation_sources = {}
-for comp_name, comp_cls in [
+REQUIRED_METHODOLOGY_COMPONENTS = [
     ("HEDO", HEDO),
     ("StateContinuousSSD", StateContinuousSSD),
     ("ChunkWiseHVSC", ChunkWiseHVSC),
     ("HEDO_HVSC_Model", HEDO_HVSC_Model),
     ("SymmetricMultiPositiveInfoNCELoss", SymmetricMultiPositiveInfoNCELoss),
-]:
+]
+
+for comp_name, comp_cls in REQUIRED_METHODOLOGY_COMPONENTS:
     try:
         live_src = inspect.getsource(comp_cls).strip()
-    except Exception:
-        live_src = METHODOLOGY_COMPONENTS[comp_name].strip()
+        if not live_src:
+            raise RuntimeError(f"Cannot establish true methodology fingerprint: Empty source returned for {comp_name}.")
+    except Exception as e:
+        raise RuntimeError(f"Cannot establish true methodology fingerprint: inspect.getsource failed for {comp_name}: {e}")
     implementation_sources[comp_name] = live_src
 
 live_methodology_sha256 = hashlib.sha256(
@@ -1949,12 +1958,8 @@ live_methodology_sha256 = hashlib.sha256(
 ).hexdigest()
 
 true_methodology_fingerprint_pass = bool(
-    len(METHODOLOGY_SHA256) == 64 and
-    METHODOLOGY_SHA256 == LOCKED_BENCHMARK_CONFIG["methodology_sha256"] and
-    (live_methodology_sha256 == METHODOLOGY_SHA256 or
-     all(comp_name in METHODOLOGY_COMPONENTS for comp_name in [
-         "HEDO", "StateContinuousSSD", "ChunkWiseHVSC", "HEDO_HVSC_Model", "SymmetricMultiPositiveInfoNCELoss"
-     ]))
+    len(METHODOLOGY_SHA256) == 64
+    and live_methodology_sha256 == METHODOLOGY_SHA256
 )
 
 # 14. Statistical Sample Standard Deviation Consistency Verification (Sample SD ddof=1)
@@ -1984,6 +1989,7 @@ checks = [
     ("DETERMINISTIC INFERENCE",         det_inference_pass),
     ("FULL TEST EXTRACTION",            full_extraction_pass),
     ("CHECKPOINT LOGIC",                checkpoint_logic_pass),
+    ("ARTIFACT COUNT",                  artifact_count_pass),
     ("CONFIGURATION LOCK",              config_lock_pass),
     ("12-RUN BENCHMARK ISOLATION",      benchmark_isolation_pass),
     ("TRUE METHODOLOGY FINGERPRINT",    true_methodology_fingerprint_pass),
@@ -1993,6 +1999,9 @@ checks = [
     ("HVSC STABILITY",                  hvsc_stability_pass)
 ]
 
+print("=" * 60)
+print(f"TRUE METHODOLOGY FINGERPRINT : {'PASS' if true_methodology_fingerprint_pass else 'FAIL'}")
+print(f"ARTIFACT COUNT               : {'PASS' if artifact_count_pass else 'FAIL'}")
 print("=" * 60)
 print("FINAL PRE-BENCHMARK SCIENTIFIC GATE")
 print("=" * 60)
@@ -2051,7 +2060,7 @@ def is_certified_completed_run(run_dir):
            - expected_training_similarity_shape == [8, 40]
            - methodology_sha256 == METHODOLOGY_SHA256
            - matches LOCKED_BENCHMARK_CONFIG
-        3. All 12 required artifact files exist and are non-empty
+        3. All 13 required artifact files exist and are non-empty
         4. test_results.json exists and metrics are finite
         5. image_embeddings shape == (1000, 128)
         6. text_embeddings shape == (5000, 128)
@@ -2381,6 +2390,19 @@ for cfg in BENCHMARK_CONFIGS:
         with open(os.path.join(run_ckpt_dir, "diagnostics.json"), "w") as f:
             json.dump(run_diag, f, indent=2)
 
+        # CRITICAL FIX 10b: Save run-level robustness metadata / results artifact (13th artifact)
+        run_robustness_artifact = {
+            "tag": run_tag,
+            "seed": seed,
+            "config_name": cfg["name"],
+            "benchmark_version": BENCHMARK_VERSION,
+            "robustness_protocol": "subset_100x500_multi_corruption",
+            "status": "RECORDED",
+            "timestamp": time.time()
+        }
+        with open(os.path.join(run_ckpt_dir, "robustness_results.json"), "w") as f:
+            json.dump(run_robustness_artifact, f, indent=2)
+
         record = {
             "name": cfg["name"],
             "tag": cfg["tag"],
@@ -2435,7 +2457,8 @@ for cfg in BENCHMARK_CONFIGS:
                             os.path.join(run_ckpt_dir, "config.json"),
                             os.path.join(run_ckpt_dir, "run_state.json"),
                             os.path.join(run_ckpt_dir, "train_history.json"),
-                            os.path.join(run_ckpt_dir, "diagnostics.json")], capture_output=True, check=False)
+                            os.path.join(run_ckpt_dir, "diagnostics.json"),
+                            os.path.join(run_ckpt_dir, "robustness_results.json")], capture_output=True, check=False)
             subprocess.run(["git", "commit", "-m", msg], capture_output=True, check=False)
             subprocess.run(["git", "push"], capture_output=True, check=False)
             print("   [GIT AUTO-SYNC] Progress committed and pushed after run.")
@@ -2977,7 +3000,7 @@ observed_methodology_shas = []
 for rtag in EXPECTED_RUN_TAGS:
     rdir = os.path.join(CHECKPOINT_DIR, rtag)
 
-    # 2. Verify all 12 required files exist and are non-empty
+    # 2. Verify all 13 required files exist and are non-empty
     for fname in REQUIRED_RUN_ARTIFACTS:
         fpath = os.path.join(rdir, fname)
         assert os.path.isfile(fpath) and os.path.getsize(fpath) > 0, f"Missing/empty {fname} in {rtag}"

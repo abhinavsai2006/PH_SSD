@@ -71,14 +71,23 @@ for nb_name in [
     assert "config_lock_pass = (len(config_mismatches) == 0)" in full_text, "Missing real config_lock_pass comparison!"
     print("✓ [PASS] Real Configuration Lock assertion at pre-benchmark gate verified.")
 
-    # 6. Final Pre-Benchmark Gate (Exact 17 Checks) & Real test extraction smoke test
+    # 6. Final Pre-Benchmark Gate (Exact 18 Checks) & Real test extraction smoke test
     assert "FINAL PRE-BENCHMARK SCIENTIFIC GATE" in full_text, "Missing exact gate header"
+    assert "EXPECTED_REQUIRED_ARTIFACT_COUNT = 13" in full_text, "Missing EXPECTED_REQUIRED_ARTIFACT_COUNT = 13"
+    assert "len(REQUIRED_RUN_ARTIFACTS) == 13" in full_text, "Missing len(REQUIRED_RUN_ARTIFACTS) == 13 assertion"
+    assert '"robustness_results.json"' in full_text, "Missing robustness_results.json in REQUIRED_RUN_ARTIFACTS"
+    assert "true_methodology_fingerprint_pass = bool(\n    len(METHODOLOGY_SHA256) == 64\n    and live_methodology_sha256 == METHODOLOGY_SHA256\n)" in full_text, "Missing strict true_methodology_fingerprint_pass condition without fallback"
+    assert "Cannot establish true methodology fingerprint" in full_text, "Missing RuntimeError on inspect.getsource failure"
+    assert "TRUE METHODOLOGY FINGERPRINT : " in full_text, "Missing explicit TRUE METHODOLOGY FINGERPRINT audit print"
+    assert "ARTIFACT COUNT               : " in full_text, "Missing explicit ARTIFACT COUNT audit print"
+
     gate_checks = [
         "DATASET COUNTS", "LEAKAGE", "CAPTION MAPPING", "MULTI-POSITIVE GEOMETRY",
         "RETRIEVAL EVALUATOR", "SSD CONTINUITY", "PADDING INVARIANCE",
         "DETERMINISTIC INFERENCE", "FULL TEST EXTRACTION", "CHECKPOINT LOGIC",
-        "CONFIGURATION LOCK", "12-RUN BENCHMARK ISOLATION", "TRUE METHODOLOGY FINGERPRINT",
-        "STATISTICAL SD CONSISTENCY", "TEST/VALIDATION SEPARATION", "HEDO DIAGNOSTICS", "HVSC STABILITY"
+        "ARTIFACT COUNT", "CONFIGURATION LOCK", "12-RUN BENCHMARK ISOLATION",
+        "TRUE METHODOLOGY FINGERPRINT", "STATISTICAL SD CONSISTENCY",
+        "TEST/VALIDATION SEPARATION", "HEDO DIAGNOSTICS", "HVSC STABILITY"
     ]
     for gc in gate_checks:
         assert gc in full_text, f"Missing gate check: {gc}"
