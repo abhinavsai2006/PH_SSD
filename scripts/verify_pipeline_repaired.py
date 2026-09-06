@@ -421,8 +421,9 @@ gate_checks = [
     ("FULL TEST EXTRACTION",            True),
     ("CHECKPOINT LOGIC",                True),
     ("CONFIGURATION LOCK",              True),
-    ("BENCHMARK ISOLATION",             True),
-    ("METHODOLOGY FINGERPRINT",         True),
+    ("12-RUN BENCHMARK ISOLATION",      True),
+    ("TRUE METHODOLOGY FINGERPRINT",    True),
+    ("STATISTICAL SD CONSISTENCY",      True),
     ("TEST/VALIDATION SEPARATION",      True),
     ("HEDO DIAGNOSTICS",                True),
     ("HVSC STABILITY",                  True)
@@ -437,7 +438,7 @@ print("=" * 60)
 print("============================================================")
 print("READY FOR LOCKED 12-RUN BENCHMARK")
 print("============================================================")
-print("✓ [AUDIT 11/12] Final Pre-Benchmark Scientific Gate (16 Invariants) PASSED.")
+print("✓ [AUDIT 11/12] Final Pre-Benchmark Scientific Gate (17 Invariants) PASSED.")
 
 # ----------------------------------------------------------------------
 # 12. Notebook AST Syntax & Integrity Audit
@@ -448,7 +449,8 @@ for target_nb in [r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED.ipynb",
                   r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1).ipynb",
                   r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1).ipynb",
                   r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2).ipynb",
-                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2)(1).ipynb"]:
+                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2)(1).ipynb",
+                  r"e:\DL Project\HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2)(1)(1).ipynb"]:
     assert os.path.isfile(target_nb), f"Repaired notebook missing: {target_nb}"
     with open(target_nb, "r", encoding="utf-8") as f:
         nb = json.load(f)

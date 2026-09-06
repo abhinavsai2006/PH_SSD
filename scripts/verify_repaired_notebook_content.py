@@ -13,7 +13,8 @@ for nb_name in [
     "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1).ipynb",
     "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1).ipynb",
     "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2).ipynb",
-    "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2)(1).ipynb"
+    "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2)(1).ipynb",
+    "HEDO_HVSC_Research_Master_REPAIRED(1)(1)(1)(1)(2)(1)(1).ipynb"
 ]:
     print("=" * 80)
     print(f"AUDITING NOTEBOOK: {nb_name}")
@@ -70,14 +71,14 @@ for nb_name in [
     assert "config_lock_pass = (len(config_mismatches) == 0)" in full_text, "Missing real config_lock_pass comparison!"
     print("✓ [PASS] Real Configuration Lock assertion at pre-benchmark gate verified.")
 
-    # 6. Final Pre-Benchmark Gate (Exact 16 Checks) & Real test extraction smoke test
+    # 6. Final Pre-Benchmark Gate (Exact 17 Checks) & Real test extraction smoke test
     assert "FINAL PRE-BENCHMARK SCIENTIFIC GATE" in full_text, "Missing exact gate header"
     gate_checks = [
         "DATASET COUNTS", "LEAKAGE", "CAPTION MAPPING", "MULTI-POSITIVE GEOMETRY",
         "RETRIEVAL EVALUATOR", "SSD CONTINUITY", "PADDING INVARIANCE",
         "DETERMINISTIC INFERENCE", "FULL TEST EXTRACTION", "CHECKPOINT LOGIC",
-        "CONFIGURATION LOCK", "BENCHMARK ISOLATION", "METHODOLOGY FINGERPRINT",
-        "TEST/VALIDATION SEPARATION", "HEDO DIAGNOSTICS", "HVSC STABILITY"
+        "CONFIGURATION LOCK", "12-RUN BENCHMARK ISOLATION", "TRUE METHODOLOGY FINGERPRINT",
+        "STATISTICAL SD CONSISTENCY", "TEST/VALIDATION SEPARATION", "HEDO DIAGNOSTICS", "HVSC STABILITY"
     ]
     for gc in gate_checks:
         assert gc in full_text, f"Missing gate check: {gc}"
@@ -132,6 +133,17 @@ for nb_name in [
     assert "h4a_status" in full_text and "h4b_status" in full_text, "Missing separate H4-A and H4-B status reporting"
     print("✓ [PASS] Independent H4-A Parameter Efficiency and H4-B Empirical Latency Scaling verified.")
 
+    # 12. Consistent Sample Standard Deviation (ddof=1)
+    assert "std_delta = float(np.std(deltas, ddof=1))" in full_text, "Missing ddof=1 sample standard deviation!"
+    print("✓ [PASS] Consistent Sample Standard Deviation (ddof=1) verified.")
+
+    # 13. Strict 12-Run Methodology Hash Verification (Fix 1 & 3)
+    assert "observed_methodology_shas = []" in full_text, "Missing observed_methodology_shas initialization"
+    assert "assert len(set(observed_methodology_shas)) == 1" in full_text, "Missing 12-run methodology hash uniformity assertion"
+    assert "assert observed_methodology_shas[0] == METHODOLOGY_SHA256" in full_text, "Missing current vs saved methodology hash assertion"
+    print("✓ [PASS] True Methodology Fingerprint & 12-Run Hash Uniformity verified.")
+
 print("\n" + "=" * 80)
 print("🎉 ALL CRITICAL AUDIT VERIFICATIONS PASSED FOR ALL NOTEBOOKS!")
 print("=" * 80)
+
