@@ -1,0 +1,470 @@
+%% BioMed_Central_Bib_Style_v1.01
+
+\begin{thebibliography}{27}
+% BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
+\ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
+\ifx \binits  \undefined \def \binits#1{#1}\fi
+\ifx \bauthor  \undefined \def \bauthor#1{#1}\fi
+\ifx \batitle  \undefined \def \batitle#1{#1}\fi
+\ifx \bjtitle  \undefined \def \bjtitle#1{#1}\fi
+\ifx \bvolume  \undefined \def \bvolume#1{\textbf{#1}}\fi
+\ifx \byear  \undefined \def \byear#1{#1}\fi
+\ifx \bissue  \undefined \def \bissue#1{#1}\fi
+\ifx \bfpage  \undefined \def \bfpage#1{#1}\fi
+\ifx \blpage  \undefined \def \blpage #1{#1}\fi
+\ifx \burl  \undefined \def \burl#1{\textsf{#1}}\fi
+\ifx \doiurl  \undefined \def \doiurl#1{\url{https://doi.org/#1}}\fi
+\ifx \betal  \undefined \def \betal{\textit{et al.}}\fi
+\ifx \binstitute  \undefined \def \binstitute#1{#1}\fi
+\ifx \binstitutionaled  \undefined \def \binstitutionaled#1{#1}\fi
+\ifx \bctitle  \undefined \def \bctitle#1{#1}\fi
+\ifx \beditor  \undefined \def \beditor#1{#1}\fi
+\ifx \bpublisher  \undefined \def \bpublisher#1{#1}\fi
+\ifx \bbtitle  \undefined \def \bbtitle#1{#1}\fi
+\ifx \bedition  \undefined \def \bedition#1{#1}\fi
+\ifx \bseriesno  \undefined \def \bseriesno#1{#1}\fi
+\ifx \blocation  \undefined \def \blocation#1{#1}\fi
+\ifx \bsertitle  \undefined \def \bsertitle#1{#1}\fi
+\ifx \bsnm \undefined \def \bsnm#1{#1}\fi
+\ifx \bsuffix \undefined \def \bsuffix#1{#1}\fi
+\ifx \bparticle \undefined \def \bparticle#1{#1}\fi
+\ifx \barticle \undefined \def \barticle#1{#1}\fi
+\bibcommenthead
+\ifx \bconfdate \undefined \def \bconfdate #1{#1}\fi
+\ifx \botherref \undefined \def \botherref #1{#1}\fi
+\ifx \url \undefined \def \url#1{\textsf{#1}}\fi
+\ifx \bchapter \undefined \def \bchapter#1{#1}\fi
+\ifx \bbook \undefined \def \bbook#1{#1}\fi
+\ifx \bcomment \undefined \def \bcomment#1{#1}\fi
+\ifx \oauthor \undefined \def \oauthor#1{#1}\fi
+\ifx \citeauthoryear \undefined \def \citeauthoryear#1{#1}\fi
+\ifx \endbibitem  \undefined \def \endbibitem {}\fi
+\ifx \bconflocation  \undefined \def \bconflocation#1{#1}\fi
+\ifx \arxivurl  \undefined \def \arxivurl#1{\textsf{#1}}\fi
+\csname PreBibitemsHook\endcsname
+
+%%% 1
+\bibitem[\protect\citeauthoryear{Radford et~al.}{2021}]{radford2021learning}
+\begin{botherref}
+\oauthor{\bsnm{Radford}, \binits{A.}},
+\oauthor{\bsnm{Kim}, \binits{J.W.}},
+\oauthor{\bsnm{Hallacy}, \binits{C.}},
+\oauthor{\bsnm{Ramesh}, \binits{A.}},
+\oauthor{\bsnm{Goh}, \binits{G.}},
+\oauthor{\bsnm{Agarwal}, \binits{S.}},
+\oauthor{\bsnm{Sastry}, \binits{G.}},
+\oauthor{\bsnm{Askell}, \binits{A.}},
+\oauthor{\bsnm{Mishkin}, \binits{P.}},
+\oauthor{\bsnm{Clark}, \binits{J.}}, et al.:
+Learning transferable visual models from natural language supervision.
+Proceedings of the 38th International Conference on Machine Learning (ICML),
+8748--8763
+(2021)
+\end{botherref}
+\endbibitem
+
+%%% 2
+\bibitem[\protect\citeauthoryear{Li et~al.}{2022}]{li2022blip}
+\begin{botherref}
+\oauthor{\bsnm{Li}, \binits{J.}},
+\oauthor{\bsnm{Li}, \binits{D.}},
+\oauthor{\bsnm{Xiong}, \binits{C.}},
+\oauthor{\bsnm{Hoi}, \binits{S.}}:
+{BLIP}: Bootstrapping language-image pre-training for unified vision-language
+  understanding and generation.
+Proceedings of the 39th International Conference on Machine Learning (ICML),
+12888--12900
+(2022)
+\end{botherref}
+\endbibitem
+
+%%% 3
+\bibitem[\protect\citeauthoryear{Jia et~al.}{2021}]{jia2021scaling}
+\begin{botherref}
+\oauthor{\bsnm{Jia}, \binits{C.}},
+\oauthor{\bsnm{Yang}, \binits{Y.}},
+\oauthor{\bsnm{Xia}, \binits{Y.}},
+\oauthor{\bsnm{Chen}, \binits{Y.-T.}},
+\oauthor{\bsnm{Parekh}, \binits{Z.}},
+\oauthor{\bsnm{Pham}, \binits{H.}},
+\oauthor{\bsnm{Le}, \binits{Q.}},
+\oauthor{\bsnm{Ku}, \binits{S.-Y.}},
+\oauthor{\bsnm{Wang}, \binits{J.}},
+\oauthor{\bsnm{Duerig}, \binits{T.}}:
+Scaling up visual and vision-language representation learning with noisy text
+  supervision.
+Proceedings of the 38th International Conference on Machine Learning (ICML),
+4904--4916
+(2021)
+\end{botherref}
+\endbibitem
+
+%%% 4
+\bibitem[\protect\citeauthoryear{Faghri et~al.}{2018}]{faghri2017vse++}
+\begin{botherref}
+\oauthor{\bsnm{Faghri}, \binits{F.}},
+\oauthor{\bsnm{Fleet}, \binits{D.J.}},
+\oauthor{\bsnm{Kiros}, \binits{J.R.}},
+\oauthor{\bsnm{Fidler}, \binits{S.}}:
+{VSE++}: Improving visual-semantic embeddings with hard negatives.
+British Machine Vision Conference (BMVC)
+(2018)
+\end{botherref}
+\endbibitem
+
+%%% 5
+\bibitem[\protect\citeauthoryear{Lee et~al.}{2018}]{lee2018stacked}
+\begin{botherref}
+\oauthor{\bsnm{Lee}, \binits{K.-H.}},
+\oauthor{\bsnm{Chen}, \binits{X.}},
+\oauthor{\bsnm{Hua}, \binits{G.}},
+\oauthor{\bsnm{Houdusse}, \binits{H.}},
+\oauthor{\bsnm{Vassilvitskii}, \binits{S.}}:
+Stacked cross attention for image-text matching.
+Proceedings of the European Conference on Computer Vision (ECCV),
+201--216
+(2018)
+\end{botherref}
+\endbibitem
+
+%%% 6
+\bibitem[\protect\citeauthoryear{Vaswani et~al.}{2017}]{vaswani2017attention}
+\begin{botherref}
+\oauthor{\bsnm{Vaswani}, \binits{A.}},
+\oauthor{\bsnm{Shazeer}, \binits{N.}},
+\oauthor{\bsnm{Parmar}, \binits{N.}},
+\oauthor{\bsnm{Uszkoreit}, \binits{J.}},
+\oauthor{\bsnm{Jones}, \binits{L.}},
+\oauthor{\bsnm{Gomez}, \binits{A.N.}},
+\oauthor{\bsnm{Kaiser}, \binits{{\L}.}},
+\oauthor{\bsnm{Polosukhin}, \binits{I.}}:
+Attention is all you need.
+Advances in Neural Information Processing Systems (NeurIPS)
+\textbf{30}
+(2017)
+\end{botherref}
+\endbibitem
+
+%%% 7
+\bibitem[\protect\citeauthoryear{Dosovitskiy
+  et~al.}{2021}]{dosovitskiy2020image}
+\begin{botherref}
+\oauthor{\bsnm{Dosovitskiy}, \binits{A.}},
+\oauthor{\bsnm{Beyer}, \binits{L.}},
+\oauthor{\bsnm{Kolesnikov}, \binits{A.}},
+\oauthor{\bsnm{Weissenborn}, \binits{D.}},
+\oauthor{\bsnm{Zhai}, \binits{X.}},
+\oauthor{\bsnm{Unterthiner}, \binits{T.}},
+\oauthor{\bsnm{Dehghani}, \binits{M.}},
+\oauthor{\bsnm{Minderer}, \binits{M.}},
+\oauthor{\bsnm{Heigold}, \binits{G.}},
+\oauthor{\bsnm{Gelly}, \binits{S.}}, et al.:
+An image is worth 16x16 words: Transformers for image recognition at scale.
+International Conference on Learning Representations (ICLR)
+(2021)
+\end{botherref}
+\endbibitem
+
+%%% 8
+\bibitem[\protect\citeauthoryear{Liu et~al.}{2019}]{liu2019roberta}
+\begin{botherref}
+\oauthor{\bsnm{Liu}, \binits{Y.}},
+\oauthor{\bsnm{Ott}, \binits{M.}},
+\oauthor{\bsnm{Goyal}, \binits{N.}},
+\oauthor{\bsnm{Du}, \binits{J.}},
+\oauthor{\bsnm{Joshi}, \binits{M.}},
+\oauthor{\bsnm{Chen}, \binits{D.}},
+\oauthor{\bsnm{Levy}, \binits{O.}},
+\oauthor{\bsnm{Lewis}, \binits{M.}},
+\oauthor{\bsnm{Zettlemoyer}, \binits{L.}},
+\oauthor{\bsnm{Stoyanov}, \binits{V.}}:
+{RoBERTa}: A robustly optimized {BERT} pretraining approach.
+arXiv preprint arXiv:1907.11692
+(2019)
+\end{botherref}
+\endbibitem
+
+%%% 9
+\bibitem[\protect\citeauthoryear{Dao et~al.}{2022}]{dao2022flashattention}
+\begin{barticle}
+\bauthor{\bsnm{Dao}, \binits{T.}},
+\bauthor{\bsnm{Fu}, \binits{D.Y.}},
+\bauthor{\bsnm{Ermon}, \binits{S.}},
+\bauthor{\bsnm{Rudra}, \binits{A.}},
+\bauthor{\bsnm{R{\'e}}, \binits{C.}}:
+\batitle{{FlashAttention}: Fast and memory-efficient exact attention with
+  {IO}-awareness}.
+\bjtitle{Advances in Neural Information Processing Systems (NeurIPS)}
+\bvolume{35},
+\bfpage{16344}--\blpage{16359}
+(\byear{2022})
+\end{barticle}
+\endbibitem
+
+%%% 10
+\bibitem[\protect\citeauthoryear{Li et~al.}{2023}]{li2023blip2}
+\begin{botherref}
+\oauthor{\bsnm{Li}, \binits{J.}},
+\oauthor{\bsnm{Li}, \binits{D.}},
+\oauthor{\bsnm{Savarese}, \binits{S.}},
+\oauthor{\bsnm{Hoi}, \binits{S.}}:
+{BLIP-2}: Bootstrapping language-image pre-training with frozen image encoders
+  and large language models.
+Proceedings of the 40th International Conference on Machine Learning (ICML),
+19730--19742
+(2023)
+\end{botherref}
+\endbibitem
+
+%%% 11
+\bibitem[\protect\citeauthoryear{Wang et~al.}{2023}]{wang2023image}
+\begin{botherref}
+\oauthor{\bsnm{Wang}, \binits{W.}},
+\oauthor{\bsnm{Bao}, \binits{H.}},
+\oauthor{\bsnm{Dong}, \binits{L.}},
+\oauthor{\bsnm{Bjorck}, \binits{J.}},
+\oauthor{\bsnm{Peng}, \binits{Z.}},
+\oauthor{\bsnm{Liu}, \binits{Q.}},
+\oauthor{\bsnm{Aggarwal}, \binits{K.}},
+\oauthor{\bsnm{Mohammed}, \binits{O.K.}},
+\oauthor{\bsnm{Singhal}, \binits{S.}},
+\oauthor{\bsnm{Som}, \binits{S.}}, et al.:
+Image as a foreign language: {BEiT-3} pretraining for vision-language tasks.
+IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR),
+19175--19186
+(2023)
+\end{botherref}
+\endbibitem
+
+%%% 12
+\bibitem[\protect\citeauthoryear{Gu et~al.}{2022}]{gu2021efficiently}
+\begin{botherref}
+\oauthor{\bsnm{Gu}, \binits{A.}},
+\oauthor{\bsnm{Goel}, \binits{K.}},
+\oauthor{\bsnm{R{\'e}}, \binits{C.}}:
+Efficiently modeling long sequences with structured state spaces.
+International Conference on Learning Representations (ICLR)
+(2022)
+\end{botherref}
+\endbibitem
+
+%%% 13
+\bibitem[\protect\citeauthoryear{Smith et~al.}{2023}]{smith2022simplified}
+\begin{botherref}
+\oauthor{\bsnm{Smith}, \binits{J.T.H.}},
+\oauthor{\bsnm{Warrington}, \binits{A.}},
+\oauthor{\bsnm{Linderman}, \binits{S.W.}}:
+Simplified state space layers for sequence modeling.
+International Conference on Learning Representations (ICLR)
+(2023)
+\end{botherref}
+\endbibitem
+
+%%% 14
+\bibitem[\protect\citeauthoryear{Gu and Dao}{2023}]{gu2023mamba}
+\begin{botherref}
+\oauthor{\bsnm{Gu}, \binits{A.}},
+\oauthor{\bsnm{Dao}, \binits{T.}}:
+Mamba: Linear-time sequence modeling with selective state spaces.
+arXiv preprint arXiv:2312.00752
+(2023)
+\end{botherref}
+\endbibitem
+
+%%% 15
+\bibitem[\protect\citeauthoryear{Dao and Gu}{2024}]{dao2024transformers}
+\begin{barticle}
+\bauthor{\bsnm{Dao}, \binits{T.}},
+\bauthor{\bsnm{Gu}, \binits{A.}}:
+\batitle{Transformers are {SSMs}: Generalized models and efficient algorithms
+  through structured state space duality}.
+\bjtitle{Proceedings of the 41st International Conference on Machine Learning
+  (ICML), PMLR}
+\bvolume{235},
+\bfpage{10041}--\blpage{10071}
+(\byear{2024})
+\end{barticle}
+\endbibitem
+
+%%% 16
+\bibitem[\protect\citeauthoryear{Gu et~al.}{2020}]{gu2020hippo}
+\begin{barticle}
+\bauthor{\bsnm{Gu}, \binits{A.}},
+\bauthor{\bsnm{Dao}, \binits{T.}},
+\bauthor{\bsnm{Dao}, \binits{S.}},
+\bauthor{\bsnm{Ermon}, \binits{S.}},
+\bauthor{\bsnm{R{\'e}}, \binits{C.}}:
+\batitle{{HiPPO}: Recurrent memory with optimal polynomial projections}.
+\bjtitle{Advances in Neural Information Processing Systems (NeurIPS)}
+\bvolume{33},
+\bfpage{1474}--\blpage{1487}
+(\byear{2020})
+\end{barticle}
+\endbibitem
+
+%%% 17
+\bibitem[\protect\citeauthoryear{He et~al.}{2016}]{he2016deep}
+\begin{botherref}
+\oauthor{\bsnm{He}, \binits{K.}},
+\oauthor{\bsnm{Zhang}, \binits{X.}},
+\oauthor{\bsnm{Ren}, \binits{S.}},
+\oauthor{\bsnm{Sun}, \binits{J.}}:
+Deep residual learning for image recognition.
+IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR),
+770--778
+(2016)
+\end{botherref}
+\endbibitem
+
+%%% 18
+\bibitem[\protect\citeauthoryear{Hendrycks and
+  Dietterich}{2019}]{hendrycks2019benchmarking}
+\begin{botherref}
+\oauthor{\bsnm{Hendrycks}, \binits{D.}},
+\oauthor{\bsnm{Dietterich}, \binits{T.}}:
+Benchmarking neural network robustness to common corruptions and perturbations.
+International Conference on Learning Representations (ICLR)
+(2019)
+\end{botherref}
+\endbibitem
+
+%%% 19
+\bibitem[\protect\citeauthoryear{Devlin et~al.}{2019}]{devlin2018bert}
+\begin{botherref}
+\oauthor{\bsnm{Devlin}, \binits{J.}},
+\oauthor{\bsnm{Chang}, \binits{M.-W.}},
+\oauthor{\bsnm{Lee}, \binits{K.}},
+\oauthor{\bsnm{Toutanova}, \binits{K.}}:
+{BERT}: Pre-training of deep bidirectional transformers for language
+  understanding.
+North American Chapter of the Association for Computational Linguistics
+  (NAACL),
+4171--4186
+(2019)
+\end{botherref}
+\endbibitem
+
+%%% 20
+\bibitem[\protect\citeauthoryear{Hodosh et~al.}{2013}]{hodosh2013framing}
+\begin{barticle}
+\bauthor{\bsnm{Hodosh}, \binits{M.}},
+\bauthor{\bsnm{Young}, \binits{P.}},
+\bauthor{\bsnm{Hockenmaier}, \binits{J.}}:
+\batitle{Framing image description as a ranking task: Data, models and
+  evaluation metrics}.
+\bjtitle{Journal of Artificial Intelligence Research}
+\bvolume{47},
+\bfpage{853}--\blpage{899}
+(\byear{2013})
+\doiurl{10.1613/jair.3994}
+\end{barticle}
+\endbibitem
+
+%%% 21
+\bibitem[\protect\citeauthoryear{Greydanus
+  et~al.}{2019}]{greydanus2019hamiltonian}
+\begin{botherref}
+\oauthor{\bsnm{Greydanus}, \binits{S.}},
+\oauthor{\bsnm{Dzamba}, \binits{M.}},
+\oauthor{\bsnm{Yosinski}, \binits{J.}}:
+Hamiltonian neural networks.
+Advances in Neural Information Processing Systems (NeurIPS)
+\textbf{32}
+(2019)
+\end{botherref}
+\endbibitem
+
+%%% 22
+\bibitem[\protect\citeauthoryear{Cranmer et~al.}{2020}]{cranmer2020lagrangian}
+\begin{botherref}
+\oauthor{\bsnm{Cranmer}, \binits{M.}},
+\oauthor{\bsnm{Greydanus}, \binits{S.}},
+\oauthor{\bsnm{Hoyer}, \binits{S.}},
+\oauthor{\bsnm{Battaglia}, \binits{P.}},
+\oauthor{\bsnm{Spergel}, \binits{D.}},
+\oauthor{\bsnm{Ho}, \binits{S.}}:
+Lagrangian neural networks.
+ICLR Workshop on Deep Differential Equations
+(2020)
+\end{botherref}
+\endbibitem
+
+%%% 23
+\bibitem[\protect\citeauthoryear{Massaroli et~al.}{2019}]{massaroli2019port}
+\begin{bchapter}
+\bauthor{\bsnm{Massaroli}, \binits{S.}},
+\bauthor{\bsnm{Poli}, \binits{M.}},
+\bauthor{\bsnm{Califano}, \binits{F.}},
+\bauthor{\bsnm{Faragasso}, \binits{A.}},
+\bauthor{\bsnm{Park}, \binits{J.}},
+\bauthor{\bsnm{Yamashita}, \binits{A.}},
+\bauthor{\bsnm{Asama}, \binits{H.}}:
+\bctitle{Port-hamiltonian approach to neural network training}.
+In: \bbtitle{Proceedings of the 2019 IEEE 58th Conference on Decision and
+  Control (CDC)},
+pp. \bfpage{6799}--\blpage{6806}
+(\byear{2019}).
+\doiurl{10.1109/CDC40024.2019.9030017}
+\end{bchapter}
+\endbibitem
+
+%%% 24
+\bibitem[\protect\citeauthoryear{Kingma and Welling}{2014}]{kingma2013auto}
+\begin{botherref}
+\oauthor{\bsnm{Kingma}, \binits{D.P.}},
+\oauthor{\bsnm{Welling}, \binits{M.}}:
+Auto-encoding variational {Bayes}.
+International Conference on Learning Representations (ICLR)
+(2014)
+\end{botherref}
+\endbibitem
+
+%%% 25
+\bibitem[\protect\citeauthoryear{Alemi et~al.}{2017}]{alemi2016deep}
+\begin{botherref}
+\oauthor{\bsnm{Alemi}, \binits{A.A.}},
+\oauthor{\bsnm{Fischer}, \binits{I.}},
+\oauthor{\bsnm{Dillon}, \binits{J.V.}},
+\oauthor{\bsnm{Murphy}, \binits{K.}}:
+Deep variational information bottleneck.
+International Conference on Learning Representations (ICLR)
+(2017)
+\end{botherref}
+\endbibitem
+
+%%% 26
+\bibitem[\protect\citeauthoryear{Young et~al.}{2014}]{young2014image}
+\begin{barticle}
+\bauthor{\bsnm{Young}, \binits{P.}},
+\bauthor{\bsnm{Lai}, \binits{A.}},
+\bauthor{\bsnm{Hodosh}, \binits{M.}},
+\bauthor{\bsnm{Hockenmaier}, \binits{J.}}:
+\batitle{From image descriptions to visual denotations: New similarity metrics
+  for semantic inference over event descriptions}.
+\bjtitle{Transactions of the Association for Computational Linguistics (TACL)}
+\bvolume{2},
+\bfpage{67}--\blpage{78}
+(\byear{2014})
+\doiurl{10.1162/TACL_A_00166}
+\end{barticle}
+\endbibitem
+
+%%% 27
+\bibitem[\protect\citeauthoryear{Lin et~al.}{2014}]{lin2014microsoft}
+\begin{botherref}
+\oauthor{\bsnm{Lin}, \binits{T.-Y.}},
+\oauthor{\bsnm{Maire}, \binits{M.}},
+\oauthor{\bsnm{Belongie}, \binits{S.}},
+\oauthor{\bsnm{Hays}, \binits{J.}},
+\oauthor{\bsnm{Perona}, \binits{P.}},
+\oauthor{\bsnm{Ramanan}, \binits{D.}},
+\oauthor{\bsnm{Doll{\'a}r}, \binits{P.}},
+\oauthor{\bsnm{Zitnick}, \binits{C.L.}}:
+Microsoft {COCO}: Common objects in context.
+Proceedings of the European Conference on Computer Vision (ECCV),
+740--755
+(2014)
+\end{botherref}
+\endbibitem
+
+\end{thebibliography}

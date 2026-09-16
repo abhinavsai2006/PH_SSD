@@ -1,0 +1,9 @@
+{
+  "status": "COMPLETED",
+  "model": "SSD Baseline",
+  "seed": 44,
+  "best_epoch": 8,
+  "val_mean_recall": 47.78,
+  "test_mean_recall": 48.61000000000001,
+  "timestamp": 1788436216.5215347
+}

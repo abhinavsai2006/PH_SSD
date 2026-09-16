@@ -1,0 +1,58 @@
+[
+  {
+    "Model": "SSD Baseline",
+    "Perturbation": "Clean (100-Image Subset)",
+    "Mean Recall": 83.96666666666667,
+    "I2T R@1": 69.0,
+    "T2I R@1": 56.8
+  },
+  {
+    "Model": "SSD Baseline",
+    "Perturbation": "Gaussian Noise (sigma=0.05)",
+    "Mean Recall": 82.76666666666667,
+    "I2T R@1": 70.0,
+    "T2I R@1": 55.800000000000004
+  },
+  {
+    "Model": "SSD Baseline",
+    "Perturbation": "Gaussian Noise (sigma=0.10)",
+    "Mean Recall": 80.16666666666667,
+    "I2T R@1": 68.0,
+    "T2I R@1": 52.6
+  },
+  {
+    "Model": "SSD Baseline",
+    "Perturbation": "Brightness Increase (+30%)",
+    "Mean Recall": 80.43333333333332,
+    "I2T R@1": 61.0,
+    "T2I R@1": 53.400000000000006
+  },
+  {
+    "Model": "Full HEDO-HVSC",
+    "Perturbation": "Clean (100-Image Subset)",
+    "Mean Recall": 83.1,
+    "I2T R@1": 68.0,
+    "T2I R@1": 55.400000000000006
+  },
+  {
+    "Model": "Full HEDO-HVSC",
+    "Perturbation": "Gaussian Noise (sigma=0.05)",
+    "Mean Recall": 82.3,
+    "I2T R@1": 70.0,
+    "T2I R@1": 52.800000000000004
+  },
+  {
+    "Model": "Full HEDO-HVSC",
+    "Perturbation": "Gaussian Noise (sigma=0.10)",
+    "Mean Recall": 80.66666666666666,
+    "I2T R@1": 68.0,
+    "T2I R@1": 51.2
+  },
+  {
+    "Model": "Full HEDO-HVSC",
+    "Perturbation": "Brightness Increase (+30%)",
+    "Mean Recall": 79.83333333333333,
+    "I2T R@1": 60.0,
+    "T2I R@1": 51.2
+  }
+]

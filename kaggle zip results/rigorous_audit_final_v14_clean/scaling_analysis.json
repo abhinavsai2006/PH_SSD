@@ -1,0 +1,22 @@
+[
+  {
+    "Seq Length": 16,
+    "Latency (ms)": 2.893564599980891
+  },
+  {
+    "Seq Length": 32,
+    "Latency (ms)": 5.436396799996146
+  },
+  {
+    "Seq Length": 64,
+    "Latency (ms)": 10.314825649948034
+  },
+  {
+    "Seq Length": 128,
+    "Latency (ms)": 19.712827899911645
+  },
+  {
+    "Seq Length": 256,
+    "Latency (ms)": 38.60174265000751
+  }
+]

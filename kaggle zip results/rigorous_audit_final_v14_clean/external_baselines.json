@@ -1,0 +1,14 @@
+[
+  {
+    "Model": "ViT-B/16 + RoBERTa-base (Frozen Backbone + Custom SSD Baseline)",
+    "Type": "Our Controlled Benchmark",
+    "Protocol": "Frozen Encoders + Flickr8k Train (Seed Avg)",
+    "Flickr8k Test MR": "48.25%"
+  },
+  {
+    "Model": "Full HEDO-HVSC (Frozen Backbone + HEDO + Custom SSD + HVSC)",
+    "Type": "Our Controlled Benchmark",
+    "Protocol": "Frozen Encoders + Flickr8k Train (Seed Avg)",
+    "Flickr8k Test MR": "48.28%"
+  }
+]

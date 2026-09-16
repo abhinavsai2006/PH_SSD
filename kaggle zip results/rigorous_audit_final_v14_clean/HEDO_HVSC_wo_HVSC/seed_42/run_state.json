@@ -1,0 +1,9 @@
+{
+  "status": "COMPLETED",
+  "model": "HEDO-HVSC w/o HVSC",
+  "seed": 42,
+  "best_epoch": 8,
+  "val_mean_recall": 48.03333333333333,
+  "test_mean_recall": 48.43333333333334,
+  "timestamp": 1788440615.6572275
+}

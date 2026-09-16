@@ -1,0 +1,286 @@
+% ==============================================================================
+% HEDO-HVSC CONCEPTUAL DIAGRAMS — 100% NATIVE LATEX TIKZ
+% Clean, uncrowded architecture diagrams with zero text-in-node bloat
+% Strict geometric alignment, explicit orthogonal tree junctions, zero diagonal lines
+% ==============================================================================
+
+\tikzset{
+  hvblock/.style={draw=black!75, rounded corners=2.5pt, align=center,
+    minimum height=8.5mm, minimum width=38mm, font=\footnotesize, line width=0.55pt},
+  hvinput/.style={hvblock, fill=gray!8},
+  hvenc/.style={hvblock, fill=blue!5, draw=blue!60!black},
+  hvmethod/.style={hvblock, fill=green!5, draw=green!60!black},
+  hvstate/.style={hvblock, fill=orange!8, draw=orange!70!black},
+  hvloss/.style={hvblock, fill=red!5, draw=red!60!black, minimum width=84mm, minimum height=12mm},
+  hvinfer/.style={hvblock, fill=blue!5, draw=blue!60!black, minimum width=84mm, minimum height=12mm},
+  flow/.style={-{Stealth[scale=0.95]}, line width=0.7pt, color=black!85},
+  hvline/.style={line width=0.7pt, color=black!85},
+}
+
+% ------------------------------------------------------------------------------
+% Figure 1: Overall Architecture Pipeline (Full-Width figure*)
+% Strict Orthogonal Bus Convergence — Top-to-Bottom Unclipped Bounding Box
+% ------------------------------------------------------------------------------
+\newcommand{\HEDOArchitectureFigure}{
+\begin{tikzpicture}[node distance=4.5mm and 40mm]
+
+% Top Margin Anchor ensuring complete top node visibility (no clipping)
+\coordinate (top_anchor) at (0, 0);
+
+% Column Titles
+\node[font=\bfseries\small, color=blue!70!black, below=2mm of top_anchor, xshift=-28mm] (ititle) {Visual Stream};
+\node[font=\bfseries\small, color=blue!70!black, below=2mm of top_anchor, xshift=28mm] (ttitle) {Textual Stream};
+
+% Left Visual Stream
+\node[hvinput, below=3.5mm of ititle] (i0) {Input Image $\mathbf{I}$\\$224 \times 224 \times 3$};
+\node[hvenc, below=of i0] (i1) {\textbf{Frozen ViT-B/16}\\$L_I=197,\ d=768$};
+\node[hvmethod, below=of i1] (i2) {Linear Projection $\mathbf{W}_{\text{proj}, I}$\\$d_{\text{model}}=128$};
+\node[hvmethod, below=of i2] (i3) {\textbf{HEDO Dissipative Block}\\Damped Momentum Update};
+\node[hvstate, below=of i3] (i4) {\textbf{Custom SSD Block}\\$C=16,\ d_{\text{state}}=64$};
+\node[hvstate, below=of i4] (i5) {Chunk Boundary States\\$\mathbf{b}_1, \dots, \mathbf{b}_K$};
+\node[hvmethod, below=of i5] (i6) {\textbf{HVSC Latent Distribution}\\$\mathbf{z}_I \sim \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{\sigma}_I^2)$};
+\node[hvenc, below=of i6] (i7) {\textbf{Image Embedding $\hat{\mathbf{e}}_I$}\\$\hat{\mathbf{e}}_I \in \mathbb{S}^{127}$};
+
+% Right Textual Stream
+\node[hvinput, below=3.5mm of ttitle] (t0) {Caption Tokens $\mathbf{T}$\\$L_T=64$ + Mask $\mathbf{M}_T$};
+\node[hvenc, below=of t0] (t1) {\textbf{Frozen RoBERTa-base}\\$L_T=64,\ d=768$};
+\node[hvmethod, below=of t1] (t2) {Linear Projection $\mathbf{W}_{\text{proj}, T}$\\$d_{\text{model}}=128$};
+\node[hvmethod, below=of t2] (t3) {\textbf{HEDO Dissipative Block}\\Damped Momentum Update};
+\node[hvstate, below=of t3] (t4) {\textbf{Custom SSD Block}\\$C=16,\ d_{\text{state}}=64$};
+\node[hvstate, below=of t4] (t5) {Mask-Weighted Aggregation\\$\mathbf{h}_{\text{bound}}$};
+\node[hvmethod, below=of t5] (t6) {\textbf{HVSC Latent Distribution}\\$\mathbf{z}_T \sim \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)$};
+\node[hvenc, below=of t6] (t7) {\textbf{Text Embedding $\hat{\mathbf{e}}_T$}\\$\hat{\mathbf{e}}_T \in \mathbb{S}^{127}$};
+
+% Vertical Connectors inside streams
+\foreach \a/\b in {i0/i1,i1/i2,i2/i3,i3/i4,i4/i5,i5/i6,i6/i7,
+                   t0/t1,t1/t2,t2/t3,t3/t4,t4/t5,t5/t6,t6/t7}
+  \draw[flow] (\a.south) -- (\b.north);
+
+% Centered Vertical Stack for Convergence Blocks
+\path (i7) -- (t7) coordinate[midway] (mid_embs);
+
+% Section 1: Training Objective (Centered Below Streams)
+\node[hvloss, below=14mm of mid_embs] (tr_box)
+{\textbf{Training Objective (Joint Optimization)}\\[2pt]
+$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$};
+
+% Pure Orthogonal Tree Convergence into Training Objective Top
+\coordinate (tr_left_drop) at ($(i7.south) + (0, -5mm)$);
+\coordinate (tr_right_drop) at ($(t7.south) + (0, -5mm)$);
+\coordinate (tr_merge) at ($(tr_box.north) + (0, 5mm)$);
+
+\draw[flow] (i7.south) -- (tr_left_drop);
+\draw[flow] (t7.south) -- (tr_right_drop);
+\draw[hvline] (tr_left_drop) -- (tr_merge -| tr_left_drop) -- (tr_merge -| tr_right_drop) -- (tr_right_drop);
+\draw[flow] (tr_merge) -- (tr_box.north);
+
+% Section 2: Test-Time Retrieval (Completely Independent — NO ARROW from Training, balanced 10mm gap)
+\node[hvinfer, below=10mm of tr_box] (te_box)
+{\textbf{Test-Time Retrieval (Independent Unimodal Inference)}\\[2pt]
+Deterministic Posterior Means $\boldsymbol{\mu}_I, \boldsymbol{\mu}_T \implies \mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top$};
+
+\node[below=4mm of te_box, font=\scriptsize, color=black!75] (te_annot)
+{No Cross-Modal Attention $\;\vert\;$ No Inter-Modality Hidden-State Exchange at Test Time};
+
+\end{tikzpicture}
+}
+
+% ------------------------------------------------------------------------------
+% Figure 2: Dataset & Preprocessing Pipeline (Full-Width figure*)
+% Perfectly symmetric 2-stage architecture strictly within 0.85\textwidth (140mm total width)
+% Zero fake arrows between Test and Stage 2 — Clean semantic separation
+% ------------------------------------------------------------------------------
+\newcommand{\HEDODatasetFigure}{
+\begin{tikzpicture}[node distance=5.5mm and 8mm]
+
+% Stage 1: Central Dataset Header
+\node[hvenc, minimum width=136mm, minimum height=9mm] (root)
+{\textbf{Standard Flickr8k Benchmark Partition (Predefined Disjoint)}\\8,000 Total Images $\;\vert\;$ 40,000 Total Captions $\;\vert\;$ 5 Captions / Image};
+
+% Sub-Splits: Val is strictly centered under root, Train on Left, Test on Right
+\node[hvmethod, below=7mm of root, minimum width=38mm, minimum height=11mm] (va)
+{\textbf{Validation Split (12.5\%)}\\1,000 Images $\;\vert\;$ 5,000 Caps\\Checkpoint Selection};
+
+\node[hvmethod, left=of va, minimum width=38mm, minimum height=11mm] (tr)
+{\textbf{Training Split (75\%)}\\6,000 Images $\;\vert\;$ 30,000 Caps\\Model Optimization};
+
+\node[hvmethod, right=of va, minimum width=38mm, minimum height=11mm] (te)
+{\textbf{Held-Out Test Split (12.5\%)}\\1,000 Images $\;\vert\;$ 5,000 Caps\\Certified Evaluation};
+
+% Tree Branching into the Three Splits
+\coordinate (split_junction) at ($(root.south) + (0, -3.5mm)$);
+\draw[hvline] (root.south) -- (split_junction);
+\draw[flow] (split_junction -| tr) -- (tr.north);
+\draw[flow] (split_junction) -- (va.north);
+\draw[flow] (split_junction -| te) -- (te.north);
+\draw[hvline] (split_junction -| tr) -- (split_junction -| te);
+
+% Stage 2 Section Label (Visual Whitespace — Strictly NO ARROWS from Test or Label)
+\node[font=\bfseries\footnotesize, color=blue!70!black, below=12mm of va] (pipe_title)
+{Modality-Specific Preprocessing and Feature Extraction (Applied Across All Benchmark Splits)};
+
+% Modality Pipelines Symmetrically Centered under Stage 2
+\node[hvinput, below=4mm of pipe_title, xshift=-34mm, minimum width=58mm, minimum height=13mm] (ip)
+{\textbf{Visual Pipeline (Images $\to$ Patch Tokens)}\\224 $\times$ 224 Center Crop, ImageNet Normalization\\Frozen ViT-B/16 Backbone $\implies 197 \times 768$ Tokens};
+
+\node[hvinput, below=4mm of pipe_title, xshift=34mm, minimum width=58mm, minimum height=13mm] (tp)
+{\textbf{Textual Pipeline (Captions $\to$ Token Sequences)}\\RoBERTa BPE Tokenizer, Max Length $L_T=64$\\Frozen RoBERTa-base Backbone $\implies 64 \times 768$ Tokens};
+
+\end{tikzpicture}
+}
+
+% ------------------------------------------------------------------------------
+% Figure 3: HEDO Coordinate-Momentum Mechanism (Independent Single Column)
+% ------------------------------------------------------------------------------
+\newcommand{\HEDOMechanismFigure}{
+\begin{tikzpicture}[node distance=4.5mm, every node/.style={font=\footnotesize}]
+\node[hvinput, minimum width=72mm] (q)
+{\textbf{Coordinate State}\\$\mathbf{q}_0 \in \mathbb{R}^{B \times L \times d_{\text{model}}}$};
+
+\node[hvstate, below=of q, minimum width=72mm] (p)
+{\textbf{Momentum Initialization}\\$\mathbf{p}_0 = \tanh(\mathbf{W}_p \mathbf{q}_0)$};
+
+\node[hvmethod, below=of p, minimum width=76mm] (m)
+{\textbf{Dissipative Momentum Update}\\$\mathbf{p}_{t+1} = \mathbf{p}_t(1 - \beta\Delta t) - \Delta t \tanh(\mathbf{W}_q \mathbf{q}_t)$\\[2pt]
+\scriptsize Damping Factor: $(1 - \beta\Delta t) = 0.995 < 1\quad(\beta=0.05, \Delta t=0.1)$};
+
+\node[hvmethod, below=of m, minimum width=76mm] (c)
+{\textbf{Discrete Coordinate Update}\\$\mathbf{q}_{t+1} = \mathbf{q}_t + \gamma\Delta t\,\mathbf{p}_{t+1}$\\[2pt]
+\scriptsize Step Scale: $\gamma = 0.1,\;\Delta t = 0.1$};
+
+\node[hvenc, below=of c, minimum width=72mm] (ln)
+{\textbf{Layer Normalization}\\$\text{HEDO}(\mathbf{q}) = \text{LayerNorm}(\mathbf{q}_{t+1})$};
+
+\foreach \a/\b in {q/p,p/m,m/c,c/ln} \draw[flow] (\a.south) -- (\b.north);
+\end{tikzpicture}
+}
+
+% ------------------------------------------------------------------------------
+% Figure 4: State-Continuous Chunk-Wise SSD Recurrence (Independent Single Column)
+% Clean Collection Bus Tree Topology into agg.north
+% ------------------------------------------------------------------------------
+\newcommand{\HEDOChunkFigure}{
+\begin{tikzpicture}[node distance=4mm and 6mm, every node/.style={font=\footnotesize}]
+\node[hvstate, minimum width=22mm, minimum height=14mm] (c1)
+{\textbf{Chunk 1}\\$x_1, \dots, x_{16}$\\$\mathbf{h}_{\text{start}, 1} = \mathbf{0}$\\$\mathbf{b}_1 = \mathbf{h}_{\text{end}, 1}$};
+
+\node[hvstate, right=7mm of c1, minimum width=22mm, minimum height=14mm] (c2)
+{\textbf{Chunk 2}\\$x_{17}, \dots, x_{32}$\\$\mathbf{h}_{\text{start}, 2} = \mathbf{h}_{\text{end}, 1}$\\$\mathbf{b}_2 = \mathbf{h}_{\text{end}, 2}$};
+
+\node[hvstate, right=7mm of c2, minimum width=22mm, minimum height=14mm] (ck)
+{\textbf{Chunk $K$}\\$x_{(K-1)C+1}, \dots, x_L$\\$\mathbf{h}_{\text{start}, K} = \mathbf{h}_{\text{end}, K-1}$\\$\mathbf{b}_K = \mathbf{h}_{\text{end}, K}$};
+
+% Horizontal State Continuity Arrows
+\draw[flow] (c1.east) -- node[above, font=\tiny, color=black!80] {state cont.} (c2.west);
+\draw[flow] (c2.east) -- node[above, font=\tiny, color=black!80] {state cont.} (ck.west);
+
+% Target Aggregation Box Below
+\node[hvmethod, below=13mm of c2, minimum width=78mm, minimum height=10mm] (agg)
+{\textbf{Mask-Weighted Boundary Aggregation}\\[2pt]
+$\displaystyle \mathbf{h}_{\text{bound}} = \frac{\sum_{k=1}^K m_k \mathbf{b}_k}{\sum_{k=1}^K m_k + \epsilon} \in \mathbb{R}^{B \times d_{\text{state}}}$};
+
+% Top-Down Bus Topology for Boundary Extraction
+\coordinate (j1) at ($(c1.south) + (0, -4.5mm)$);
+\coordinate (j2) at ($(c2.south) + (0, -4.5mm)$);
+\coordinate (jk) at ($(ck.south) + (0, -4.5mm)$);
+
+\draw[flow] (c1.south) -- (j1);
+\draw[flow] (c2.south) -- (j2);
+\draw[flow] (ck.south) -- (jk);
+\draw[hvline] (j1) -- (jk);
+\draw[flow] (j2) -- (agg.north);
+
+\end{tikzpicture}
+}
+
+% ------------------------------------------------------------------------------
+% Figure 5: Training vs. Test-Time Inference Flow (Full-Width figure*)
+% Strict Orthogonal Tree Convergence & Clean Hierarchy (No Diagonal Lines)
+% ------------------------------------------------------------------------------
+\newcommand{\HEDOInferenceFigure}{
+\begin{tikzpicture}[node distance=6mm and 36mm]
+
+% ==============================================================================
+% SECTION A: TRAINING PHASE
+% ==============================================================================
+\node[font=\bfseries\small, color=blue!70!black] (tr_title)
+{A. Training Phase: Stochastic Latent Alignment \& Joint Metric Learning};
+
+% Top Encoder Pipelines
+\node[hvmethod, below=6mm of tr_title, xshift=-44mm, minimum width=45mm, minimum height=9mm] (iz)
+{\textbf{Visual Encoder Pipeline}\\Frozen ViT-B/16 + HEDO + SSD};
+
+\node[hvmethod, below=6mm of tr_title, xshift=44mm, minimum width=45mm, minimum height=9mm] (tz)
+{\textbf{Textual Encoder Pipeline}\\Frozen RoBERTa + HEDO + SSD};
+
+% Intermediate Latent Boxes
+\node[hvstate, below=7mm of iz, minimum width=45mm, minimum height=9mm] (v_lat)
+{\textbf{Visual Latent}\\$\mathbf{z}_I \sim \mathcal{N}(\boldsymbol{\mu}_I, \boldsymbol{\sigma}_I^2)\implies \mathbf{e}_I$};
+
+\node[hvstate, below=7mm of tz, minimum width=45mm, minimum height=9mm] (t_lat)
+{\textbf{Textual Latent}\\$\mathbf{z}_T \sim \mathcal{N}(\boldsymbol{\mu}_T, \boldsymbol{\sigma}_T^2)\implies \mathbf{e}_T$};
+
+\draw[flow] (iz.south) -- (v_lat.north);
+\draw[flow] (tz.south) -- (t_lat.north);
+
+% Training Joint Optimization Objective Box
+\node[hvloss, below=17mm of $(v_lat)!0.5!(t_lat)$, minimum width=88mm, minimum height=14mm] (tr_loss)
+{\textbf{Joint Optimization Objective}\\[2pt]
+$\displaystyle \mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}}(\mathbf{e}_I, \mathbf{e}_T; \tau) + 0.01 \cdot \mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$};
+
+% Clean Orthogonal Tree Convergence into Training Objective Top (tr_loss.north)
+\coordinate (v_join) at ($(v_lat.south) + (0, -5.5mm)$);
+\coordinate (t_join) at ($(t_lat.south) + (0, -5.5mm)$);
+\coordinate (tr_merge) at ($(tr_loss.north) + (0, 5.5mm)$);
+
+\draw[flow] (v_lat.south) -- (v_join);
+\draw[flow] (t_lat.south) -- (t_join);
+\draw[hvline] (v_join) -- (tr_merge -| v_join) -- (tr_merge -| t_join) -- (t_join);
+\draw[flow] (tr_merge) -- (tr_loss.north);
+
+% ==============================================================================
+% SECTION B: TEST-TIME RETRIEVAL (COMPLETELY SEPARATE — NO ARROW FROM TRAINING)
+% ==============================================================================
+\node[font=\bfseries\small, color=green!60!black, below=15mm of tr_loss] (te_title)
+{B. Test-Time Retrieval: Deterministic Unimodal Evaluation (Strictly Independent)};
+
+% Top Inputs for Test-Time
+\node[hvinput, below=6mm of te_title, xshift=-44mm, minimum width=45mm, minimum height=9mm] (iq)
+{\textbf{Query Image $\mathbf{I}$}\\Single Evaluation Sample};
+
+\node[hvinput, below=6mm of te_title, xshift=44mm, minimum width=45mm, minimum height=9mm] (tg)
+{\textbf{Text Gallery $\mathcal{T}$}\\Candidate Corpus ($5{,}000$ Captions)};
+
+% Intermediate Deterministic Means
+\node[hvenc, below=7mm of iq, minimum width=45mm, minimum height=9mm] (iq_mean)
+{\textbf{Deterministic Mean $\boldsymbol{\mu}_I$}\\Unit Embedding $\hat{\mathbf{e}}_I \in \mathbb{S}^{127}$};
+
+\node[hvenc, below=7mm of tg, minimum width=45mm, minimum height=9mm] (tg_mean)
+{\textbf{Deterministic Mean $\boldsymbol{\mu}_T$}\\Unit Embedding $\hat{\mathbf{e}}_T \in \mathbb{S}^{127}$};
+
+\draw[flow] (iq.south) -- (iq_mean.north);
+\draw[flow] (tg.south) -- (tg_mean.north);
+
+% Cosine Similarity Box
+\node[hvinfer, below=16mm of $(iq_mean)!0.5!(tg_mean)$, minimum width=88mm, minimum height=11mm] (te_sim)
+{\textbf{Cosine Similarity Matrix}\\[2pt]
+$\mathbf{S} = \hat{\mathbf{e}}_I \hat{\mathbf{e}}_T^\top \in \mathbb{R}^{1000 \times 5000}$};
+
+% Clean Orthogonal Tree Convergence into Cosine Similarity Top (te_sim.north)
+\coordinate (iq_join) at ($(iq_mean.south) + (0, -5.5mm)$);
+\coordinate (tg_join) at ($(tg_mean.south) + (0, -5.5mm)$);
+\coordinate (te_merge) at ($(te_sim.north) + (0, 5.5mm)$);
+
+\draw[flow] (iq_mean.south) -- (iq_join);
+\draw[flow] (tg_mean.south) -- (tg_join);
+\draw[hvline] (iq_join) -- (te_merge -| iq_join) -- (te_merge -| tg_join) -- (tg_join);
+\draw[flow] (te_merge) -- (te_sim.north);
+
+% Final Retrieval Metrics Box
+\node[hvmethod, below=7mm of te_sim, minimum width=88mm, minimum height=8.5mm] (te_metrics)
+{\textbf{Ranking \& Cross-Modal Evaluation Metrics:}\; R@1, R@5, R@10, Mean Recall (MR)};
+
+\draw[flow] (te_sim.south) -- (te_metrics.north);
+
+\end{tikzpicture}
+}

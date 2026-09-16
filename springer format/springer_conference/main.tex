@@ -1,0 +1,315 @@
+%% Springer LNCS camera-ready format (llncs), anonymized for double-blind review.
+%% Condensed from final_ieee_paper/main.tex to meet the 10--12 page limit.
+%% Build: pdflatex main -> bibtex main -> pdflatex main -> pdflatex main
+\documentclass[runningheads,a4paper]{llncs}
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{bm}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage[expansion=false]{microtype}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds}
+\usepackage[hidelinks]{hyperref}
+
+% Emit real inter-word spaces so text extraction and PDF-to-Word conversion keep word boundaries
+\pdfinterwordspaceon
+\setlength{\emergencystretch}{1.5em}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.8}
+
+\input{figures/hedo_hvsc_tikz.tex}
+
+\begin{document}
+
+\title{Hamiltonian-Inspired Energy Dissipation and Chunk-Wise Variational State Coupling for Efficient Multimodal State-Space Models}
+\titlerunning{HEDO-HVSC for Multimodal State-Space Models}
+
+% Author names, affiliations, and e-mail addresses are withheld for double-blind review.
+\author{Anonymous Author(s)}
+\authorrunning{Anonymous Author(s)}
+\institute{Affiliation withheld for double-blind review}
+
+\maketitle
+
+\begin{abstract}
+State-Space Models (SSMs) offer sub-quadratic alternatives to self-attention, but deploying state-space recurrence in cross-modal vision-language metric learning raises two practical challenges: sensitivity to representation perturbations and potential misalignment between modality-specific boundary representations. We propose HEDO-HVSC, a multimodal state-space framework with two components: (i) the Hamiltonian-Inspired Energy Dissipation Operator (HEDO), a learned discrete coordinate-momentum transformation with positive damping that introduces a dissipative inductive bias, and (ii) Chunk-Wise Variational State Coupling (HVSC), which performs mask-weighted aggregation of chunk boundary states and regularizes modality-specific Gaussian latents through symmetric Kullback-Leibler (KL) divergence during training, while preserving independent, deterministic unimodal inference at test time. In a controlled 12-run factorial benchmark (4 configurations $\times$ 3 seeds) on Flickr8k with frozen ViT-B/16 and RoBERTa-base backbones, the full model achieves a test Mean Recall of $48.28\% \pm 0.59\%$, comparable to a custom SSD-style baseline ($48.25\% \pm 0.47\%$; mean paired delta $+0.03\% \pm 0.20\%$). Corruption stress tests show a mixed robustness profile, with a $+0.50\%$ gain under severe Gaussian noise ($\sigma=0.10$), and latency profiling over sequence lengths $L \in [16, 256]$ shows approximately linear empirical scaling.
+
+\keywords{Image-text retrieval \and State-space models \and Hamiltonian-inspired dynamics \and Variational representation learning \and Vision-language alignment}
+\end{abstract}
+
+%% ============================================================================
+\section{Introduction}
+\label{sec:introduction}
+Cross-modal image-text retrieval is a foundational problem in multimodal machine learning, underpinning image search, visual question answering, and embodied agents~\cite{radford2021learning,li2022blip,jia2021scaling}. The goal is to project visual patch sequences and textual token sequences into a joint metric space where semantic alignment corresponds to vector proximity~\cite{faghri2017vse++,lee2018stacked}. Transformer encoders built on self- and cross-attention are the standard foundation for vision-language models~\cite{vaswani2017attention,dosovitskiy2020image,liu2019roberta}, but their cost grows quadratically, $\mathcal{O}(L^2)$, with sequence length~\cite{dao2022flashattention}, which becomes substantial for high-resolution images and long captions~\cite{li2023blip2,wang2023image}.
+
+Linear-time sequence models such as S4~\cite{gu2021efficiently}, S5~\cite{smith2022simplified}, Mamba~\cite{gu2023mamba}, and State-Space Duality (SSD)~\cite{dao2024transformers} mitigate this cost through discretized linear dynamical systems with $\mathcal{O}(L)$ complexity~\cite{gu2020hippo}. Applying state-space recurrence to multimodal metric learning, however, introduces two challenges. First, \emph{representation perturbation sensitivity}: recurrent transitions propagate token variations, so localized noise, clutter, and photometric variation in visual patches can cause hidden-state drift~\cite{he2016deep,hendrycks2019benchmarking}. Second, \emph{boundary representation misalignment}: separate unidirectional encoders may accumulate modality-specific drift, and unweighted pooling lets padding tokens influence final text representations~\cite{devlin2018bert,faghri2017vse++}.
+
+To investigate these challenges, we present HEDO-HVSC. Our contributions are:
+\begin{enumerate}
+    \item \textbf{HEDO}, a learned discrete coordinate-momentum transformation ($\Delta t=0.1$, $\beta=0.05$, $\gamma=0.1$) whose damping term limits momentum amplification prior to sequence recurrence.
+    \item \textbf{A state-continuous chunk-wise SSD-style recurrence} ($C=16$, $d_{\text{state}}=64$) in PyTorch that carries hidden states across chunk boundaries without resets.
+    \item \textbf{HVSC}, a mask-weighted boundary-state aggregation that parameterizes Gaussian latents regularized by symmetric KL divergence during training, while inference remains strictly unimodal and deterministic.
+    \item \textbf{A controlled multi-seed factorial benchmark} (12 runs) on Flickr8k~\cite{hodosh2013framing} with frozen backbones, complemented by corruption testing and latency scaling analysis.
+\end{enumerate}
+
+%% ============================================================================
+\section{Related Work}
+\label{sec:related_work}
+
+\textbf{Vision-language metric learning.} VSE++~\cite{faghri2017vse++} and SCAN~\cite{lee2018stacked} established hard-negative ranking losses and stacked cross-attention for image-text matching. CLIP~\cite{radford2021learning} and ALIGN~\cite{jia2021scaling} showed that dual encoders trained with symmetric InfoNCE on web-scale pairs yield robust representations, and BLIP~\cite{li2022blip} and BLIP-2~\cite{li2023blip2} added cross-attention decoders for fine-grained reasoning, at quadratic cost in sequence length.
+
+\textbf{Structured state space models.} S4~\cite{gu2021efficiently} formalized continuous-time linear time-invariant systems with HiPPO initializations~\cite{gu2020hippo}; S5~\cite{smith2022simplified} simplified it with parallel scans over diagonal state matrices. Mamba~\cite{gu2023mamba} made the recurrent parameters input-dependent, and SSD/Mamba-2~\cite{dao2024transformers} established the equivalence between structured masked attention and recurrence. We use a custom PyTorch SSD-style recurrence inspired by this perspective rather than native Mamba-2/SSD CUDA kernels.
+
+\textbf{Hamiltonian and variational models.} Hamiltonian~\cite{greydanus2019hamiltonian} and Lagrangian~\cite{cranmer2020lagrangian} neural networks embed energy conservation into learning, and port-Hamiltonian systems~\cite{massaroli2019port} add positive semi-definite damping. VAEs~\cite{kingma2013auto} and the Variational Information Bottleneck~\cite{alemi2016deep} formalize latent representation learning. HEDO adapts discrete dissipative mechanics into a sequence operator, and HVSC uses Gaussian latents over recurrent boundary states for cross-modal alignment.
+
+%% ============================================================================
+\section{Problem Formulation and Background}
+\label{sec:problem_formulation}
+
+\textbf{Cross-modal metric learning.} Let $\mathcal{D} = \{(\mathbf{I}_i, \mathcal{T}_i)\}_{i=1}^N$ be a dataset where each image $\mathbf{I}_i$ has $M$ captions $\mathcal{T}_i = \{\mathbf{T}_{i,m}\}_{m=1}^M$. We learn encoders $f_{\theta}(\mathbf{I}), g_{\phi}(\mathbf{T}) \in \mathbb{S}^{d-1}$ such that semantic relevance correlates with cosine similarity $s(\mathbf{I}, \mathbf{T}) = f_{\theta}(\mathbf{I})^\top g_{\phi}(\mathbf{T})$.
+
+\textbf{State-space recurrence.} A continuous SSM $\dot{\mathbf{h}}(t) = \mathbf{A}\mathbf{h}(t) + \mathbf{B}u(t)$, $y(t) = \mathbf{C}\mathbf{h}(t) + \mathbf{D}u(t)$ discretized with zero-order hold and step $\Delta$ gives
+\begin{equation}
+\mathbf{h}_t = \overline{\mathbf{A}} \mathbf{h}_{t-1} + \overline{\mathbf{B}} u_t, \qquad y_t = \mathbf{C} \mathbf{h}_t + \mathbf{D} u_t,
+\end{equation}
+with $\overline{\mathbf{A}} = \exp(\Delta \mathbf{A})$. SSD~\cite{dao2024transformers} shows that for scalar-times-identity $\mathbf{A}$ the recurrence admits structured block matrix computation. Our benchmark implementation uses an explicit sequential PyTorch recurrence.
+
+\textbf{Dissipative mechanics.} For coordinates $\mathbf{q}$, momenta $\mathbf{p}$, Hamiltonian $\mathcal{H}(\mathbf{q}, \mathbf{p})$, and damping $\mathbf{D} \succ 0$, dissipative dynamics $\dot{\mathbf{q}} = \nabla_{\mathbf{p}}\mathcal{H}$, $\dot{\mathbf{p}} = -\nabla_{\mathbf{q}}\mathcal{H} - \mathbf{D}\nabla_{\mathbf{p}}\mathcal{H}$ satisfy $\dot{\mathcal{H}} = -\nabla_{\mathbf{p}}\mathcal{H}^\top \mathbf{D} \nabla_{\mathbf{p}}\mathcal{H} \le 0$. This continuous-time property motivates our construction but does not imply monotonic energy decay for the discrete learned HEDO update; ``energy dissipation'' refers to the damping mechanism and its physical motivation.
+
+%% ============================================================================
+\section{Proposed HEDO-HVSC Architecture}
+\label{sec:methodology}
+
+\begin{figure}[!htbp]
+\centering
+\resizebox{!}{0.6\textheight}{\HEDOArchitectureFigure}
+\caption{HEDO-HVSC pipeline. Frozen ViT-B/16 ($L_I=197$) and RoBERTa-base ($L_T=64$) features are projected to $d_{\text{model}}=128$, transformed by HEDO, and processed by chunk-wise SSD recurrence ($C=16$, $d_{\text{state}}=64$). During training, boundary states parameterize Gaussian latents regularized by $\mathcal{D}_{\text{SKL}}$ alongside multi-positive InfoNCE; at test time, deterministic posterior means are computed strictly unimodally.}
+\label{fig:overall_architecture}
+\end{figure}
+
+\textbf{Backbone features.} As shown in Fig.~\ref{fig:overall_architecture}, an image $\mathbf{I} \in \mathbb{R}^{3 \times 224 \times 224}$ and a caption $\mathbf{T}$ are encoded by frozen backbones and linearly projected:
+\begin{equation}
+\mathbf{X}_I^{(0)} = \mathbf{W}_{\text{proj}, I} \, \text{ViT-B/16}(\mathbf{I}), \qquad \mathbf{X}_T^{(0)} = \mathbf{W}_{\text{proj}, T} \, \text{RoBERTa}(\mathbf{T}), \label{eq:backbone}
+\end{equation}
+with $\mathbf{X}_I^{(0)} \in \mathbb{R}^{B \times L_I \times d_{\text{model}}}$ ($L_I = 197$: 196 patches plus a class token), $\mathbf{X}_T^{(0)} \in \mathbb{R}^{B \times L_T \times d_{\text{model}}}$, and a text mask $\mathbf{M}_T \in \{0, 1\}^{B \times L_T}$. Both backbones remain frozen in all experiments.
+
+\subsection{Hamiltonian-Inspired Energy Dissipation Operator (HEDO)}
+Given input coordinates $\mathbf{q}_0 \in \mathbb{R}^{B \times L \times d_{\text{model}}}$, HEDO initializes momenta $\mathbf{p}_0 = \tanh(\mathbf{W}_p \mathbf{q}_0)$ and applies a damped coordinate-momentum update with $\Delta t = 0.1$, $\beta = 0.05$, and $\gamma = 0.1$:
+\begin{align}
+\mathbf{p}_{t+1} &= \mathbf{p}_t (1 - \beta \Delta t) - \Delta t \tanh(\mathbf{W}_q \mathbf{q}_t), \label{eq:momentum_update} \\
+\mathbf{q}_{t+1} &= \mathbf{q}_t + \gamma \Delta t \, \mathbf{p}_{t+1}, \qquad \text{HEDO}(\mathbf{q}) = \text{LayerNorm}(\mathbf{q}_{t+1}), \label{eq:hedo}
+\end{align}
+where $\mathbf{W}_p, \mathbf{W}_q \in \mathbb{R}^{d_{\text{model}} \times d_{\text{model}}}$ are learnable. With the empirical energy $\mathcal{H}(\mathbf{q}, \mathbf{p}) = \frac{1}{2}(\|\mathbf{q}\|_2^2 + \|\mathbf{p}\|_2^2)$, update \eqref{eq:momentum_update} satisfies
+\begin{equation}
+\|\mathbf{p}_{t+1}\|_2 \le (1 - \beta \Delta t)\|\mathbf{p}_t\|_2 + \Delta t \|\tanh(\mathbf{W}_q \mathbf{q}_t)\|_2 .
+\end{equation}
+Since $\|\tanh(\cdot)\|_2 \le \sqrt{d_{\text{model}}}$, the contraction factor $(1 - \beta \Delta t) = 0.995$ limits momentum amplification under the bounded force term. In pre-training diagnostics, HEDO reduced image representation energy from $\mathcal{H}_{\text{raw}} = 170.824$ to $\mathcal{H}_{\text{HEDO}} = 77.563$ while preserving cosine similarity $0.9952$; however, unforced multi-step trajectories were not monotonically decreasing (images: $170.824 \to 174.387$ over six steps; text: $5.849 \to 5.892$). We therefore describe HEDO as a damping inductive bias, not a system with guaranteed monotonic energy decay.
+
+\subsection{State-Continuous Chunk-Wise SSD-Style Recurrence}
+The HEDO output $\mathbf{X}$ is projected to $d_{\text{state}} = 64$ by $\mathbf{B}_{\text{proj}}$, with learned decay $\mathbf{A}_{\text{decay}} = \exp(-\exp(\mathbf{A}_{\text{log}})) \in (0, 1)^{d_{\text{state}}}$. The sequence is split into $K = \lceil L / C \rceil$ chunks of size $C = 16$, and hidden states evolve as
+\begin{equation}
+\mathbf{h}_{t} = m_t \left( \mathbf{A}_{\text{decay}} \odot \mathbf{h}_{t-1} + \mathbf{B}_{\text{proj}} \mathbf{x}_t \right) + (1 - m_t) \mathbf{h}_{t-1},
+\end{equation}
+where $m_t \in \{0, 1\}$ marks valid tokens, so padded positions preserve the state. States carry across chunks ($\mathbf{h}_{\text{start}, k} = \mathbf{h}_{\text{end}, k-1}$, $\mathbf{h}_{\text{start}, 1} = \mathbf{0}$); the final state of each chunk is recorded as boundary state $\mathbf{b}_k$ with validity flag $m_k = \mathbb{I}(\sum_{t \in k} m_t > 0)$ (Fig.~\ref{fig:chunk_recurrence}).
+
+\begin{figure}[!htbp]
+\centering
+\resizebox{0.9\textwidth}{!}{\HEDOChunkFigure}
+\caption{State-continuous chunk-wise recurrence with boundary state extraction. Hidden states propagate across chunk boundaries without resets, and mask-weighted aggregation prevents padding bias.}
+\label{fig:chunk_recurrence}
+\end{figure}
+
+\subsection{Chunk-Wise Variational State Coupling (HVSC)}
+HVSC aggregates valid boundary states and parameterizes a diagonal Gaussian with $z_{\text{dim}} = 64$:
+\begin{equation}
+\mathbf{h}_{\text{bound}} = \frac{\sum_{k=1}^K m_k \mathbf{b}_k}{\sum_{k=1}^K m_k + \epsilon}, \label{eq:hbound}
+\end{equation}
+\begin{equation}
+\boldsymbol{\mu} = \mathbf{W}_\mu \mathbf{h}_{\text{bound}}, \qquad \log \boldsymbol{\sigma}^2 = \text{clamp}(\mathbf{W}_{\text{logvar}} \mathbf{h}_{\text{bound}}, -5, 2), \label{eq:latent}
+\end{equation}
+with $\epsilon = 10^{-6}$. During training, latents are sampled as $\mathbf{z} = \boldsymbol{\mu} + \boldsymbol{\epsilon} \odot \boldsymbol{\sigma}$ with $\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$. The sequence is mean-pooled (mask-weighted for text) into $\mathbf{h}_{\text{pool}}$ and fused as $\mathbf{e} = \text{LayerNorm}(\mathbf{h}_{\text{pool}} + \alpha \mathbf{W}_{\text{out}} \mathbf{z})$ with $\alpha = 0.1$. Cross-modal boundary alignment is regularized in FP32 by the symmetric KL divergence
+\begin{equation}
+\mathcal{D}_{\text{SKL}}(p_I \parallel p_T) = \tfrac{1}{2} \left[ D_{\text{KL}}(p_I \parallel p_T) + D_{\text{KL}}(p_T \parallel p_I) \right], \label{eq:skl}
+\end{equation}
+computed analytically for diagonal Gaussians. At test time, sampling is omitted and the posterior means are used:
+\begin{equation}
+\hat{\mathbf{e}}_M = \text{Normalize}\big(\text{LayerNorm}(\mathbf{h}_{\text{pool}, M} + \alpha \mathbf{W}_{\text{out}} \boldsymbol{\mu}_M)\big), \qquad M \in \{I, T\}.
+\end{equation}
+Visual and textual embeddings are thus computed independently, with no cross-modal attention or hidden-state exchange.
+
+\subsection{Training Objective}
+The loss is $\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{InfoNCE}} + \lambda_{\text{KL}} \mathcal{D}_{\text{SKL}}$ with $\lambda_{\text{KL}} = 0.01$, where the multi-positive InfoNCE accounts for the 5 captions per image:
+\begin{equation}
+\mathcal{L}_{\text{InfoNCE}} = -\frac{1}{2B} \sum_{i=1}^B \left[ \log \frac{\sum_{j \in \mathcal{P}(i)} e^{s_{i,j} / \tau}}{\sum_{k=1}^{5B} e^{s_{i,k} / \tau}} + \log \frac{e^{s_{i,i} / \tau}}{\sum_{k=1}^B e^{s_{k,i} / \tau}} \right], \label{eq:infonce}
+\end{equation}
+where $s_{i,j} = \hat{\mathbf{e}}_{I, i}^\top \hat{\mathbf{e}}_{T, j}$, $\mathcal{P}(i)$ is the positive caption set of image $i$, and the learnable logit scale is capped at $100$. Algorithm~\ref{alg:hedo_hvsc} summarizes one training step.
+
+\begin{algorithm}[!htbp]
+\caption{HEDO-HVSC forward pass and training step}
+\label{alg:hedo_hvsc}
+\begin{algorithmic}[1]
+\Require Images $\mathbf{I} \in \mathbb{R}^{B \times 3 \times 224 \times 224}$, tokens $\mathbf{T} \in \mathbb{Z}^{B \times 64}$, masks $\mathbf{M}_T$, positive index sets $\mathcal{P}$
+\Ensure Total loss $\mathcal{L}_{\text{total}}$, test embeddings $\hat{\mathbf{e}}_I, \hat{\mathbf{e}}_T$
+\State Extract frozen features $\mathbf{X}_I^{(0)}, \mathbf{X}_T^{(0)}$ via \eqref{eq:backbone}
+\State Apply the HEDO transformation, if enabled, via \eqref{eq:momentum_update}--\eqref{eq:hedo}
+\State Run state-continuous chunk-wise SSD recurrence; collect boundary states $\mathbf{b}_k$ and flags $m_k$
+\State Aggregate boundary states and parameterize latents via \eqref{eq:hbound}--\eqref{eq:latent}
+\State Compute $\mathcal{D}_{\text{SKL}}(p_I \parallel p_T)$ in FP32 via \eqref{eq:skl}
+\State Sample $\mathbf{z}$ and form coupled embeddings $\mathbf{e}_I, \mathbf{e}_T$
+\State Compute $\mathcal{L}_{\text{InfoNCE}}$ via \eqref{eq:infonce}
+\State \Return $\mathcal{L}_{\text{total}} \gets \mathcal{L}_{\text{InfoNCE}} + 0.01 \cdot \mathcal{D}_{\text{SKL}}$
+\end{algorithmic}
+\end{algorithm}
+
+%% ============================================================================
+\section{Experimental Setup}
+\label{sec:experimental_setup}
+
+\textbf{Dataset.} We use Flickr8k~\cite{hodosh2013framing}: 8,000 images with 5 captions each, split into 6,000 / 1,000 / 1,000 images (30,000 / 5,000 / 5,000 captions) for training, checkpoint selection, and held-out testing. Disjointness of the splits was verified via image identifier hashing.
+
+\textbf{Backbones and implementation.} The visual backbone is the \texttt{timm} checkpoint \texttt{vit\_base\_}\allowbreak\texttt{patch16\_224} (86.6\,M parameters, ImageNet normalization) and the text backbone is \texttt{roberta-base} (124.6\,M parameters, $L_T=64$); both are frozen, and only projections, HEDO, SSD, and HVSC modules (0.330--0.422\,M parameters) are trained. We use Python 3.12, PyTorch 2.10.0 (CUDA 12.8), \texttt{timm} 1.0.26, and \texttt{transformers} 5.0.0 on an NVIDIA Tesla T4 (16\,GB), with AMP FP16 and gradient scaling. Checkpoints are selected by peak validation Mean Recall (patience 3 epochs, $\Delta_{\text{min}}=0.05\%$), and the test split is evaluated once. Table~\ref{tab:hyperparameters} lists the hyperparameters.
+
+\begin{table}[t]
+\centering
+\caption{Hyperparameter specification.}
+\label{tab:hyperparameters}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}ll|ll@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} & \textbf{Hyperparameter} & \textbf{Value} \\
+\midrule
+Image resolution & $224 \times 224$ & Optimizer & AdamW ($0.9$, $0.999$; wd $10^{-4}$) \\
+$d_{\text{model}}$ / $d_{\text{state}}$ & $128$ / $64$ & Batch size & $64$ images ($320$ captions) \\
+Chunk size $C$ & $16$ & Epochs & $8$ \\
+HEDO $\Delta t$ / $\beta$ / $\gamma$ & $0.1$ / $0.05$ / $0.1$ & LR schedule & Cosine, $2 \times 10^{-4} \to 10^{-6}$ \\
+HVSC latent dim & $64$ & Gradient clipping & Norm $1.0$ \\
+KL weight $\lambda_{\text{KL}}$ & $0.01$ (FP32) & Seeds & $42, 43, 44$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Protocol and metrics.} Four configurations are evaluated with three seeds each (12 runs): (i) Custom SSD-Style Baseline, (ii) w/o HEDO, (iii) w/o HVSC, and (iv) Full HEDO-HVSC. Image-to-text (I2T) R@K ranks all 5,000 test captions per image and succeeds if any ground-truth caption is in the top $K$; text-to-image (T2I) R@K ranks all 1,000 test images per caption. Mean Recall (MR) averages the six recalls. For robustness, a 100-image (500-caption) test subset was fixed a priori with seed 42 and evaluated under identical corruptions for all models; Gaussian noise was added pixel-wise with a fixed seed before clipping to $[0, 1]$.
+
+%% ============================================================================
+\section{Results}
+\label{sec:results}
+
+\begin{table}[t]
+\centering
+\caption{Retrieval results on the Flickr8k test split (1,000 images, 5,000 captions), mean $\pm$ standard deviation over 3 seeds. H: HEDO, V: HVSC.}
+\label{tab:main_results}
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lcccccccccc@{}}
+\toprule
+& & & \multicolumn{3}{c}{\textbf{Image-to-Text (\%)}} & \multicolumn{3}{c}{\textbf{Text-to-Image (\%)}} & \\
+\cmidrule(lr){4-6}\cmidrule(lr){7-9}
+\textbf{Model} & \textbf{H} & \textbf{V} & \textbf{R@1} & \textbf{R@5} & \textbf{R@10} & \textbf{R@1} & \textbf{R@5} & \textbf{R@10} & \textbf{MR (\%)} \\
+\midrule
+SSD Baseline & -- & -- & $26.53{\pm}0.33$ & $57.30{\pm}0.80$ & $70.10{\pm}1.22$ & $20.45{\pm}0.56$ & $49.89{\pm}0.19$ & $65.20{\pm}0.43$ & $48.25{\pm}0.47$ \\
+w/o HEDO & -- & \checkmark & $26.70{\pm}0.82$ & $57.07{\pm}0.85$ & $70.03{\pm}1.11$ & $20.29{\pm}0.36$ & $49.95{\pm}0.21$ & $65.27{\pm}0.32$ & $48.22{\pm}0.43$ \\
+w/o HVSC & \checkmark & -- & $\mathbf{27.20{\pm}0.99}$ & $56.97{\pm}0.19$ & $70.30{\pm}0.45$ & $20.66{\pm}0.53$ & $\mathbf{50.33{\pm}0.22}$ & $65.10{\pm}0.24$ & $\mathbf{48.43{\pm}0.29}$ \\
+\textbf{Full HEDO-HVSC} & \checkmark & \checkmark & $26.73{\pm}1.87$ & $56.83{\pm}0.47$ & $\mathbf{70.47{\pm}0.80}$ & $\mathbf{20.71{\pm}0.18}$ & $49.97{\pm}0.40$ & $64.96{\pm}0.34$ & $48.28{\pm}0.59$ \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\textbf{Main benchmark.} Table~\ref{tab:main_results} reports the aggregated test results. Full HEDO-HVSC achieves a Mean Recall of $48.28\% \pm 0.59\%$ (I2T R@1 $26.73\%$, T2I R@1 $20.71\%$), comparable to the baseline ($48.25\% \pm 0.47\%$); the w/o HVSC ablation achieves the highest Mean Recall ($48.43\% \pm 0.29\%$). Matched-seed deltas of the full model over the baseline are $-0.14\%$ (seed 42), $-0.08\%$ (seed 43), and $+0.32\%$ (seed 44), for a mean paired delta of $+0.03\% \pm 0.20\%$. The $2 \times 2$ factorial interaction, $\Delta_{\text{int}} = \text{MR}_{11} - \text{MR}_{10} - \text{MR}_{01} + \text{MR}_{00} = 48.28 - 48.43 - 48.22 + 48.25 = -0.12\%$, is small, indicating limited interaction between HEDO and HVSC on clean data.
+
+\begin{table}[t]
+\centering
+\begin{minipage}[t]{0.49\textwidth}
+\centering
+\caption{Corruption stress test (Mean Recall, 100-image subset).}
+\label{tab:robustness}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Condition} & \textbf{Base} & \textbf{Full} & \textbf{$\Delta$} \\
+\midrule
+Clean & $83.97$ & $83.10$ & $-0.87$ \\
+Gaussian $\sigma=0.05$ & $82.77$ & $82.30$ & $-0.47$ \\
+Gaussian $\sigma=0.10$ & $80.17$ & $\mathbf{80.67}$ & $\mathbf{+0.50}$ \\
+Brightness $+30\%$ & $80.43$ & $79.83$ & $-0.60$ \\
+\bottomrule
+\end{tabular}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}
+\centering
+\caption{Inference latency of the SSD block ($B=16$).}
+\label{tab:scaling}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}ccc@{}}
+\toprule
+\textbf{$L$} & \textbf{Latency (ms)} & \textbf{Relative} \\
+\midrule
+16 & $2.894 \pm 0.021$ & $1.00\times$ \\
+32 & $5.436 \pm 0.034$ & $1.88\times$ \\
+64 & $10.315 \pm 0.052$ & $3.56\times$ \\
+128 & $19.713 \pm 0.089$ & $6.81\times$ \\
+256 & $38.602 \pm 0.141$ & $13.34\times$ \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    ybar, bar width=9pt, width=0.8\textwidth, height=4.2cm,
+    ymin=78, ymax=86, ylabel={Subset Mean Recall (\%)},
+    symbolic x coords={Clean, Gauss 0.05, Gauss 0.10, Bright +30\%}, xtick=data,
+    legend style={at={(0.98,0.97)}, anchor=north east, legend columns=1, font=\scriptsize},
+    ymajorgrids=true, grid style={dashed, gray!30},
+    tick label style={font=\scriptsize}, label style={font=\small}, enlarge x limits=0.18
+]
+\addplot[fill=blue!30, draw=blue!70!black] coordinates {(Clean, 83.97) (Gauss 0.05, 82.77) (Gauss 0.10, 80.17) (Bright +30\%, 80.43)};
+\addplot[fill=red!30, draw=red!70!black] coordinates {(Clean, 83.10) (Gauss 0.05, 82.30) (Gauss 0.10, 80.67) (Bright +30\%, 79.83)};
+\legend{SSD Baseline, Full HEDO-HVSC}
+\end{axis}
+\end{tikzpicture}
+\caption{Robustness under pixel-space perturbations on the 100-image test subset: the full model is better only under severe Gaussian noise ($\sigma=0.10$).}
+\label{fig:robustness}
+\end{figure}
+
+\textbf{Robustness.} To examine whether dissipation attenuates perturbations, the baseline and full model were evaluated on the fixed 100-image subset under pixel-space corruptions (Table~\ref{tab:robustness}, Fig.~\ref{fig:robustness}). The profile is mixed: the full model is $+0.50\%$ better under severe Gaussian noise ($\sigma=0.10$) but lower on clean images ($-0.87\%$), mild noise ($-0.47\%$), and brightness increase ($-0.60\%$). This subset experiment is a secondary diagnostic rather than a comprehensive robustness evaluation.
+
+\textbf{Scaling and footprint.} Latency was measured for $L \in \{16, \dots, 256\}$ ($d_{\text{model}}=128$, $d_{\text{state}}=64$) after 10 warm-up iterations, averaged over 50 timed iterations with explicit CUDA synchronization (Table~\ref{tab:scaling}). A linear fit, $\text{Latency}(L) = 0.149 L + 0.582$\,ms ($R^2 = 0.9998$), characterizes the measured range; the $\mathcal{O}(L)$ complexity follows from the sequential recurrence itself. The full model has $0.422$\,M trainable parameters (projections 46.7\%, SSD blocks 23.3\%, HVSC 22.4\%, HEDO 7.8\%, normalization 0.2\%), under $0.21\%$ of the 209.854\,M frozen backbone parameters, with 2686.25\,MB peak training VRAM (baseline: 0.330\,M, 1878.22\,MB; w/o HEDO: 0.356\,M, 1878.81\,MB; w/o HVSC: 0.397\,M, 2685.66\,MB).
+
+%% ============================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+The full model matches the baseline on clean retrieval (paired delta $+0.03\% \pm 0.20\%$). Because only three seeds were evaluated per configuration, variability is reported descriptively rather than through inferential tests. The w/o HVSC configuration attains the highest Mean Recall, so the experiments do not show that HVSC improves clean-data accuracy; its role is best interpreted as a training-time cross-modal boundary-distribution regularizer, with mask weighting preventing padding from contaminating boundary states. HEDO yields a small advantage under severe Gaussian noise but not across all corruptions.
+
+\textbf{What the results do not establish.} The results do not establish state-of-the-art accuracy over fine-tuned, unconstrained dual encoders; HEDO does not provide a monotonic Lyapunov stability guarantee for discrete learned dynamics; robustness is not universally superior; the PyTorch recurrence is not compared against native CUDA Mamba-2 kernels; and scaling is measured only for $L \in [16, 256]$.
+
+\textbf{Limitations and future work.} Evaluation is limited to Flickr8k; extending it to Flickr30k~\cite{young2014image} and MS-COCO~\cite{lin2014microsoft} is future work. Backbones were frozen, and joint fine-tuning may increase capacity. Compiling the recurrence into native CUDA kernels should further accelerate inference.
+
+\textbf{Data and code availability.} Experiments use the public Flickr8k dataset. Source code, configurations, evaluation scripts, and benchmark manifests are publicly available; the repository link is withheld for double-blind review.
+
+%% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+We introduced HEDO-HVSC, a multimodal state-space framework combining a Hamiltonian-inspired discrete dissipative operator with mask-weighted chunk-wise variational state coupling. In a 12-run controlled factorial benchmark on Flickr8k, HEDO-HVSC achieves retrieval performance comparable to a custom SSD-style baseline ($48.28\% \pm 0.59\%$ Mean Recall). Measured latency scales approximately linearly over the tested sequence lengths, consistent with the linear recurrent structure, and robustness evaluation shows a small advantage under severe Gaussian noise with mixed results under other perturbations.
+
+\bibliographystyle{splncs04}
+\bibliography{references}
+
+\end{document}

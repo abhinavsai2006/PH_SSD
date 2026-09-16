@@ -1,0 +1,149 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\doi}[1]{https://doi.org/#1}
+
+\bibitem{alemi2016deep}
+Alemi, A.A., Fischer, I., Dillon, J.V., Murphy, K.: Deep variational
+  information bottleneck. International Conference on Learning Representations
+  (ICLR)  (2017)
+
+\bibitem{cranmer2020lagrangian}
+Cranmer, M., Greydanus, S., Hoyer, S., Battaglia, P., Spergel, D., Ho, S.:
+  Lagrangian neural networks. ICLR Workshop on Deep Differential Equations
+  (2020)
+
+\bibitem{dao2022flashattention}
+Dao, T., Fu, D.Y., Ermon, S., Rudra, A., R{\'e}, C.: {FlashAttention}: Fast and
+  memory-efficient exact attention with {IO}-awareness. Advances in Neural
+  Information Processing Systems (NeurIPS)  \textbf{35},  16344--16359 (2022)
+
+\bibitem{dao2024transformers}
+Dao, T., Gu, A.: Transformers are {SSMs}: Generalized models and efficient
+  algorithms through structured state space duality. Proceedings of the 41st
+  International Conference on Machine Learning (ICML), PMLR  \textbf{235},
+  10041--10071 (2024)
+
+\bibitem{devlin2018bert}
+Devlin, J., Chang, M.W., Lee, K., Toutanova, K.: {BERT}: Pre-training of deep
+  bidirectional transformers for language understanding. North American Chapter
+  of the Association for Computational Linguistics (NAACL) pp. 4171--4186
+  (2019)
+
+\bibitem{dosovitskiy2020image}
+Dosovitskiy, A., Beyer, L., Kolesnikov, A., Weissenborn, D., Zhai, X.,
+  Unterthiner, T., Dehghani, M., Minderer, M., Heigold, G., Gelly, S., et~al.:
+  An image is worth 16x16 words: Transformers for image recognition at scale.
+  International Conference on Learning Representations (ICLR)  (2021)
+
+\bibitem{faghri2017vse++}
+Faghri, F., Fleet, D.J., Kiros, J.R., Fidler, S.: {VSE++}: Improving
+  visual-semantic embeddings with hard negatives. British Machine Vision
+  Conference (BMVC)  (2018)
+
+\bibitem{greydanus2019hamiltonian}
+Greydanus, S., Dzamba, M., Yosinski, J.: Hamiltonian neural networks. Advances
+  in Neural Information Processing Systems (NeurIPS)  \textbf{32} (2019)
+
+\bibitem{gu2023mamba}
+Gu, A., Dao, T.: Mamba: Linear-time sequence modeling with selective state
+  spaces. arXiv preprint arXiv:2312.00752  (2023)
+
+\bibitem{gu2020hippo}
+Gu, A., Dao, T., Dao, S., Ermon, S., R{\'e}, C.: {HiPPO}: Recurrent memory with
+  optimal polynomial projections. Advances in Neural Information Processing
+  Systems (NeurIPS)  \textbf{33},  1474--1487 (2020)
+
+\bibitem{gu2021efficiently}
+Gu, A., Goel, K., R{\'e}, C.: Efficiently modeling long sequences with
+  structured state spaces. International Conference on Learning Representations
+  (ICLR)  (2022)
+
+\bibitem{he2016deep}
+He, K., Zhang, X., Ren, S., Sun, J.: Deep residual learning for image
+  recognition. IEEE/CVF Conference on Computer Vision and Pattern Recognition
+  (CVPR) pp. 770--778 (2016)
+
+\bibitem{hendrycks2019benchmarking}
+Hendrycks, D., Dietterich, T.: Benchmarking neural network robustness to common
+  corruptions and perturbations. International Conference on Learning
+  Representations (ICLR)  (2019)
+
+\bibitem{hodosh2013framing}
+Hodosh, M., Young, P., Hockenmaier, J.: Framing image description as a ranking
+  task: Data, models and evaluation metrics. Journal of Artificial Intelligence
+  Research  \textbf{47},  853--899 (2013). \doi{10.1613/jair.3994}
+
+\bibitem{jia2021scaling}
+Jia, C., Yang, Y., Xia, Y., Chen, Y.T., Parekh, Z., Pham, H., Le, Q., Ku, S.Y.,
+  Wang, J., Duerig, T.: Scaling up visual and vision-language representation
+  learning with noisy text supervision. Proceedings of the 38th International
+  Conference on Machine Learning (ICML) pp. 4904--4916 (2021)
+
+\bibitem{kingma2013auto}
+Kingma, D.P., Welling, M.: Auto-encoding variational {Bayes}. International
+  Conference on Learning Representations (ICLR)  (2014)
+
+\bibitem{lee2018stacked}
+Lee, K.H., Chen, X., Hua, G., Houdusse, H., Vassilvitskii, S.: Stacked cross
+  attention for image-text matching. Proceedings of the European Conference on
+  Computer Vision (ECCV) pp. 201--216 (2018)
+
+\bibitem{li2023blip2}
+Li, J., Li, D., Savarese, S., Hoi, S.: {BLIP-2}: Bootstrapping language-image
+  pre-training with frozen image encoders and large language models.
+  Proceedings of the 40th International Conference on Machine Learning (ICML)
+  pp. 19730--19742 (2023)
+
+\bibitem{li2022blip}
+Li, J., Li, D., Xiong, C., Hoi, S.: {BLIP}: Bootstrapping language-image
+  pre-training for unified vision-language understanding and generation.
+  Proceedings of the 39th International Conference on Machine Learning (ICML)
+  pp. 12888--12900 (2022)
+
+\bibitem{lin2014microsoft}
+Lin, T.Y., Maire, M., Belongie, S., Hays, J., Perona, P., Ramanan, D.,
+  Doll{\'a}r, P., Zitnick, C.L.: Microsoft {COCO}: Common objects in context.
+  Proceedings of the European Conference on Computer Vision (ECCV) pp. 740--755
+  (2014)
+
+\bibitem{liu2019roberta}
+Liu, Y., Ott, M., Goyal, N., Du, J., Joshi, M., Chen, D., Levy, O., Lewis, M.,
+  Zettlemoyer, L., Stoyanov, V.: {RoBERTa}: A robustly optimized {BERT}
+  pretraining approach. arXiv preprint arXiv:1907.11692  (2019)
+
+\bibitem{massaroli2019port}
+Massaroli, S., Poli, M., Califano, F., Faragasso, A., Park, J., Yamashita, A.,
+  Asama, H.: Port-hamiltonian approach to neural network training. In:
+  Proceedings of the 2019 IEEE 58th Conference on Decision and Control (CDC).
+  pp. 6799--6806 (2019). \doi{10.1109/CDC40024.2019.9030017}
+
+\bibitem{radford2021learning}
+Radford, A., Kim, J.W., Hallacy, C., Ramesh, A., Goh, G., Agarwal, S., Sastry,
+  G., Askell, A., Mishkin, P., Clark, J., et~al.: Learning transferable visual
+  models from natural language supervision. Proceedings of the 38th
+  International Conference on Machine Learning (ICML) pp. 8748--8763 (2021)
+
+\bibitem{smith2022simplified}
+Smith, J.T.H., Warrington, A., Linderman, S.W.: Simplified state space layers
+  for sequence modeling. International Conference on Learning Representations
+  (ICLR)  (2023)
+
+\bibitem{vaswani2017attention}
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N.,
+  Kaiser, {\L}., Polosukhin, I.: Attention is all you need. Advances in Neural
+  Information Processing Systems (NeurIPS)  \textbf{30} (2017)
+
+\bibitem{wang2023image}
+Wang, W., Bao, H., Dong, L., Bjorck, J., Peng, Z., Liu, Q., Aggarwal, K.,
+  Mohammed, O.K., Singhal, S., Som, S., et~al.: Image as a foreign language:
+  {BEiT-3} pretraining for vision-language tasks. IEEE/CVF Conference on
+  Computer Vision and Pattern Recognition (CVPR) pp. 19175--19186 (2023)
+
+\bibitem{young2014image}
+Young, P., Lai, A., Hodosh, M., Hockenmaier, J.: From image descriptions to
+  visual denotations: New similarity metrics for semantic inference over event
+  descriptions. Transactions of the Association for Computational Linguistics
+  (TACL)  \textbf{2},  67--78 (2014). \doi{10.1162/TACL_A_00166}
+
+\end{thebibliography}
