@@ -1,0 +1,66 @@
+[
+  {
+    "run_id": "native_mamba2_full_hedo_hvsc_seed42_fp16_nan",
+    "date": "2026-09-07",
+    "configuration": "full_hedo_hvsc, seed 42, native Mamba-2, FP16 autocast + GradScaler on the trainable stack, HVSC logvar clamp [-10, 10], LR 1e-3, KL weight 1e-4 (sum over 128 dims)",
+    "source": "Downloads/HEDO_HVSC_NATIVE_MAMBA2_READY_TO_TRAIN (1).ipynb, cell 8 output",
+    "observed": "epoch 1 loss 2.05777 InfoNCE 2.05656 KL 12.10831 ValMR 0.647; epoch 2 loss/InfoNCE/KL NaN, ValMR 0.500; run interrupted",
+    "status": "FAILED",
+    "reason": "Numerical divergence (FAILED_NUMERICAL_STABILITY); epoch-1 validation mean recall at chance level; no test evaluation, no checkpoint, no finite-value trace.",
+    "usable_as_result": false
+  },
+  {
+    "run_id": "custom_ssd_v13_12run_benchmark",
+    "date": "2026-09-03",
+    "configuration": "hedo_hvsc_publication_benchmark_v13: custom PyTorch SSD-style recurrence (not native Mamba-2), timm vit_base_patch16_224, transformers 5.0.0, AMP FP16, batch 64 images, LR 2e-4, KL 0.01, 8 epochs, seeds 42/43/44",
+    "source": "kaggle zip results/rigorous_audit_final_v14_clean/ (reported as MR 48.28 +- 0.59 full vs 48.25 +- 0.47 baseline in springer format/*/main.tex)",
+    "status": "INVALID",
+    "reason": "Different architecture (custom SSD, not native Mamba-2) and different backbone/preprocessing/hyperparameters; source code, checkpoints and embeddings absent (NON-REPRODUCIBLE); reported standard deviations use ddof=0. Must not appear in the native Mamba-2 paper.",
+    "usable_as_result": false
+  },
+  {
+    "run_id": "custom_ssd_v13_robustness_and_scaling",
+    "date": "2026-09-03",
+    "configuration": "v13 custom SSD: 100-image corruption subset (single model per condition) and SSD-block latency L in [16, 256]",
+    "source": "kaggle zip results/rigorous_audit_final_v14_clean/robustness_results.json, scaling_analysis.json",
+    "status": "INVALID",
+    "reason": "Custom SSD timing is not native Mamba-2 timing; robustness from one model on 100 images with no seed variance; NON-REPRODUCIBLE.",
+    "usable_as_result": false
+  },
+  {
+    "run_id": "ph_ssd_main_results_table",
+    "date": "2026-09-02",
+    "configuration": "PH-SSD tables (Full PH-SSD I2T R@1 83.2, T2I R@1 64.8, MR 87.47; CLIP 87.77; Mamba-2 80.53)",
+    "source": "tables/main_results.csv, research_audit/retrieval_verification.csv, research_audit/FINAL_AUDIT.md (commit b227fb4)",
+    "status": "INVALID",
+    "reason": "No run artifacts (checkpoints, embeddings, logs, configs) exist for these numbers; different method name/architecture; NON-REPRODUCIBLE.",
+    "usable_as_result": false
+  },
+  {
+    "run_id": "native_mamba_results_subset_eval",
+    "date": "2026-08-14",
+    "configuration": "results/native_mamba_results.json (test MR 19.58; ablation 'Baseline SSD' 14.58)",
+    "source": "results/native_mamba_results.json, results/native_mamba_training_history.json",
+    "status": "INVALID",
+    "reason": "Recalls are multiples of 1/32 or 1/160 (e.g. 3.125, 18.75), i.e. evaluated on a tiny subset rather than 1000 images x 5000 captions; no reproducible artifacts.",
+    "usable_as_result": false
+  },
+  {
+    "run_id": "cpu_harness_synthetic_runs",
+    "date": "2026-09-16",
+    "configuration": "CPU harness of the stable runner: causal stand-in for Mamba2, synthetic prototype features, fake tokenizer",
+    "source": "Claude Code session scratchpad (harness_*, hv2_*)",
+    "status": "INVALID",
+    "reason": "Synthetic data and stand-in modules used only to test code paths; not Flickr8k, not native Mamba-2, not pretrained backbones.",
+    "usable_as_result": false
+  },
+  {
+    "run_id": "e_hedo_x_hvsc_pipeline",
+    "date": "2026-09-16",
+    "configuration": "Native mamba notebook/hedo_native (E-HEDO + X-HVSC, feature cache, re-ranking)",
+    "source": "Native mamba notebook/HEDO_HVSC_NATIVE_MAMBA2_READY_TO_TRAIN.ipynb",
+    "status": "NON-REPRODUCIBLE",
+    "reason": "Never executed on GPU (no results exist). It is a different method from the sigmoid-gamma HEDO / pooled HVSC evaluated by stable_runner and must not be mixed with it.",
+    "usable_as_result": false
+  }
+]
