@@ -26,7 +26,7 @@
 \title{Dissecting Continuous-State and Variational Inductive Biases in State Space Duality: An Empirical Audit of Native Mamba-2 Cross-Modal Alignment}
 
 \author{Abhinav~Sai~M.%
-\thanks{Manuscript submitted for peer review. Code, audited logs, and configuration artifacts are publicly available at \protect\url{https://github.com/abhinavsai2006/PH_SSD}. (Email: \protect\url{abhinavsai2006@gmail.com})}%
+\thanks{Manuscript prepared for submission. Code, audited logs, and configuration artifacts are publicly available at \protect\url{https://github.com/abhinavsai2006/PH_SSD}. (Email: \protect\url{abhinavsai2006@gmail.com})}%
 \thanks{The author is with the Department of Computer Science and Engineering.}%
 }
 
@@ -36,7 +36,7 @@
 \maketitle
 
 \begin{abstract}
-Structured State Space Models (SSMs) and their duality with structured attention---principally embodied in Mamba-2 via State Space Duality (SSD)---offer linear time complexity $O(L)$ with respect to sequence length, presenting an appealing alternative to quadratic self-attention in cross-modal vision-language alignment. In this paper, we conduct a rigorous, pre-registered empirical audit investigating whether continuous-time dynamical system adaptations and variational latent coupling enhance or compromise cross-modal representations built upon frozen vision (ViT-B/16) and language (RoBERTa-base) encoders. We formalize and evaluate three mechanisms: (1) Structure-Aware Hamiltonian-Inspired Dissipative Coordinate-Momentum Adapter (HEDO), incorporating exact skew-symmetric learned interactions $\mathbf{J} = (\mathbf{A} - \mathbf{A}^T)/\sqrt{d}$ and positive diagonal damping $\mathbf{R}$; (2) Adaptive Variational State Coupling (AVSC), which introduces confidence-gated symmetric Kullback-Leibler (KL) divergence across intermediate chunk-boundary states; and (3) Multi-Scale State Aggregation (MSA), fusing global mean, boundary, and terminal recurrent states. Across an audited 24-run, 8-configuration ablation benchmark (three random seeds per configuration, $n=3$ paired runs) on Flickr8k, paired-difference analysis using two-tailed 95\% Student-$t$ confidence intervals indicates: (i) Mamba-2 equipped with HEDO shows no statistically significant difference from the standard linear alignment baseline under the present three-seed evaluation ($37.31 \pm 0.68\%$ vs. $37.16 \pm 0.57\%$ Mean Recall, paired $\Delta = +0.15$ percentage points [pp], 95\% CI $[-1.42, +1.73]$ pp, CI includes zero) while processing $7,054$ pairs/s at the head with $1,086$ MB peak VRAM; (ii) Multi-scale recurrent aggregation consistently degrades retrieval performance ($\Delta \approx -10.27$ to $-10.75$ pp, with 95\% CIs strictly negative), revealing that causal boundary states introduce severe temporal asymmetry that corrupts isotropic pooling; and (iii) Variational coupling is associated with severe alignment degradation ($\Delta \approx -30.52$ to $-32.11$ pp down to a low-retrieval regime of $\approx 5.0\%-6.6\%$), consistent with dimensional collapse under the evaluated formulation. We present geometric and gradient analyses showing that intermediate cross-modal symmetric KL penalties conflict with hyperspherical multi-positive InfoNCE contrastive repulsion, providing a mechanistic explanation consistent with this degradation. Our findings deliver vital negative results and actionable design principles for integrating state space duality into multimodal systems.
+Structured State Space Models (SSMs) and their duality with structured attention---principally embodied in Mamba-2 via State Space Duality (SSD)---offer linear time complexity $O(L)$ with respect to sequence length, presenting an appealing alternative to quadratic self-attention in cross-modal vision-language alignment. In this paper, we conduct a rigorous, pre-specified empirical audit investigating whether continuous-time dynamical system adaptations and variational latent coupling enhance or compromise cross-modal representations built upon frozen vision (ViT-B/16) and language (RoBERTa-base) encoders. We formalize and evaluate three mechanisms: (1) Structure-Aware Hamiltonian-Inspired Dissipative Coordinate-Momentum Adapter (HEDO), incorporating exact skew-symmetric learned interactions $\mathbf{J} = (\mathbf{A} - \mathbf{A}^T)/\sqrt{d}$ and positive diagonal damping $\mathbf{R}$; (2) Adaptive Variational State Coupling (AVSC), which introduces confidence-gated symmetric Kullback-Leibler (KL) divergence across intermediate chunk-boundary states; and (3) Multi-Scale State Aggregation (MSA), fusing global mean, boundary, and terminal recurrent states. Across an audited 24-run, 8-configuration ablation benchmark (three random seeds per configuration, $n=3$ paired runs) on Flickr8k, paired-difference analysis using two-tailed 95\% Student-$t$ confidence intervals indicates: (i) Mamba-2 equipped with HEDO shows no statistically significant difference from the standard linear alignment baseline under the present three-seed evaluation ($37.31 \pm 0.68\%$ vs. $37.16 \pm 0.57\%$ Mean Recall, paired $\Delta = +0.15$ percentage points [pp], 95\% CI $[-1.42, +1.73]$ pp, CI includes zero) while processing $7,054$ pairs/s at the head with $1,086$ MB peak VRAM; (ii) Multi-scale recurrent aggregation consistently degrades retrieval performance ($\Delta \approx -10.27$ to $-10.75$ pp, with 95\% CIs strictly negative), revealing that causal boundary states introduce severe temporal asymmetry that corrupts isotropic pooling; and (iii) Variational coupling is associated with severe alignment degradation ($\Delta \approx -30.52$ to $-32.11$ pp), with retrieval falling to approximately $5.0\%-6.6\%$ Mean Recall, consistent with a collapse-like representation failure under the evaluated formulation. Geometric and gradient analyses indicate that intermediate cross-modal symmetric KL penalties introduce competing distribution-matching constraints that conflict with hyperspherical multi-positive InfoNCE contrastive repulsion, providing a plausible mechanistic interpretation of this failure. Our findings deliver vital negative results and actionable design principles for integrating state space duality into multimodal systems.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -67,7 +67,7 @@ Despite theoretical promise, an essential question remains unaddressed:
 In the existing literature, continuous-time and variational inductive biases are frequently evaluated under isolated, non-audited configurations lacking multi-seed paired-difference analysis or systematic ablation isolation of individual components. Crucially, the interaction between sequential SSM recurrent dynamics and hyperspherical contrastive alignment manifolds has not been systematically investigated. Without rigorous ablation controls, it is impossible to determine whether reported performance variations stem from the underlying state-space sequence model, continuous-time dynamical adapters, or stochastic optimization noise.
 
 \subsection{Research Questions and Hypotheses}
-To resolve this gap, we formalize four pre-registered research questions:
+To resolve this gap, we formalize four pre-specified research questions:
 \begin{itemize}
     \item \textbf{RQ1}: Does the integration of a Hamiltonian-inspired dissipative coordinate-momentum adapter (HEDO) preserve or enhance retrieval performance over standard linear alignment?
     \item \textbf{RQ2}: Does multi-scale state aggregation (MSA) combining boundary and terminal recurrent states improve cross-modal representation quality?
@@ -79,9 +79,9 @@ To resolve this gap, we formalize four pre-registered research questions:
 In addressing these questions, this paper delivers four primary contributions:
 \begin{enumerate}
     \item \textbf{Structured HEDO Adapter Integration}: We design and formalize a Structure-Aware Hamiltonian-Inspired Dissipative Coordinate-Momentum Adapter (HEDO) integrated with Native Mamba-2, establishing energy boundedness under continuous dynamics.
-    \item \textbf{Controlled Empirical Audit}: We construct a controlled 8-configuration ablation matrix isolating HEDO, MSA, and AVSC upon strictly frozen ViT-B/16 and RoBERTa-base backbones.
+    \item \textbf{Controlled Empirical Audit}: We construct a controlled 8-configuration ablation benchmark evaluating selected individual and joint architectural configurations from the $2^4$ design space upon strictly frozen ViT-B/16 and RoBERTa-base backbones.
     \item \textbf{Paired Multi-Seed Statistical Evaluation}: Across 24 audited runs (3 independent random seeds per configuration, $n=3$ paired runs), we perform paired-difference analysis using two-tailed 95\% Student-$t$ confidence intervals, finding that no statistically significant difference from the baseline was detected under the three-seed evaluation ($+0.15$ pp, 95\% CI $[-1.42, +1.73]$ pp).
-    \item \textbf{Mechanistic Analysis}: We provide mathematical and gradient analyses explaining how causal boundary states in MSA introduce temporal asymmetry that degrades isotropic pooling ($\approx -10.5$ pp), and show how intermediate cross-modal symmetric KL penalties in AVSC conflict with hyperspherical InfoNCE repulsion, providing a mechanistic explanation consistent with dimensional collapse under the evaluated formulation ($\approx -31$ pp).
+    \item \textbf{Mechanistic Analysis}: We provide geometric and architectural analyses hypothesizing how causal boundary states in MSA introduce temporal asymmetry that degrades isotropic pooling ($\approx -10.5$ pp), and interpret how intermediate cross-modal symmetric KL penalties in AVSC impose conflicting distribution-matching constraints against hyperspherical InfoNCE repulsion, consistent with the observed representation collapse ($\approx -31$ pp).
 \end{enumerate}
 
 \subsection{Paper Organization}
@@ -274,11 +274,12 @@ Since $\mathbf{R}_{i,i} \ge 0.05 > 0$, $\frac{d}{dt}\mathcal{H} \le 0$, proving 
 \end{proof}
 
 \subsubsection{Bounded Discrete Integration}
-To integrate the continuous ODE in discrete time without numerical instability, we employ a bounded Euler step $\Delta t = 0.05 + 0.10 \cdot \sigma(\tau_{\Delta t}) \in [0.05, 0.15]$:
+We employ a bounded explicit Euler step with $\Delta t = 0.05 + 0.10 \cdot \sigma(\tau_{\Delta t}) \in [0.05, 0.15]$, where $\tau_{\Delta t} \in \mathbb{R}$ is a separate learnable scalar parameter distinct from the InfoNCE log-temperature $\tau$:
 \begin{equation}
 \label{eq:euler_step}
 \mathbf{q}_{\mathrm{new}} = \mathbf{q} + \Delta t \cdot \dot{\mathbf{q}}, \quad \mathbf{p}_{\mathrm{new}} = \mathbf{p} + \Delta t \cdot \dot{\mathbf{p}}.
 \end{equation}
+Numerical stability across discrete integration steps is subsequently monitored empirically through finite-value assertions.
 
 \subsubsection{Residual Update}
 The updated canonical variables are combined and normalized, producing a residual update:
@@ -427,7 +428,7 @@ Images are resized to $224 \times 224$ and normalized using ImageNet statistics.
 All models are trained for 10 epochs using AdamW with an initial learning rate of $\eta = 10^{-4}$ and weight decay $10^{-4}$. Batch size is fixed to 8 unique images and 40 captions per iteration. Gradient clipping is enforced at a maximum $\ell_2$ norm of $1.0$.
 
 \subsection{Experimental Configurations}
-To systematically decouple the individual and joint effects of HEDO, Mamba-2, MSA, and AVSC, we evaluate a controlled 8-configuration ablation matrix, summarized in Table~\ref{tab:configurations}.
+To evaluate selected individual and joint effects of HEDO, Mamba-2, MSA, and AVSC, we construct a controlled 8-configuration ablation benchmark, summarized in Table~\ref{tab:configurations}. Because a full factorial exploration over four binary mechanisms would require $2^4 = 16$ configurations, our benchmark evaluates a targeted, structured subset of this space.
 
 \begin{table}[htbp]
 \centering
@@ -449,7 +450,7 @@ To systematically decouple the individual and joint effects of HEDO, Mamba-2, MS
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:configurations} defines the 8-configuration ablation matrix designed to isolate the individual and joint effects of HEDO, Mamba-2, MSA, and AVSC across the eight evaluated models. Full V2 activates all four mechanisms simultaneously and is included as a compositional stress test rather than as an assumption that all components are individually beneficial.
+Table~\ref{tab:configurations} defines the controlled 8-configuration ablation benchmark. While these eight configurations evaluate critical individual and joint additions (e.g., Mamba-2 + HEDO vs. baseline), they represent a structured subset of the $2^4$ architectural space rather than an exhaustive full factorial matrix; consequently, they evaluate selected combinations rather than independently isolating every factor in complete isolation (such as Mamba-2 without HEDO, or MSA without Mamba-2/HEDO). Full V2 activates all four mechanisms simultaneously and serves as a compositional stress test rather than an assumption that all components are mutually compatible.
 
 \subsection{Evaluation Metrics}
 Retrieval performance is evaluated on the standard 1,000-image test set ($1,000$ images $\times$ $5,000$ captions):
@@ -483,6 +484,7 @@ where $t_{0.025, 2} = 4.303$. An architectural comparison relative to the baseli
     \item \textbf{NOT SUPPORTED (NO STAT. DIFF.)}: The null hypothesis of zero difference cannot be rejected as $\mathrm{CI}_{95\%}$ contains zero ($\mathrm{CI}_{\mathrm{low}} \le 0 \le \mathrm{CI}_{\mathrm{high}}$).
     \item \textbf{CONTRADICTED (DEGRADATION)}: $\bar{\Delta}_c < 0$ and $\mathrm{CI}_{95\%}$ strictly excludes zero ($\mathrm{CI}_{\mathrm{high}} < 0$).
 \end{itemize}
+Because the analysis was designed as a predefined architectural audit with seven baseline comparisons, we report unadjusted two-sided 95\% Student-$t$ confidence intervals; multiplicity-adjusted inference is left for future expanded benchmarks.
 
 \subsection{Reproducibility and Audit Controls}
 To guarantee numerical reproducibility and prevent silent execution failures, the training harness incorporates strict hardware and numerical assertion gates:
@@ -499,7 +501,7 @@ The complete multi-seed experimental audit protocol is formalized in Algorithm~\
 \label{alg:audit}
 \begin{algorithmic}[1]
 \REQUIRE Configuration set $\mathcal{C} = \{c_0, c_1, \dots, c_7\}$, seeds $\mathcal{S} = \{42, 43, 44\}$, test dataset $\mathcal{D}_{\mathrm{test}}$
-\ENSURE Paired deltas $\bar{\Delta}_c$, 95\% confidence intervals $\mathrm{CI}_{95\%}$, pre-registered verdicts
+\ENSURE Paired deltas $\bar{\Delta}_c$, 95\% confidence intervals $\mathrm{CI}_{95\%}$, pre-specified verdicts
 \FOR{each configuration $c \in \mathcal{C}$}
     \FOR{each random seed $s \in \mathcal{S}$}
         \STATE Set random seed $s$ across PyTorch, NumPy, Python runtime
@@ -568,7 +570,7 @@ The empirical retrieval metrics across all 8 configurations are compiled in Tabl
 \label{fig:ablation_recall}
 \end{figure*}
 
-As reported in Table~\ref{tab:ablation_results}, the baseline model achieves a Mean Recall of $37.16 \pm 0.57\%$, with Image-to-Text (i2t) R@1 of $16.53\%$ and Text-to-Image (t2i) R@1 of $13.92\%$. Across the eight configurations, performance bifurcates cleanly into two distinct regimes: a stable regime where performance is statistically indistinguishable from baseline (Baseline and Mamba-2 + HEDO) and severe degradation regimes (MSA and AVSC). As visually evident in Fig.~\ref{fig:ablation_recall}, this bifurcation is uniform across all recall thresholds.
+As reported in Table~\ref{tab:ablation_results}, the baseline model achieves a Mean Recall of $37.16 \pm 0.57\%$, with Image-to-Text (i2t) R@1 of $16.53\%$ and Text-to-Image (t2i) R@1 of $13.92\%$. Across the eight configurations, performance bifurcates cleanly into two distinct regimes: a stable regime where no statistically significant difference from the baseline was detected under the three-seed evaluation (Baseline and Mamba-2 + HEDO) and severe degradation regimes (MSA and AVSC). As visually evident in Fig.~\ref{fig:ablation_recall}, this bifurcation is uniform across all recall thresholds.
 
 \subsection{HEDO + Native Mamba-2 Evaluation}
 Equipping the architecture with the Hamiltonian-inspired dissipative adapter and Native Mamba-2 sequence blocks (\texttt{mamba2\_hedo\_v2}) yields a Mean Recall of $37.31 \pm 0.68\%$, with i2t R@1 reaching $17.40 \pm 0.62\%$ and t2i R@1 reaching $14.20 \pm 0.58\%$. As shown in Table~\ref{tab:paired_deltas}, the mean paired delta is $+0.1533$ pp, with a 95\% confidence interval of $[-1.4246, +1.7313]$ pp ($n=3$ paired runs). Because the confidence interval encompasses zero, the hypothesis of a statistically significant improvement ($H_1$) is classified as \textbf{NOT SUPPORTED} (no statistically significant difference was detected under the present three-seed evaluation). 
@@ -653,19 +655,19 @@ Table~\ref{tab:efficiency_results} and Fig.~\ref{fig:efficiency_tradeoff} quanti
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.96\textwidth]{fig_efficiency_tradeoff.pdf}
-\caption{Efficiency vs. accuracy tradeoffs across all 8 configurations. (a) Head throughput (pairs/s) vs. Mean Recall (\%). (b) End-to-end throughput (pairs/s) vs. Peak Training VRAM (MB). Bubble area is proportional to the trainable parameter count ($465\mathrm{k}$ to $764\mathrm{k}$). Mamba-2 + HEDO lies on the observed accuracy-throughput Pareto frontier, retaining baseline-level retrieval accuracy at high throughput and low memory.}
+\caption{Efficiency vs. accuracy tradeoffs across all 8 configurations. (a) Head throughput (pairs/s) vs. Mean Recall (\%). (b) End-to-end throughput (pairs/s) vs. Peak Training VRAM (MB). Bubble area is proportional to the trainable parameter count ($465\mathrm{k}$ to $764\mathrm{k}$). Mamba-2 + HEDO lies on the observed accuracy-throughput Pareto frontier among the eight evaluated configurations, retaining baseline-level retrieval accuracy at high throughput and low memory.}
 \label{fig:efficiency_tradeoff}
 \end{figure*}
 
-Mamba-2 + HEDO requires $597,787$ trainable parameters (an increment of $132,610$ parameters over the baseline), representing a $0.06\%$ addition to the $211.2$M total model parameters. Relative to the baseline linear projection, peak training VRAM increases from $1,042.31$ MB to $1,086.15$ MB ($+43.84$ MB), head latency increases from $4.19 \pm 0.13$ ms to $5.67 \pm 0.13$ ms, and end-to-end latency increases from $7.64 \pm 0.23$ ms to $8.39 \pm 0.08$ ms. Despite these measurable overheads, head throughput remains high at $7,054.12 \pm 161.35$ pairs/s ($4,765.93 \pm 45.65$ pairs/s end-to-end), supporting Hypothesis 4 ($H_4$) by confirming practical computational throughput. As shown in Fig.~\ref{fig:efficiency_tradeoff}, Mamba-2 + HEDO lies on the observed accuracy-throughput Pareto frontier.
+Mamba-2 + HEDO requires $597,787$ trainable parameters, adding $132,610$ trainable parameters (+28.5\% relative to the baseline trainable parameter budget of $465,177$), while increasing the total parameter count by only 0.063\% because the 210.6M backbone parameters remain frozen. Relative to the baseline linear projection, peak training VRAM increases from $1,042.31$ MB to $1,086.15$ MB ($+43.84$ MB, a 4.2\% increase), head latency increases from $4.19 \pm 0.13$ ms to $5.67 \pm 0.13$ ms (+35.3\%), and end-to-end latency increases from $7.64 \pm 0.23$ ms to $8.39 \pm 0.08$ ms (+9.8\%). Despite these moderate overheads, head throughput remains high at $7,054.12 \pm 161.35$ pairs/s ($4,765.93 \pm 45.65$ pairs/s end-to-end), supporting Hypothesis 4 ($H_4$) by confirming practical computational throughput. As shown in Fig.~\ref{fig:efficiency_tradeoff}, Mamba-2 + HEDO lies on the observed accuracy-throughput Pareto frontier among the eight evaluated configurations.
 
 \subsection{Multi-Seed Stability}
-Fig.~\ref{fig:seed_stability_metrics} illustrates the stability across seeds 42, 43, and 44. The standard deviation in Mean Recall across seeds is small ($\le 0.68\%$ for the top configurations), indicating that the empirical observations reflect systematic architectural properties rather than stochastic optimization artifacts.
+Fig.~\ref{fig:seed_stability_metrics} illustrates the stability across seeds 42, 43, and 44. The standard deviation in Mean Recall across seeds is small ($\le 0.68\%$ for the top configurations), indicating consistency across the evaluated seeds, although larger seed ensembles are required to quantify sensitivity to random initialization more precisely.
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.96\textwidth]{fig_seed_stability_metrics.pdf}
-\caption{Multi-seed run stability and retrieval rank distributions. (a) Mean Recall across seeds 42, 43, and 44, showing tight inter-seed clustering and absolute reproducibility. (b) Log-scale Median Retrieval Rank (MedR) for image-to-text and text-to-image matching; lower values denote superior retrieval ranking precision.}
+\caption{Multi-seed run stability and retrieval rank distributions. (a) Mean Recall across seeds 42, 43, and 44, showing consistent performance across the three evaluated random seeds. (b) Log-scale Median Retrieval Rank (MedR) for image-to-text and text-to-image matching; lower values denote superior retrieval ranking precision.}
 \label{fig:seed_stability_metrics}
 \end{figure*}
 
@@ -678,7 +680,7 @@ Fig.~\ref{fig:seed_stability_metrics} illustrates the stability across seeds 42,
 The clear bifurcation between the stability of HEDO and the failure of MSA and AVSC demands thorough mechanistic analysis.
 
 \subsection{Interpretation of HEDO Stability}
-Unlike AVSC and MSA, HEDO maintains performance statistically indistinguishable from the baseline. This stability is governed by three structural properties formalized in Section~\ref{sec:architecture}-D:
+Unlike AVSC and MSA, HEDO maintains performance with no statistically significant difference detected from the baseline under the three-seed evaluation. This stability is governed by three structural properties formalized in Section~\ref{sec:architecture}-D:
 \begin{enumerate}
     \item \textbf{Exact Skew-Symmetry}: By parameterizing $\mathbf{J} = (\mathbf{A} - \mathbf{A}^T)/\sqrt{d}$ via \eqref{eq:skew_symmetric}, HEDO enforces $\mathbf{v}^T \mathbf{J}^T \mathbf{v} = 0$ identically for all $\mathbf{v}$. The skew-symmetric component contributes no direct change to the quadratic Hamiltonian energy in the continuous-time formulation.
     \item \textbf{Positive Diagonal Damping}: The damping matrix $\mathbf{R} = \mathrm{diag}(0.05 + 0.95\sigma(\boldsymbol{\gamma}))$ via \eqref{eq:damping_matrix} guarantees that energy is dissipated monotonically ($\dot{\mathcal{H}} \le 0$ by Proposition 1), preventing activation blow-up or exploding gradients.
@@ -688,46 +690,40 @@ Unlike AVSC and MSA, HEDO maintains performance statistically indistinguishable 
 \subsection{Why MSA Degrades Retrieval: Recurrent Pooling Asymmetry}
 Multi-Scale State Aggregation attempted to enrich embeddings by concatenating chunk-boundary states $\bar{\mathbf{y}}_{\mathrm{boundary}}$ and the terminal valid state $\mathbf{y}_{\mathrm{last}}$ with the global mean state $\bar{\mathbf{y}}_{\mathrm{global}}$. This resulted in an immediate $\approx 10.5$ pp drop in Mean Recall.
 
-This degradation stems from a fundamental mismatch between the causal recurrence of SSMs and the permutation-invariance required for multimodal pooling:
+We hypothesize that the degradation arises from the interaction between recurrent positional asymmetry and the selected pooling scheme:
 \begin{enumerate}
-    \item \textbf{Causal Scan Bias}: In Mamba-2, state transitions are computed sequentially:
+    \item \textbf{Recurrent Positional Asymmetry}: In Mamba-2, state transitions are computed sequentially:
     \begin{equation}
     \label{eq:mamba_recurrence}
     \mathbf{h}_t = \mathbf{A}_t \mathbf{h}_{t-1} + \mathbf{B}_t \mathbf{x}_t.
     \end{equation}
-    The terminal state $\mathbf{y}_{\mathrm{last}}$ strongly reflects the recency bias of the final tokens. While in language, the final token may coincide with a padding boundary or punctuation mark, in vision, the final token corresponds arbitrarily to the bottom-right image patch ($14 \times 14$ grid). Concatenating $\mathbf{y}_{\mathrm{last}}$ injects severe spatial and positional bias into the cross-modal representation.
-    \item \textbf{Chunk Boundary Discontinuity}: Chunk-boundary states $\mathbf{Y}_{\mathrm{boundary}}$ capture the internal recurrent state at arbitrary 16-token intervals. Because visual objects and linguistic phrases do not align with uniform 16-token boundaries, these states represent arbitrary temporal snapshots rather than coherent semantic constituents.
-    \item \textbf{Isotropic Mean Pooling Superiority}: Conversely, uniform masked mean pooling $\bar{\mathbf{y}}_{\mathrm{global}} = \frac{1}{L}\sum_{i=1}^L \mathbf{y}_i$ computes an unweighted barycenter over all contextualized token representations, preserving the permutation-invariant semantic centroid required for contrastive alignment.
+    The terminal valid state $\mathbf{y}_{\mathrm{last}} = \mathbf{Y}_{B, L_{\mathrm{valid}}-1}$ reflects the cumulative recency bias of the sequential recurrence. In language, it corresponds to the final valid token, whose semantic or positional role may differ substantially across captions. In vision, the final token corresponds to the bottom-right image patch ($14 \times 14$ grid). Concatenating $\mathbf{y}_{\mathrm{last}}$ introduces severe positional asymmetry into the multimodal embedding.
+    \item \textbf{Chunk Boundary Arbitrariness}: Chunk-boundary states $\mathbf{Y}_{\mathrm{boundary}}$ capture the internal recurrent state at arbitrary 16-token intervals. Because visual entities and linguistic phrases do not align with uniform 16-token boundaries, these states represent arbitrary recurrent snapshots rather than coherent semantic constituents.
+    \item \textbf{Order-Agnostic Mean Pooling}: Conversely, uniform masked mean pooling $\bar{\mathbf{y}}_{\mathrm{global}} = \frac{\sum_{i=1}^L m_i \mathbf{Y}_i}{\sum_{i=1}^L m_i}$ computes an unweighted barycenter over all contextualized token representations, providing an order-agnostic aggregation of the contextualized sequence states suitable for contrastive alignment.
 \end{enumerate}
 
-\subsection{Why AVSC Produces Collapse: Gradient Geometry Conflict}
-To understand why variational coupling degraded retrieval performance, we analyze the interaction between the gradients of the symmetric KL loss and the multi-positive InfoNCE loss. The following gradient and geometric analysis provides a mechanistic explanation consistent with the observed dimensional-collapse behavior.
+\subsection{Mechanistic Interpretation of AVSC Degradation}
+\label{sec:avsc_mechanisms}
+The severe retrieval degradation observed across all AVSC configurations ($\Delta \approx -30.5$ to $-32.1$ pp, Mean Recall $\approx 5.0\%-6.6\%$, MedR $\ge 60$) demands careful mechanistic examination. Rather than a formal mathematical theorem of collapse, we provide a conservative mechanistic interpretation based on the competing geometric constraints of the objective functions.
 
-\begin{theorem}[Optimization Conflict between InfoNCE and Symmetric Variational KL]
-\label{thm:gradient_conflict}
-Let $\mathbf{z}_v, \mathbf{z}_t \in \mathbb{S}^{d-1}$ be $\ell_2$-normalized embeddings on the unit hypersphere supervised by multi-positive InfoNCE loss $\mathcal{L}_{\mathrm{NCE}}$ and symmetric variational coupling loss $\mathcal{L}_{\mathrm{KL}}$. While InfoNCE promotes discriminative separation of normalized cross-modal embeddings across $\mathbb{S}^{d-1}$, the symmetric KL term penalizes discrepancies between the intermediate vision and text posterior means and variances:
-\begin{equation}
-\label{eq:kl_gradient}
-\boldsymbol{\nabla}_{\mathbf{z}} \mathcal{L}_{\mathrm{KL}} \propto (\boldsymbol{\mu}_v - \boldsymbol{\mu}_t) + \left( \frac{1}{\boldsymbol{\sigma}_t^2} - \frac{1}{\boldsymbol{\sigma}_v^2} \right).
-\end{equation}
-Under the evaluated formulation, this distribution-matching objective introduces optimization pressure that can conflict with the hyperspherical geometry promoted by multi-positive InfoNCE, providing a mechanistic explanation consistent with the observed severe retrieval degradation.
-\end{theorem}
+\subsubsection{Competing Geometric Pressures}
+In the evaluated architecture, two distinct objectives operate at different stages of representation processing:
+\begin{enumerate}
+    \item \textbf{Hyperspherical Contrastive Repulsion}: The multi-positive InfoNCE loss operates on final $\ell_2$-normalized embeddings $\mathbf{z}_v, \mathbf{z}_t \in \mathbb{S}^{d-1}$. As established in contrastive representation theory~\cite{wang2020understanding,chen2020simple}, InfoNCE balances positive attraction with negative repulsion. The repulsive gradient across negative pairs,
+    \begin{equation}
+    \label{eq:repulsive_grad}
+    \nabla_{\mathbf{z}_i} \mathcal{L}_{\mathrm{rep}} = \sum_{j \in \mathcal{N}(i)} \frac{\exp(\tau \mathbf{z}_i^T \mathbf{z}_j)}{\sum_k \exp(\tau \mathbf{z}_i^T \mathbf{z}_k)} \tau \mathbf{z}_j,
+    \end{equation}
+    pushes non-matching embeddings apart, promoting uniform dispersion and high effective rank across the unit hypersphere $\mathbb{S}^{d-1}$.
+    \item \textbf{Intermediate Distribution Matching}: Concurrently, the AVSC objective penalizes the symmetric Kullback-Leibler divergence $\mathcal{D}_{\mathrm{KL}}^{\mathrm{sym}}(q_v, q_t)$ between diagonal Gaussian posteriors $q_v = \mathcal{N}(\boldsymbol{\mu}_v, \boldsymbol{\Sigma}_v)$ and $q_t = \mathcal{N}(\boldsymbol{\mu}_t, \boldsymbol{\Sigma}_t)$ parameterized by linear heads on intermediate representations $\mathbf{h}_v, \mathbf{h}_t \in \mathbb{R}^d$ via \eqref{eq:avsc_params_v}--\eqref{eq:avsc_params_t}.
+\end{enumerate}
 
-\begin{proof}[Geometric Sketch]
-InfoNCE optimizes alignment on the hypersphere by balancing an attractive force between positive pairs and a repulsive force between negative pairs~\cite{chen2020simple,jing2022understanding}. For negative pairs, the repulsive gradient is:
-\begin{equation}
-\label{eq:repulsive_grad}
-\nabla_{\mathbf{z}_i} \mathcal{L}_{\mathrm{rep}} = \sum_{j \in \mathcal{N}(i)} \frac{\exp(\tau \mathbf{z}_i^T \mathbf{z}_j)}{\sum_k \exp(\tau \mathbf{z}_i^T \mathbf{z}_k)} \tau \mathbf{z}_j.
-\end{equation}
-This repulsion maximizes the entropy of the embedding distribution, driving the singular values of the empirical covariance matrix $\boldsymbol{\Sigma}_{\mathbf{Z}} = \frac{1}{N}\sum_i \mathbf{z}_i \mathbf{z}_i^T$ toward uniformity (isotropy on $\mathbb{S}^{d-1}$).
+\subsubsection{Optimization Conflict and Representation Failure}
+The symmetric KL divergence constrains the intermediate vision and text Gaussian posteriors toward distributional agreement in both their means and variances. However, because this constraint is applied to intermediate representations while the final retrieval objective operates on normalized embeddings, the two objectives impose competing geometric constraints on the representation space.
 
-In contrast, the KL divergence $\mathcal{D}_{\mathrm{KL}}(q_v \parallel q_t)$ penalizes discrepancies in both mean and variance. Because vision and text feature spaces possess disparate intrinsic dimensionalities ($196$ spatial patches vs. $\le 64$ linguistic tokens), forcing intermediate chunk-boundary states into identical diagonal Gaussian distributions induces a severe bottleneck. Specifically, the gradient of $\mathcal{D}_{\mathrm{KL}}^{\mathrm{sym}}$ with respect to the posterior log-variance is:
-\begin{equation}
-\label{eq:logvar_grad}
-\frac{\partial \mathcal{D}_{\mathrm{KL}}^{\mathrm{sym}}}{\partial \log \boldsymbol{\sigma}_v^2} = \frac{1}{2}\left( \frac{\boldsymbol{\sigma}_v^2}{\boldsymbol{\sigma}_t^2} - 1 \right) + \frac{(\boldsymbol{\mu}_v - \boldsymbol{\mu}_t)^2}{2\boldsymbol{\sigma}_t^2}.
-\end{equation}
-When the network attempts to minimize this penalty across heterogeneous modalities, the optimization path collapses variance toward the minimum clamp floor $\sigma_{\min}^2 = \exp(-6) \approx 0.00248$. Consequently, the posterior distributions degenerate into near-deterministic point masses that overfit to spurious cross-modal correlations, annihilating the discriminative geometric separation enforced by InfoNCE. This dynamic provides a mechanistic explanation consistent with severe dimensional collapse and the near-zero Recall@1 ($1.0\%-1.8\%$) observed empirically.
-\end{proof}
+In particular, contrastive learning requires preserving fine-grained cross-modal discrepancies to discriminate among 40 in-batch candidates, whereas the intermediate Gaussian distribution-matching penalty penalizes discrepancy between paired representations regardless of the global contrastive configuration. Under the evaluated formulation and hyperparameters ($\lambda_{\mathrm{KL}} = 10^{-3}$, clamp range $[-6.0, 2.0]$), the resulting optimization dynamics coincide with severe retrieval degradation.
+
+While these empirical results---including near-zero Recall@1 ($1.0\%-1.8\%$) and drastic median rank inflation ($61-103$)---are consistent with a collapse-like representation failure under the evaluated formulation, the present experiments establish this empirical association but do not by themselves prove that symmetric KL uniquely causes dimensional collapse. Conclusive verification of dimensional collapse would require empirical tracking of the singular value spectrum and effective embedding rank during training, which we identify as an important direction for future investigation.
 
 \subsection{Efficiency--Accuracy Tradeoff}
 Fig.~\ref{fig:efficiency_tradeoff} illustrates the Pareto frontier across all configurations. The baseline linear projection achieves the highest throughput ($9,550$ pairs/s) and lowest latency ($4.19$ ms). Mamba-2 + HEDO retains baseline-level retrieval accuracy ($37.31\%$) with moderate computational overhead, sustaining $7,054$ pairs/s throughput with an incremental VRAM cost of only $43.8$ MB ($1,086$ MB vs. $1,042$ MB) and lying on the observed accuracy-throughput Pareto frontier. In contrast, all configurations incorporating AVSC or MSA incur substantial computational overhead without performance benefits.
@@ -752,7 +748,7 @@ While our findings provide rigorous empirical and mathematical insights, several
     \item \textbf{Backbone Scope}: Both vision (ViT-B/16) and language (RoBERTa-base) encoders were kept strictly frozen. While freezing isolates the sequence models, end-to-end fine-tuning may exhibit different optimization interactions.
     \item \textbf{Number of Seeds}: The benchmark evaluated three random seeds per configuration ($N=24$ total runs). Although paired Student-$t$ confidence intervals can be computed from these three paired observations, the small sample size limits statistical power; larger seed ensembles would provide more precise estimates.
     \item \textbf{Architecture Scope}: The study evaluated a specific Mamba-2 parameterization ($d_{\mathrm{model}}=128, d_{\mathrm{state}}=64, Q=16$). Exploring varying chunk sizes and state dimensions remains an area for future work.
-    \item \textbf{Mechanistic Analysis Scope}: The gradient conflict analysis provides a formal mathematical explanation for the observed dimensional collapse, but full empirical tracking of covariance spectra during training would offer further granular confirmation.
+    \item \textbf{Mechanistic Analysis Scope}: Our mechanistic interpretation identifies competing geometric pressures between intermediate distribution matching and hyperspherical contrastive repulsion, which is consistent with the observed retrieval failure; however, direct covariance-spectrum diagnostics (such as singular-value decay and effective rank tracking) were not measured and are required to establish dimensional collapse conclusively.
 \end{itemize}
 
 % =========================================================================
@@ -760,13 +756,13 @@ While our findings provide rigorous empirical and mathematical insights, several
 % =========================================================================
 \section{Conclusion}
 \label{sec:conclusion}
-This paper presented an audited, multi-seed empirical investigation of continuous-state and variational inductive biases in Native Mamba-2 cross-modal alignment. Through a controlled 8-configuration ablation benchmark across 24 training runs on Flickr8k ($n=3$ paired runs per configuration), our findings establish that Native Mamba-2 combined with the Hamiltonian dissipative adapter (HEDO) preserves baseline-level retrieval performance under the evaluated Flickr8k, frozen-backbone, three-seed setting ($37.31 \pm 0.68\%$ vs. $37.16 \pm 0.57\%$ Mean Recall, paired $\Delta = +0.15$ pp, 95\% CI $[-1.42, +1.73]$ pp, no statistically significant difference detected), while maintaining high throughput ($7,054$ pairs/s) and low memory ($1,086$ MB peak VRAM). In contrast, Multi-Scale State Aggregation (MSA) and Adaptive Variational State Coupling (AVSC) configurations exhibit statistically significant degradation ($\Delta \approx -10.5$ pp and $\Delta \approx -31$ pp, respectively), consistent with recurrent pooling asymmetry and variational gradient conflicts under the evaluated formulation. These findings provide foundational empirical clarity and actionable architectural guidelines for integrating state space duality into multimodal foundation models.
+This paper presented an audited, multi-seed empirical investigation of continuous-state and variational inductive biases in Native Mamba-2 cross-modal alignment. Through a controlled 8-configuration ablation benchmark across 24 training runs on Flickr8k ($n=3$ paired runs per configuration), our findings establish that Native Mamba-2 combined with the Hamiltonian dissipative adapter (HEDO) preserves baseline-level retrieval performance under the evaluated Flickr8k, frozen-backbone, three-seed setting ($37.31 \pm 0.68\%$ vs. $37.16 \pm 0.57\%$ Mean Recall, paired $\Delta = +0.15$ pp, 95\% CI $[-1.42, +1.73]$ pp, no statistically significant difference detected), while maintaining high throughput ($7,054$ pairs/s) and low memory ($1,086$ MB peak VRAM). In contrast, Multi-Scale State Aggregation (MSA) and Adaptive Variational State Coupling (AVSC) configurations exhibit statistically significant degradation ($\Delta \approx -10.5$ pp and $\Delta \approx -31$ pp, respectively). For MSA, this degradation is consistent with recurrent positional asymmetry corrupting isotropic pooling. For AVSC, the empirical results are consistent with a representation-collapse mechanism arising from competing geometric constraints between intermediate distribution matching and hyperspherical contrastive repulsion, although direct covariance-spectrum diagnostics are required to establish dimensional collapse conclusively. These findings provide foundational empirical clarity and actionable architectural guidelines for integrating state space duality into multimodal foundation models.
 
 % =========================================================================
 % ACKNOWLEDGMENTS & REFERENCES
 % =========================================================================
 \section*{Acknowledgment}
-This work was supported in part by the Advanced Multimodal Computing Initiative. The authors thank the open-source community for maintaining the \texttt{mamba\_ssm} and \texttt{transformers} libraries.
+The author thanks the open-source community for maintaining the \texttt{mamba\_ssm} and \texttt{transformers} libraries.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
