@@ -36,7 +36,7 @@
 \maketitle
 
 \begin{abstract}
-Structured State Space Models (SSMs) and their duality with structured attention---principally embodied in Mamba-2 via State Space Duality (SSD)---offer linear time complexity $O(L)$ with respect to sequence length, presenting an appealing alternative to quadratic self-attention in cross-modal vision-language alignment. In this paper, we conduct a rigorous, pre-registered empirical audit investigating whether continuous-time dynamical system adaptations and variational latent coupling enhance or compromise cross-modal representations built upon frozen vision (ViT-B/16) and language (RoBERTa-base) encoders. We formalize and evaluate three mechanisms: (1) Structure-Aware Hamiltonian-Inspired Dissipative Coordinate-Momentum Adapter (HEDO), incorporating exact skew-symmetric learned interactions $\mathbf{J} = (\mathbf{A} - \mathbf{A}^T)/\sqrt{d}$ and positive diagonal damping $\mathbf{R}$; (2) Adaptive Variational State Coupling (AVSC), which introduces confidence-gated symmetric Kullback-Leibler (KL) divergence across intermediate chunk-boundary states; and (3) Multi-Scale State Aggregation (MSA), fusing global mean, boundary, and terminal recurrent states. Across an audited 24-run, 8-configuration ablation benchmark (three random seeds per configuration, $n=3$ paired runs) on Flickr8k, empirical hypothesis testing indicates: (i) Mamba-2 equipped with HEDO shows no statistically significant difference from the standard linear alignment baseline under the present three-seed evaluation ($37.31 \pm 0.68\%$ vs. $37.16 \pm 0.57\%$ Mean Recall, paired $\Delta = +0.15$ percentage points [pp], 95\% CI $[-1.42, +1.73]$ pp, CI includes zero) while processing $7,054$ pairs/s at the head with $1,086$ MB peak VRAM; (ii) Multi-scale recurrent aggregation consistently degrades retrieval performance ($\Delta \approx -10.27$ to $-10.75$ pp, with 95\% CIs strictly negative), revealing that causal boundary states introduce severe temporal asymmetry that corrupts isotropic pooling; and (iii) Variational coupling is associated with severe alignment degradation ($\Delta \approx -30.52$ to $-32.11$ pp down to a low-retrieval regime of $\approx 5.0\%-6.6\%$), consistent with dimensional collapse under the evaluated formulation. We present geometric and gradient analyses showing that isotropic Gaussian KL penalties conflict with hyperspherical multi-positive InfoNCE contrastive repulsion, providing a mechanistic explanation consistent with this degradation. Our findings deliver vital negative results and actionable design principles for integrating state space duality into multimodal systems.
+Structured State Space Models (SSMs) and their duality with structured attention---principally embodied in Mamba-2 via State Space Duality (SSD)---offer linear time complexity $O(L)$ with respect to sequence length, presenting an appealing alternative to quadratic self-attention in cross-modal vision-language alignment. In this paper, we conduct a rigorous, pre-registered empirical audit investigating whether continuous-time dynamical system adaptations and variational latent coupling enhance or compromise cross-modal representations built upon frozen vision (ViT-B/16) and language (RoBERTa-base) encoders. We formalize and evaluate three mechanisms: (1) Structure-Aware Hamiltonian-Inspired Dissipative Coordinate-Momentum Adapter (HEDO), incorporating exact skew-symmetric learned interactions $\mathbf{J} = (\mathbf{A} - \mathbf{A}^T)/\sqrt{d}$ and positive diagonal damping $\mathbf{R}$; (2) Adaptive Variational State Coupling (AVSC), which introduces confidence-gated symmetric Kullback-Leibler (KL) divergence across intermediate chunk-boundary states; and (3) Multi-Scale State Aggregation (MSA), fusing global mean, boundary, and terminal recurrent states. Across an audited 24-run, 8-configuration ablation benchmark (three random seeds per configuration, $n=3$ paired runs) on Flickr8k, paired-difference analysis using two-tailed 95\% Student-$t$ confidence intervals indicates: (i) Mamba-2 equipped with HEDO shows no statistically significant difference from the standard linear alignment baseline under the present three-seed evaluation ($37.31 \pm 0.68\%$ vs. $37.16 \pm 0.57\%$ Mean Recall, paired $\Delta = +0.15$ percentage points [pp], 95\% CI $[-1.42, +1.73]$ pp, CI includes zero) while processing $7,054$ pairs/s at the head with $1,086$ MB peak VRAM; (ii) Multi-scale recurrent aggregation consistently degrades retrieval performance ($\Delta \approx -10.27$ to $-10.75$ pp, with 95\% CIs strictly negative), revealing that causal boundary states introduce severe temporal asymmetry that corrupts isotropic pooling; and (iii) Variational coupling is associated with severe alignment degradation ($\Delta \approx -30.52$ to $-32.11$ pp down to a low-retrieval regime of $\approx 5.0\%-6.6\%$), consistent with dimensional collapse under the evaluated formulation. We present geometric and gradient analyses showing that isotropic Gaussian KL penalties conflict with hyperspherical multi-positive InfoNCE contrastive repulsion, providing a mechanistic explanation consistent with this degradation. Our findings deliver vital negative results and actionable design principles for integrating state space duality into multimodal systems.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -64,7 +64,7 @@ Despite theoretical promise, an essential question remains unaddressed:
 \end{quote}
 
 \subsection{Research Gap}
-In the existing literature, continuous-time and variational inductive biases are frequently evaluated under isolated, non-audited configurations lacking multi-seed paired-difference hypothesis testing or systematic factorial isolation of individual components. Crucially, the interaction between sequential SSM recurrent dynamics and hyperspherical contrastive alignment manifolds has not been systematically investigated. Without rigorous factorial controls, it is impossible to determine whether reported performance variations stem from the underlying state-space sequence model, continuous-time dynamical adapters, or stochastic optimization noise.
+In the existing literature, continuous-time and variational inductive biases are frequently evaluated under isolated, non-audited configurations lacking multi-seed paired-difference analysis or systematic ablation isolation of individual components. Crucially, the interaction between sequential SSM recurrent dynamics and hyperspherical contrastive alignment manifolds has not been systematically investigated. Without rigorous ablation controls, it is impossible to determine whether reported performance variations stem from the underlying state-space sequence model, continuous-time dynamical adapters, or stochastic optimization noise.
 
 \subsection{Research Questions and Hypotheses}
 To resolve this gap, we formalize four pre-registered research questions:
@@ -80,7 +80,7 @@ In addressing these questions, this paper delivers four primary contributions:
 \begin{enumerate}
     \item \textbf{Structured HEDO Adapter Integration}: We design and formalize a Structure-Aware Hamiltonian-Inspired Dissipative Coordinate-Momentum Adapter (HEDO) integrated with Native Mamba-2, establishing energy boundedness under continuous dynamics.
     \item \textbf{Controlled Empirical Audit}: We construct a controlled 8-configuration ablation matrix isolating HEDO, MSA, and AVSC upon strictly frozen ViT-B/16 and RoBERTa-base backbones.
-    \item \textbf{Paired Multi-Seed Statistical Evaluation}: Across 24 audited runs (3 independent random seeds per configuration, $n=3$ paired runs), we apply paired Student-$t$ hypothesis testing with 95\% confidence intervals, finding that no statistically significant difference from the baseline was detected for Mamba-2 + HEDO under this sample size ($+0.15$ pp, 95\% CI $[-1.42, +1.73]$ pp).
+    \item \textbf{Paired Multi-Seed Statistical Evaluation}: Across 24 audited runs (3 independent random seeds per configuration, $n=3$ paired runs), we perform paired-difference analysis using two-tailed 95\% Student-$t$ confidence intervals, finding that no statistically significant difference from the baseline was detected under the three-seed evaluation ($+0.15$ pp, 95\% CI $[-1.42, +1.73]$ pp).
     \item \textbf{Mechanistic Analysis}: We provide mathematical and gradient analyses explaining how causal boundary states in MSA introduce temporal asymmetry that degrades isotropic pooling ($\approx -10.5$ pp), and show how isotropic Gaussian KL penalties in AVSC conflict with hyperspherical InfoNCE repulsion, providing a mechanistic explanation consistent with dimensional collapse under the evaluated formulation ($\approx -31$ pp).
 \end{enumerate}
 
@@ -162,7 +162,7 @@ Given projected and pooled unit-normalized embeddings $\mathbf{z}_v, \mathbf{z}_
 \end{itemize}
 
 \subsection{Formal Hypotheses}
-We formalize four testable hypotheses evaluated via paired statistical testing:
+We formalize four testable hypotheses evaluated via paired-difference confidence interval analysis:
 \begin{itemize}
     \item \textbf{Hypothesis 1 ($H_1$)}: Integrating HEDO and Native Mamba-2 improves Mean Recall over the linear baseline: $\mu(\Delta_{\mathrm{HEDO}}) > 0$.
     \item \textbf{Hypothesis 2 ($H_2$)}: Incorporating multi-scale recurrent states (MSA) improves Mean Recall: $\mu(\Delta_{\mathrm{MSA}}) > 0$.
@@ -477,11 +477,11 @@ We report the sample mean $\bar{\Delta}_c$, sample standard deviation $s_c$, and
 \label{eq:confidence_interval}
 \mathrm{CI}_{95\%} = \left[ \bar{\Delta}_c - t_{0.025, 2} \frac{s_c}{\sqrt{3}}, \; \bar{\Delta}_c + t_{0.025, 2} \frac{s_c}{\sqrt{3}} \right],
 \end{equation}
-where $t_{0.025, 2} = 4.303$. A hypothesis of improvement is classified as:
+where $t_{0.025, 2} = 4.303$. An architectural comparison relative to the baseline is classified as:
 \begin{itemize}
-    \item \textbf{SUPPORTED}: $\bar{\Delta}_c > 0$ and $\mathrm{CI}_{95\%}$ strictly excludes zero ($\mathrm{CI}_{\mathrm{low}} > 0$).
+    \item \textbf{SUPPORTED (IMPROVEMENT)}: $\bar{\Delta}_c > 0$ and $\mathrm{CI}_{95\%}$ strictly excludes zero ($\mathrm{CI}_{\mathrm{low}} > 0$).
     \item \textbf{NOT SUPPORTED (NO STAT. DIFF.)}: The null hypothesis of zero difference cannot be rejected as $\mathrm{CI}_{95\%}$ contains zero ($\mathrm{CI}_{\mathrm{low}} \le 0 \le \mathrm{CI}_{\mathrm{high}}$).
-    \item \textbf{CONTRADICTED}: $\bar{\Delta}_c < 0$ and $\mathrm{CI}_{95\%}$ strictly excludes zero ($\mathrm{CI}_{\mathrm{high}} < 0$).
+    \item \textbf{CONTRADICTED (DEGRADATION)}: $\bar{\Delta}_c < 0$ and $\mathrm{CI}_{95\%}$ strictly excludes zero ($\mathrm{CI}_{\mathrm{high}} < 0$).
 \end{itemize}
 
 \subsection{Reproducibility and Audit Controls}
@@ -523,7 +523,7 @@ The complete multi-seed experimental audit protocol is formalized in Algorithm~\
         \ENDIF
     \ENDIF
 \ENDFOR
-\STATE Generate tabular summaries (Tables~\ref{tab:ablation_results}, \ref{tab:paired_deltas}, \ref{tab:efficiency_results}) and statistical figures (Figs.~\ref{fig:factorial_recall}--\ref{fig:seed_stability_metrics})
+\STATE Generate tabular summaries (Tables~\ref{tab:ablation_results}, \ref{tab:paired_deltas}, \ref{tab:efficiency_results}) and statistical figures (Figs.~\ref{fig:ablation_recall}--\ref{fig:seed_stability_metrics})
 \RETURN Audited benchmark results and statistical decisions
 \end{algorithmic}
 \end{algorithm}
@@ -535,7 +535,7 @@ The complete multi-seed experimental audit protocol is formalized in Algorithm~\
 \label{sec:results}
 
 \subsection{Overall Retrieval Performance}
-The empirical retrieval metrics across all 8 configurations are compiled in Table~\ref{tab:ablation_results} and illustrated across recall thresholds in Fig.~\ref{fig:factorial_recall}. 
+The empirical retrieval metrics across all 8 configurations are compiled in Table~\ref{tab:ablation_results} and illustrated across recall thresholds in Fig.~\ref{fig:ablation_recall}. 
 
 \begin{table*}[!t]
 \centering
@@ -565,10 +565,10 @@ The empirical retrieval metrics across all 8 configurations are compiled in Tabl
 \centering
 \includegraphics[width=0.96\textwidth]{fig_factorial_recall.pdf}
 \caption{Controlled ablation benchmark on Flickr8k across all 8 configurations (3 independent random seeds, $N=24$ runs). (a) Image-to-Text (i2t) Recall@1, Recall@5, and Recall@10. (b) Text-to-Image (t2i) Recall@1, Recall@5, and Recall@10. Error bars denote $\pm 1$ standard deviation. Note the striking bifurcation between the stable regime with no detected difference from baseline (Baseline and Mamba-2 + HEDO) and the severe degradation regimes (MSA and AVSC).}
-\label{fig:factorial_recall}
+\label{fig:ablation_recall}
 \end{figure*}
 
-As reported in Table~\ref{tab:ablation_results}, the baseline model achieves a Mean Recall of $37.16 \pm 0.57\%$, with Image-to-Text (i2t) R@1 of $16.53\%$ and Text-to-Image (t2i) R@1 of $13.92\%$. Across the eight configurations, performance bifurcates cleanly into two distinct regimes: a stable regime where performance is statistically indistinguishable from baseline (Baseline and Mamba-2 + HEDO) and severe degradation regimes (MSA and AVSC). As visually evident in Fig.~\ref{fig:factorial_recall}, this bifurcation is uniform across all recall thresholds.
+As reported in Table~\ref{tab:ablation_results}, the baseline model achieves a Mean Recall of $37.16 \pm 0.57\%$, with Image-to-Text (i2t) R@1 of $16.53\%$ and Text-to-Image (t2i) R@1 of $13.92\%$. Across the eight configurations, performance bifurcates cleanly into two distinct regimes: a stable regime where performance is statistically indistinguishable from baseline (Baseline and Mamba-2 + HEDO) and severe degradation regimes (MSA and AVSC). As visually evident in Fig.~\ref{fig:ablation_recall}, this bifurcation is uniform across all recall thresholds.
 
 \subsection{HEDO + Native Mamba-2 Evaluation}
 Equipping the architecture with the Hamiltonian-inspired dissipative adapter and Native Mamba-2 sequence blocks (\texttt{mamba2\_hedo\_v2}) yields a Mean Recall of $37.31 \pm 0.68\%$, with i2t R@1 reaching $17.40 \pm 0.62\%$ and t2i R@1 reaching $14.20 \pm 0.58\%$. As shown in Table~\ref{tab:paired_deltas}, the mean paired delta is $+0.1533$ pp, with a 95\% confidence interval of $[-1.4246, +1.7313]$ pp ($n=3$ paired runs). Because the confidence interval encompasses zero, the hypothesis of a statistically significant improvement ($H_1$) is classified as \textbf{NOT SUPPORTED} (no statistically significant difference was detected under the present three-seed evaluation). 
