@@ -703,14 +703,14 @@ This degradation stems from a fundamental mismatch between the causal recurrence
 \subsection{Why AVSC Produces Collapse: Gradient Geometry Conflict}
 To understand why variational coupling degraded retrieval performance, we analyze the interaction between the gradients of the symmetric KL loss and the multi-positive InfoNCE loss. The following gradient and geometric analysis provides a mechanistic explanation consistent with the observed dimensional-collapse behavior.
 
-\begin{theorem}[Gradient Conflict between InfoNCE and Symmetric Variational KL]
+\begin{theorem}[Optimization Conflict between InfoNCE and Symmetric Variational KL]
 \label{thm:gradient_conflict}
-Let $\mathbf{z}_v, \mathbf{z}_t \in \mathbb{S}^{d-1}$ be $\ell_2$-normalized embeddings on the unit hypersphere supervised by multi-positive InfoNCE loss $\mathcal{L}_{\mathrm{NCE}}$ and symmetric variational coupling loss $\mathcal{L}_{\mathrm{KL}}$. While InfoNCE promotes discriminative separation of normalized cross-modal embeddings across $\mathbb{S}^{d-1}$, the symmetric KL term penalizes discrepancies between intermediate vision and text posterior means and variances:
+Let $\mathbf{z}_v, \mathbf{z}_t \in \mathbb{S}^{d-1}$ be $\ell_2$-normalized embeddings on the unit hypersphere supervised by multi-positive InfoNCE loss $\mathcal{L}_{\mathrm{NCE}}$ and symmetric variational coupling loss $\mathcal{L}_{\mathrm{KL}}$. While InfoNCE promotes discriminative separation of normalized cross-modal embeddings across $\mathbb{S}^{d-1}$, the symmetric KL term penalizes discrepancies between the intermediate vision and text posterior means and variances:
 \begin{equation}
 \label{eq:kl_gradient}
 \boldsymbol{\nabla}_{\mathbf{z}} \mathcal{L}_{\mathrm{KL}} \propto (\boldsymbol{\mu}_v - \boldsymbol{\mu}_t) + \left( \frac{1}{\boldsymbol{\sigma}_t^2} - \frac{1}{\boldsymbol{\sigma}_v^2} \right).
 \end{equation}
-Under the evaluated formulation, these competing optimization pressures are consistent with the observed severe representation degradation.
+Under the evaluated formulation, this distribution-matching objective introduces optimization pressure that can conflict with the hyperspherical geometry promoted by multi-positive InfoNCE, providing a mechanistic explanation consistent with the observed severe retrieval degradation.
 \end{theorem}
 
 \begin{proof}[Geometric Sketch]
@@ -760,7 +760,7 @@ While our findings provide rigorous empirical and mathematical insights, several
 % =========================================================================
 \section{Conclusion}
 \label{sec:conclusion}
-This paper presented an audited, multi-seed empirical investigation of continuous-state and variational inductive biases in Native Mamba-2 cross-modal alignment. Through a controlled 8-configuration ablation benchmark across 24 training runs on Flickr8k ($n=3$ paired runs per configuration), we found that no statistically significant difference from the baseline was detected for Native Mamba-2 combined with the Hamiltonian dissipative adapter (HEDO) under the three-seed evaluation ($37.31 \pm 0.68\%$ vs. $37.16 \pm 0.57\%$ Mean Recall, 95\% CI $[-1.42, +1.73]$ pp), while maintaining high throughput ($7,054$ pairs/s) and low memory ($1,086$ MB peak VRAM). Furthermore, our results indicate that Multi-Scale State Aggregation and Adaptive Variational State Coupling are associated with severe alignment degradation, consistent with recurrent pooling asymmetry and variational gradient conflicts under the evaluated formulation. These findings provide foundational empirical clarity and actionable architectural guidelines for integrating state space duality into multimodal foundation models.
+This paper presented an audited, multi-seed empirical investigation of continuous-state and variational inductive biases in Native Mamba-2 cross-modal alignment. Through a controlled 8-configuration ablation benchmark across 24 training runs on Flickr8k ($n=3$ paired runs per configuration), our findings establish that Native Mamba-2 combined with the Hamiltonian dissipative adapter (HEDO) preserves baseline-level retrieval performance under the evaluated Flickr8k, frozen-backbone, three-seed setting ($37.31 \pm 0.68\%$ vs. $37.16 \pm 0.57\%$ Mean Recall, paired $\Delta = +0.15$ pp, 95\% CI $[-1.42, +1.73]$ pp, no statistically significant difference detected), while maintaining high throughput ($7,054$ pairs/s) and low memory ($1,086$ MB peak VRAM). In contrast, Multi-Scale State Aggregation (MSA) and Adaptive Variational State Coupling (AVSC) configurations exhibit statistically significant degradation ($\Delta \approx -10.5$ pp and $\Delta \approx -31$ pp, respectively), consistent with recurrent pooling asymmetry and variational gradient conflicts under the evaluated formulation. These findings provide foundational empirical clarity and actionable architectural guidelines for integrating state space duality into multimodal foundation models.
 
 % =========================================================================
 % ACKNOWLEDGMENTS & REFERENCES
