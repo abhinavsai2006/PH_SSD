@@ -32,24 +32,24 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 # Data parsed exactly from values.txtx
 CONFIGS = [
     'baseline',
-    'mamba2_hedo_v2',
-    'mamba2_msa_v2',
-    'hedo_msa_v2',
-    'avsc_msa_v2',
-    'mamba2_avsc_v2',
-    'full_v2',
-    'hedo_avsc_v2'
+    'mamba2_hedo',
+    'mamba2_msa',
+    'hedo_msa',
+    'avsc_msa',
+    'mamba2_avsc',
+    'full',
+    'hedo_avsc'
 ]
 
 CONFIG_LABELS = {
     'baseline': 'Baseline (Linear Proj.)',
-    'mamba2_hedo_v2': 'Mamba-2 + HEDO',
-    'mamba2_msa_v2': 'Mamba-2 + MSA',
-    'hedo_msa_v2': 'HEDO + MSA',
-    'avsc_msa_v2': 'AVSC + MSA',
-    'mamba2_avsc_v2': 'Mamba-2 + AVSC',
-    'full_v2': 'Full V2 (All)',
-    'hedo_avsc_v2': 'HEDO + AVSC'
+    'mamba2_hedo': 'Mamba-2 + HEDO',
+    'mamba2_msa': 'Mamba-2 + MSA',
+    'hedo_msa': 'HEDO + MSA',
+    'avsc_msa': 'AVSC + MSA',
+    'mamba2_avsc': 'Mamba-2 + AVSC',
+    'full': 'Full Model (All)',
+    'hedo_avsc': 'HEDO + AVSC'
 }
 
 # Ablation summary data: means and standard deviations
@@ -65,7 +65,7 @@ ABLATION_DATA = {
         'i2t_medr': (7.6667, 0.5774),
         't2i_medr': (9.0000, 0.0000)
     },
-    'mamba2_hedo_v2': {
+    'mamba2_hedo': {
         'mean_recall': (37.3111, 0.6835),
         'i2t_r1': (17.4000, 0.6245),
         'i2t_r5': (43.4667, 1.8502),
@@ -76,7 +76,7 @@ ABLATION_DATA = {
         'i2t_medr': (7.6667, 0.5774),
         't2i_medr': (9.0000, 0.0000)
     },
-    'mamba2_msa_v2': {
+    'mamba2_msa': {
         'mean_recall': (26.8867, 0.6829),
         'i2t_r1': (9.7667, 0.5132),
         'i2t_r5': (29.5333, 0.9452),
@@ -87,7 +87,7 @@ ABLATION_DATA = {
         'i2t_medr': (13.8333, 0.7638),
         't2i_medr': (14.6667, 0.5774)
     },
-    'hedo_msa_v2': {
+    'hedo_msa': {
         'mean_recall': (26.4089, 0.4900),
         'i2t_r1': (9.4667, 0.4726),
         'i2t_r5': (29.5000, 1.4731),
@@ -98,7 +98,7 @@ ABLATION_DATA = {
         'i2t_medr': (14.6667, 0.5774),
         't2i_medr': (15.3333, 0.5774)
     },
-    'avsc_msa_v2': {
+    'avsc_msa': {
         'mean_recall': (6.6422, 0.8208),
         'i2t_r1': (1.4667, 0.3215),
         'i2t_r5': (6.4000, 1.8682),
@@ -109,7 +109,7 @@ ABLATION_DATA = {
         'i2t_medr': (81.6667, 5.8381),
         't2i_medr': (61.3333, 2.8868)
     },
-    'mamba2_avsc_v2': {
+    'mamba2_avsc': {
         'mean_recall': (6.1200, 1.1352),
         'i2t_r1': (1.8000, 0.7810),
         'i2t_r5': (6.2667, 1.1015),
@@ -120,7 +120,7 @@ ABLATION_DATA = {
         'i2t_medr': (99.8333, 21.5019),
         't2i_medr': (72.3333, 14.7422)
     },
-    'full_v2': {
+    'full': {
         'mean_recall': (5.9511, 0.4203),
         'i2t_r1': (1.4667, 0.3055),
         'i2t_r5': (5.9667, 0.4726),
@@ -131,7 +131,7 @@ ABLATION_DATA = {
         'i2t_medr': (94.3333, 6.6583),
         't2i_medr': (69.6667, 3.7859)
     },
-    'hedo_avsc_v2': {
+    'hedo_avsc': {
         'mean_recall': (5.0444, 0.8381),
         'i2t_r1': (1.0333, 0.1155),
         'i2t_r5': (4.9333, 0.8963),
@@ -187,7 +187,7 @@ PAIRED_DELTAS = [
         'color': '#e41a1c'
     },
     {
-        'comparison': 'Full V2 (All)',
+        'comparison': 'Full Model (All)',
         'mean_delta': -31.2067,
         'ci_low': -32.5987,
         'ci_high': -29.8146,

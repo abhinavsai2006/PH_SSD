@@ -1,4 +1,4 @@
-\documentclass[10pt,journal,final]{IEEEtran}
+\documentclass[conference]{IEEEtran}
 
 \usepackage{amsmath,amssymb,amsfonts,amsthm}
 \usepackage{algorithm}
@@ -25,13 +25,37 @@
 
 \title{Dissecting Continuous-State and Variational Inductive Biases in State Space Duality: An Empirical Audit of Native Mamba-2 Cross-Modal Alignment}
 
-\author{Abhinav~Sai~M.%
-\thanks{Manuscript prepared for submission. Code, audited logs, and configuration artifacts are publicly available at \protect\url{https://github.com/abhinavsai2006/PH_SSD}. (Email: \protect\url{abhinavsai2006@gmail.com})}%
-\thanks{The author is with the Department of Computer Science and Engineering.}%
+\author{
+\IEEEauthorblockN{Madapati Naga Durga Abhinav Sai}
+\IEEEauthorblockA{
+\textit{School of Computer Science}\\
+\textit{and Engineering}\\
+\textit{VIT-AP University}\\
+Amaravati, Andhra Pradesh\\
+522237, India\\
+{\footnotesize abhinav.24bca7148@vitapstudent.ac.in}
 }
-
-\markboth{Journal Submission Draft: Native Mamba-2 Cross-Modal Alignment Audit}%
-{M.: Dissecting Continuous-State and Variational Inductive Biases in State Space Duality}
+\and
+\IEEEauthorblockN{T V R M Siva Shanmukh}
+\IEEEauthorblockA{
+\textit{School of Computer Science}\\
+\textit{and Engineering}\\
+\textit{VIT-AP University}\\
+Amaravati, Andhra Pradesh\\
+522237, India\\
+{\footnotesize shanmukh.24bce7269@vitapstudent.ac.in}
+}
+\and
+\IEEEauthorblockN{Rajesh Duvvuru}
+\IEEEauthorblockA{
+\textit{School of Computer Science}\\
+\textit{and Engineering}\\
+\textit{VIT-AP University}\\
+Amaravati, Andhra Pradesh\\
+522237, India\\
+{\footnotesize rajesh.duvvuru@vitap.ac.in}
+}
+}
 
 \maketitle
 
@@ -130,7 +154,7 @@ where $\dot{\mathbf{q}}$ and $\dot{\mathbf{p}}$ denote time derivatives. In diss
 These formulations provide structural inductive biases ensuring asymptotic stability and energy boundedness in continuous dynamical representations.
 
 \subsection{Variational Representation Learning}
-In multimodal representation learning, variational information bottlenecks have been proposed to regularize latent embeddings by penalizing the Kullback-Leibler (KL) divergence between posterior representations and prior distributions~\cite{kingma2014auto,alemi2017deep}. However, the interaction between variational distribution penalties and non-linear contrastive manifolds remains poorly understood, frequently inducing optimization instability when intermediate latent constraints conflict with contrastive objective gradients.
+In representation learning, variational information bottlenecks classically regularize latent spaces by penalizing the Kullback-Leibler (KL) divergence between approximate posteriors and a static uninformative prior, typically $\mathcal{N}(\mathbf{0}, \mathbf{I})$~\cite{kingma2014auto,alemi2017deep}. In cross-modal settings, variational extensions instead couple modalities by penalizing symmetric divergence directly between vision and language posteriors without a static Gaussian anchor. However, the interaction between cross-modal posterior distribution-matching penalties and hyperspherical contrastive manifolds remains poorly understood, frequently inducing optimization instability when intermediate distributional constraints conflict with contrastive objective gradients.
 
 \subsection{Positioning of This Work}
 While existing literature separately motivates structured state spaces, continuous Hamiltonian dynamics, and variational regularization, prior work does not evaluate their joint interaction within multimodal alignment architectures. This work provides a controlled empirical audit of these inductive biases within Native Mamba-2 cross-modal retrieval.
@@ -195,13 +219,13 @@ As illustrated in Fig.~\ref{fig:architecture}, both modalities operate in parall
 \subsection{Frozen Vision and Language Encoders}
 The visual stream uses $\mathrm{ViT\text{-}B/16}$ ($85.8\text{M}$ parameters) yielding $\mathbf{X}_v \in \mathbb{R}^{B \times 196 \times 768}$, and the language stream uses $\mathrm{RoBERTa\text{-}base}$ ($124.6\text{M}$ parameters) yielding $\mathbf{X}_t \in \mathbb{R}^{B \times L \times 768}$, both kept strictly frozen as formalized in \eqref{eq:frozen_vision}--\eqref{eq:frozen_lang}.
 
-\subsection{Linear Projection}
+\subsection{Linear Projection and Baseline Architecture}
 Both modalities are projected into a common latent dimension $d=128$:
 \begin{equation}
 \label{eq:projection}
 \mathbf{H}_v^{(0)} = \mathbf{X}_v \mathbf{W}_v, \quad \mathbf{H}_t^{(0)} = \mathbf{X}_t \mathbf{W}_t,
 \end{equation}
-where $\mathbf{W}_v, \mathbf{W}_t \in \mathbb{R}^{768 \times 128}$ are trainable linear projection weight matrices initialized via Xavier uniform initialization. This linear projection reduces the channel dimensionality from 768 to 128, establishing the common working dimension for subsequent adapters and sequence models.
+where $\mathbf{W}_v, \mathbf{W}_t \in \mathbb{R}^{768 \times 128}$ are trainable linear projection weight matrices initialized via Xavier uniform initialization. This linear projection reduces the channel dimensionality from 768 to 128, establishing the common working dimension for subsequent adapters and sequence models. In the reference \texttt{baseline} model, these projected tokens bypass all sequence blocks and adapters, proceeding directly to masked global mean pooling and InfoNCE alignment. This establishes the canonical minimal baseline for cross-modal alignment from frozen encoders.
 
 \subsection{Structure-Aware Hamiltonian Dissipative Adapter (HEDO)}
 The HEDO adapter introduces a continuous-state inductive bias rooted in dissipative Hamiltonian dynamics.
@@ -279,7 +303,7 @@ We employ a bounded explicit Euler step with $\Delta t = 0.05 + 0.10 \cdot \sigm
 \label{eq:euler_step}
 \mathbf{q}_{\mathrm{new}} = \mathbf{q} + \Delta t \cdot \dot{\mathbf{q}}, \quad \mathbf{p}_{\mathrm{new}} = \mathbf{p} + \Delta t \cdot \dot{\mathbf{p}}.
 \end{equation}
-Numerical stability across discrete integration steps is subsequently monitored empirically through finite-value assertions.
+Importantly, while Proposition 1 establishes monotonic energy decay ($\frac{d}{dt}\mathcal{H} \le 0$) for the continuous-time dynamical system \eqref{eq:hedo_ode}, discrete Euler discretization introduces local truncation errors of order $O(\Delta t^2)$ and does not mathematically guarantee strict monotonic dissipation at each discrete step. Instead, the combination of small step sizes $\Delta t \le 0.15$ and strictly positive damping $\mathbf{R} \ge 0.05\mathbf{I}$ serves as a stabilizing inductive bias, and numerical stability across discrete integration steps is monitored empirically through runtime finite-tensor assertions.
 
 \subsubsection{Residual Update}
 The updated canonical variables are combined and normalized, producing a residual update:
@@ -439,18 +463,18 @@ To evaluate selected individual and joint effects of HEDO, Mamba-2, MSA, and AVS
 \textbf{Configuration ID} & \textbf{HEDO} & \textbf{Mamba-2} & \textbf{MSA} & \textbf{AVSC} \\
 \midrule
 \texttt{baseline} & $\times$ & $\times$ & $\times$ & $\times$ \\
-\texttt{mamba2\_hedo\_v2} & $\checkmark$ & $\checkmark$ & $\times$ & $\times$ \\
-\texttt{mamba2\_msa\_v2} & $\times$ & $\checkmark$ & $\checkmark$ & $\times$ \\
-\texttt{hedo\_msa\_v2} & $\checkmark$ & $\times$ & $\checkmark$ & $\times$ \\
-\texttt{avsc\_msa\_v2} & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ \\
-\texttt{mamba2\_avsc\_v2} & $\times$ & $\checkmark$ & $\times$ & $\checkmark$ \\
-\texttt{full\_v2} (All) & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
-\texttt{hedo\_avsc\_v2} & $\checkmark$ & $\times$ & $\times$ & $\checkmark$ \\
+\texttt{mamba2\_hedo} & $\checkmark$ & $\checkmark$ & $\times$ & $\times$ \\
+\texttt{mamba2\_msa} & $\times$ & $\checkmark$ & $\checkmark$ & $\times$ \\
+\texttt{hedo\_msa} & $\checkmark$ & $\times$ & $\checkmark$ & $\times$ \\
+\texttt{avsc\_msa} & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ \\
+\texttt{mamba2\_avsc} & $\times$ & $\checkmark$ & $\times$ & $\checkmark$ \\
+\texttt{full\_model} (All) & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+\texttt{hedo\_avsc} & $\checkmark$ & $\times$ & $\times$ & $\checkmark$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:configurations} defines the controlled 8-configuration ablation benchmark. While these eight configurations evaluate critical individual and joint additions (e.g., Mamba-2 + HEDO vs. baseline), they represent a structured subset of the $2^4$ architectural space rather than an exhaustive full factorial matrix; consequently, they evaluate selected combinations rather than independently isolating every factor in complete isolation (such as Mamba-2 without HEDO, or MSA without Mamba-2/HEDO). Full V2 activates all four mechanisms simultaneously and serves as a compositional stress test rather than an assumption that all components are mutually compatible.
+Table~\ref{tab:configurations} defines the controlled 8-configuration ablation benchmark. We intentionally designate the linear-projection model as the reference \texttt{baseline}: because the underlying ViT-B/16 and RoBERTa-base representations are frozen, direct linear projection followed by mean pooling constitutes the simplest and most parameter-efficient alignment head. Comparing against this linear baseline directly isolates whether introducing sequential state-space modeling (Mamba-2 SSD) and continuous dynamical adapters (HEDO) adds measurable empirical value over direct linear dimensionality reduction. While these eight configurations evaluate critical individual and joint additions (e.g., Mamba-2 + HEDO vs. baseline), they represent a structured subset of the $2^4$ architectural space rather than an exhaustive full factorial matrix; consequently, they evaluate selected combinations rather than independently isolating every factor in complete isolation (such as Mamba-2 without HEDO, or MSA without Mamba-2/HEDO). The full model activates all four mechanisms simultaneously and serves as a compositional stress test rather than an assumption that all components are mutually compatible.
 
 \subsection{Evaluation Metrics}
 Retrieval performance is evaluated on the standard 1,000-image test set ($1,000$ images $\times$ $5,000$ captions):
@@ -556,7 +580,7 @@ The empirical retrieval metrics across all 8 configurations are compiled in Tabl
 \midrule
 \textbf{AVSC + MSA} & $1.47 \pm 0.32$ & $6.40 \pm 1.87$ & $11.50 \pm 1.84$ & $1.50 \pm 0.26$ & $6.51 \pm 0.28$ & $12.48 \pm 0.76$ & $6.64 \pm 0.82$ & $81.67 \pm 5.84$ & $61.33 \pm 2.89$ & Contradicted \\
 \textbf{Mamba-2 + AVSC} & $1.80 \pm 0.78$ & $6.27 \pm 1.10$ & $11.87 \pm 0.96$ & $1.05 \pm 0.32$ & $5.55 \pm 1.38$ & $10.19 \pm 2.74$ & $6.12 \pm 1.14$ & $99.83 \pm 21.50$ & $72.33 \pm 14.74$ & Contradicted \\
-\textbf{Full V2 (All)} & $1.47 \pm 0.31$ & $5.97 \pm 0.47$ & $10.73 \pm 0.68$ & $1.25 \pm 0.29$ & $5.60 \pm 0.69$ & $10.69 \pm 1.09$ & $5.95 \pm 0.42$ & $94.33 \pm 6.66$ & $69.67 \pm 3.79$ & Contradicted \\
+\textbf{Full Model (All)} & $1.47 \pm 0.31$ & $5.97 \pm 0.47$ & $10.73 \pm 0.68$ & $1.25 \pm 0.29$ & $5.60 \pm 0.69$ & $10.69 \pm 1.09$ & $5.95 \pm 0.42$ & $94.33 \pm 6.66$ & $69.67 \pm 3.79$ & Contradicted \\
 \textbf{HEDO + AVSC} & $1.03 \pm 0.12$ & $4.93 \pm 0.90$ & $9.27 \pm 1.05$ & $1.01 \pm 0.23$ & $4.83 \pm 1.15$ & $9.20 \pm 1.89$ & $5.04 \pm 0.84$ & $103.17 \pm 10.13$ & $79.00 \pm 13.23$ & Contradicted \\
 \bottomrule
 \end{tabular}%
@@ -573,24 +597,24 @@ The empirical retrieval metrics across all 8 configurations are compiled in Tabl
 As reported in Table~\ref{tab:ablation_results}, the baseline model achieves a Mean Recall of $37.16 \pm 0.57\%$, with Image-to-Text (i2t) R@1 of $16.53\%$ and Text-to-Image (t2i) R@1 of $13.92\%$. Across the eight configurations, performance bifurcates cleanly into two distinct regimes: a stable regime where no statistically significant difference from the baseline was detected under the three-seed evaluation (Baseline and Mamba-2 + HEDO) and severe degradation regimes (MSA and AVSC). As visually evident in Fig.~\ref{fig:ablation_recall}, this bifurcation is uniform across all recall thresholds.
 
 \subsection{HEDO + Native Mamba-2 Evaluation}
-Equipping the architecture with the Hamiltonian-inspired dissipative adapter and Native Mamba-2 sequence blocks (\texttt{mamba2\_hedo\_v2}) yields a Mean Recall of $37.31 \pm 0.68\%$, with i2t R@1 reaching $17.40 \pm 0.62\%$ and t2i R@1 reaching $14.20 \pm 0.58\%$. As shown in Table~\ref{tab:paired_deltas}, the mean paired delta is $+0.1533$ pp, with a 95\% confidence interval of $[-1.4246, +1.7313]$ pp ($n=3$ paired runs). Because the confidence interval encompasses zero, the hypothesis of a statistically significant improvement ($H_1$) is classified as \textbf{NOT SUPPORTED} (no statistically significant difference was detected under the present three-seed evaluation). 
+Equipping the architecture with the Hamiltonian-inspired dissipative adapter and Native Mamba-2 sequence blocks (\texttt{mamba2\_hedo}) yields a Mean Recall of $37.31 \pm 0.68\%$, with i2t R@1 reaching $17.40 \pm 0.62\%$ and t2i R@1 reaching $14.20 \pm 0.58\%$. As shown in Table~\ref{tab:paired_deltas}, the mean paired delta is $+0.1533$ pp, with a 95\% confidence interval of $[-1.4246, +1.7313]$ pp ($n=3$ paired runs). Because the confidence interval encompasses zero, the hypothesis of a statistically significant improvement ($H_1$) is classified as \textbf{NOT SUPPORTED} (no statistically significant difference was detected under the present three-seed evaluation). 
 
 These results indicate that Native Mamba-2 combined with the HEDO dissipative adapter preserves baseline-level retrieval performance under the evaluated conditions, without observed numerical instability, while maintaining low computational overhead.
 
 \subsection{MSA Ablation Analysis}
-Configurations incorporating Multi-Scale State Aggregation (\texttt{mamba2\_msa\_v2} and \texttt{hedo\_msa\_v2}) exhibit a sharp and consistent drop in retrieval capability. \texttt{mamba2\_msa\_v2} attains a Mean Recall of $26.89 \pm 0.68\%$, representing a severe paired delta of $-10.2711$ pp (95\% CI: $[-13.1018, -7.4404]$ pp). Similarly, \texttt{hedo\_msa\_v2} achieves $26.41 \pm 0.49\%$ ($\Delta = -10.7489$ pp, 95\% CI: $[-12.3816, -9.1161]$ pp). Both results strictly exclude zero and contradict Hypothesis 2 ($H_2$). Instead of enriching sequence representations, multi-scale chunk boundary and terminal token states substantially degrade retrieval quality.
+Configurations incorporating Multi-Scale State Aggregation (\texttt{mamba2\_msa} and \texttt{hedo\_msa}) exhibit a sharp and consistent drop in retrieval capability. \texttt{mamba2\_msa} attains a Mean Recall of $26.89 \pm 0.68\%$, representing a severe paired delta of $-10.2711$ pp (95\% CI: $[-13.1018, -7.4404]$ pp). Similarly, \texttt{hedo\_msa} achieves $26.41 \pm 0.49\%$ ($\Delta = -10.7489$ pp, 95\% CI: $[-12.3816, -9.1161]$ pp). Both results strictly exclude zero and contradict Hypothesis 2 ($H_2$). Instead of enriching sequence representations, multi-scale chunk boundary and terminal token states substantially degrade retrieval quality.
 
 \subsection{AVSC Ablation Analysis}
-The most striking empirical outcome is that Adaptive Variational State Coupling is associated with severe alignment degradation. Across all four configurations containing AVSC (\texttt{avsc\_msa\_v2}, \texttt{mamba2\_avsc\_v2}, \texttt{full\_v2}, and \texttt{hedo\_avsc\_v2}), Mean Recall drops precipitously to $5.04\%-6.64\%$, consistent with dimensional collapse under the evaluated formulation. 
+The most striking empirical outcome is that Adaptive Variational State Coupling is associated with severe alignment degradation. Across all four configurations containing AVSC (\texttt{avsc\_msa}, \texttt{mamba2\_avsc}, \texttt{full\_model}, and \texttt{hedo\_avsc}), Mean Recall drops precipitously to $5.04\%-6.64\%$, consistent with dimensional collapse under the evaluated formulation. 
 
 The paired deltas are uniformly severe:
 \begin{itemize}
     \item \textbf{AVSC + MSA}: $\Delta = -30.52$ pp (95\% CI: $[-32.49, -28.54]$ pp)
     \item \textbf{Mamba-2 + AVSC}: $\Delta = -31.04$ pp (95\% CI: $[-35.26, -26.81]$ pp)
-    \item \textbf{Full V2 (All)}: $\Delta = -31.21$ pp (95\% CI: $[-32.60, -29.81]$ pp)
+    \item \textbf{Full Model (All)}: $\Delta = -31.21$ pp (95\% CI: $[-32.60, -29.81]$ pp)
     \item \textbf{HEDO + AVSC}: $\Delta = -32.11$ pp (95\% CI: $[-35.61, -28.62]$ pp)
 \end{itemize}
-Full V2 (All), which simultaneously combines HEDO, Mamba-2, MSA, and AVSC, attains $5.95 \pm 0.42\%$ Mean Recall, indicating that the variational degradation dominates and nullifies any beneficial inductive biases. Correspondingly, Median Rank (MedR), which is $7.67$ (i2t) and $9.00$ (t2i) for Baseline and Mamba-2 + HEDO, blows up to $81.67-103.17$ (i2t) and $61.33-79.00$ (t2i) in AVSC configurations. These outcomes contradict Hypothesis 3 ($H_3$).
+The full model (All), which simultaneously combines HEDO, Mamba-2, MSA, and AVSC, attains $5.95 \pm 0.42\%$ Mean Recall, indicating that the variational degradation dominates and nullifies any beneficial inductive biases. Correspondingly, Median Rank (MedR), which is $7.67$ (i2t) and $9.00$ (t2i) for Baseline and Mamba-2 + HEDO, blows up to $81.67-103.17$ (i2t) and $61.33-79.00$ (t2i) in AVSC configurations. These outcomes contradict Hypothesis 3 ($H_3$).
 
 \subsection{Statistical Comparison}
 The detailed paired deltas across individual seeds and confidence intervals are reported in Table~\ref{tab:paired_deltas} and visualized as a forest plot in Fig.~\ref{fig:paired_deltas}.
@@ -609,7 +633,7 @@ The detailed paired deltas across individual seeds and confidence intervals are 
 \textbf{HEDO + MSA vs. Baseline} & $\{42: -11.12, 43: -9.99, 44: -11.14\}$ & $\mathbf{-10.7489}$ & $0.6573$ & $[-12.3816, -9.1161]$ & True & \textbf{CONTRADICTED (-10.75 pp)} \\
 \textbf{AVSC + MSA vs. Baseline} & $\{42: -31.01, 43: -30.94, 44: -29.60\}$ & $\mathbf{-30.5156}$ & $0.7967$ & $[-32.4947, -28.5364]$ & True & \textbf{CONTRADICTED (-30.52 pp)} \\
 \textbf{Mamba-2 + AVSC vs. Baseline} & $\{42: -32.98, 43: -29.83, 44: -30.30\}$ & $\mathbf{-31.0378}$ & $1.7008$ & $[-35.2627, -26.8129]$ & True & \textbf{CONTRADICTED (-31.04 pp)} \\
-\textbf{Full V2 (All) vs. Baseline} & $\{42: -31.55, 43: -30.56, 44: -31.51\}$ & $\mathbf{-31.2067}$ & $0.5604$ & $[-32.5987, -29.8146]$ & True & \textbf{CONTRADICTED (-31.21 pp)} \\
+\textbf{Full Model (All) vs. Baseline} & $\{42: -31.55, 43: -30.56, 44: -31.51\}$ & $\mathbf{-31.2067}$ & $0.5604$ & $[-32.5987, -29.8146]$ & True & \textbf{CONTRADICTED (-31.21 pp)} \\
 \textbf{HEDO + AVSC vs. Baseline} & $\{42: -33.71, 43: -31.05, 44: -31.58\}$ & $\mathbf{-32.1133}$ & $1.4073$ & $[-35.6092, -28.6174]$ & True & \textbf{CONTRADICTED (-32.11 pp)} \\
 \bottomrule
 \end{tabular}%
@@ -645,7 +669,7 @@ Table~\ref{tab:efficiency_results} and Fig.~\ref{fig:efficiency_tradeoff} quanti
 \midrule
 \textbf{AVSC + MSA} & $631,321$ & $211,254,017$ & $1,046.63$ & $367.30 \pm 2.19$ & $5.70 \pm 0.28$ & $9.19 \pm 0.36$ & $7,029.26 \pm 332.78$ & $4,354.75 \pm 166.50$ \\
 \textbf{Mamba-2 + AVSC} & $531,225$ & $211,153,921$ & $1,043.18$ & $329.82 \pm 2.51$ & $5.16 \pm 0.35$ & $8.48 \pm 0.30$ & $7,773.80 \pm 514.86$ & $4,718.49 \pm 163.03$ \\
-\textbf{Full V2 (All)} & $763,931$ & $211,386,627$ & $1,089.33$ & $463.06 \pm 1.49$ & $7.07 \pm 0.45$ & $10.68 \pm 0.39$ & $5,671.25 \pm 375.35$ & $3,749.01 \pm 139.28$ \\
+\textbf{Full Model (All)} & $763,931$ & $211,386,627$ & $1,089.33$ & $463.06 \pm 1.49$ & $7.07 \pm 0.45$ & $10.68 \pm 0.39$ & $5,671.25 \pm 375.35$ & $3,749.01 \pm 139.28$ \\
 \textbf{HEDO + AVSC} & $663,835$ & $211,286,531$ & $1,087.42$ & $427.66 \pm 3.20$ & $6.16 \pm 0.25$ & $9.74 \pm 0.51$ & $6,500.59 \pm 273.53$ & $4,112.24 \pm 209.50$ \\
 \bottomrule
 \end{tabular}%
@@ -683,7 +707,7 @@ The clear bifurcation between the stability of HEDO and the failure of MSA and A
 Unlike AVSC and MSA, HEDO maintains performance with no statistically significant difference detected from the baseline under the three-seed evaluation. This stability is governed by three structural properties formalized in Section~\ref{sec:architecture}-D:
 \begin{enumerate}
     \item \textbf{Exact Skew-Symmetry}: By parameterizing $\mathbf{J} = (\mathbf{A} - \mathbf{A}^T)/\sqrt{d}$ via \eqref{eq:skew_symmetric}, HEDO enforces $\mathbf{v}^T \mathbf{J}^T \mathbf{v} = 0$ identically for all $\mathbf{v}$. The skew-symmetric component contributes no direct change to the quadratic Hamiltonian energy in the continuous-time formulation.
-    \item \textbf{Positive Diagonal Damping}: The damping matrix $\mathbf{R} = \mathrm{diag}(0.05 + 0.95\sigma(\boldsymbol{\gamma}))$ via \eqref{eq:damping_matrix} guarantees that energy is dissipated monotonically ($\dot{\mathcal{H}} \le 0$ by Proposition 1), preventing activation blow-up or exploding gradients.
+    \item \textbf{Positive Diagonal Damping}: The damping matrix $\mathbf{R} = \mathrm{diag}(0.05 + 0.95\sigma(\boldsymbol{\gamma}))$ via \eqref{eq:damping_matrix} guarantees that energy is dissipated monotonically in the continuous-time formulation ($\dot{\mathcal{H}} \le 0$ by Proposition 1). Under discrete Euler steps, this continuous inductive bias combined with bounded step sizes empirically prevents activation blow-up or exploding gradients.
     \item \textbf{Residual Damping Scaling}: The residual update $\mathbf{x}_{\mathrm{out}} = \mathbf{x} + 0.10 \cdot \mathbf{W}_o \mathrm{LayerNorm}(\mathbf{q}_{\mathrm{new}} + \mathbf{p}_{\mathrm{new}})$ in \eqref{eq:hedo_out} ensures that the adapter acts as a near-identity perturbation at initialization, maintaining the pre-trained manifold geometry of the frozen backbones.
 \end{enumerate}
 
@@ -762,7 +786,7 @@ This paper presented an audited, multi-seed empirical investigation of continuou
 % ACKNOWLEDGMENTS & REFERENCES
 % =========================================================================
 \section*{Acknowledgment}
-The author thanks the open-source community for maintaining the \texttt{mamba\_ssm} and \texttt{transformers} libraries.
+The authors thank the open-source community for maintaining the \texttt{mamba\_ssm} and \texttt{transformers} libraries.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

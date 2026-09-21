@@ -1,0 +1,309 @@
+%% BioMed_Central_Bib_Style_v1.01
+
+\begin{thebibliography}{18}
+% BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
+\ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
+\ifx \binits  \undefined \def \binits#1{#1}\fi
+\ifx \bauthor  \undefined \def \bauthor#1{#1}\fi
+\ifx \batitle  \undefined \def \batitle#1{#1}\fi
+\ifx \bjtitle  \undefined \def \bjtitle#1{#1}\fi
+\ifx \bvolume  \undefined \def \bvolume#1{\textbf{#1}}\fi
+\ifx \byear  \undefined \def \byear#1{#1}\fi
+\ifx \bissue  \undefined \def \bissue#1{#1}\fi
+\ifx \bfpage  \undefined \def \bfpage#1{#1}\fi
+\ifx \blpage  \undefined \def \blpage #1{#1}\fi
+\ifx \burl  \undefined \def \burl#1{\textsf{#1}}\fi
+\ifx \doiurl  \undefined \def \doiurl#1{\url{https://doi.org/#1}}\fi
+\ifx \betal  \undefined \def \betal{\textit{et al.}}\fi
+\ifx \binstitute  \undefined \def \binstitute#1{#1}\fi
+\ifx \binstitutionaled  \undefined \def \binstitutionaled#1{#1}\fi
+\ifx \bctitle  \undefined \def \bctitle#1{#1}\fi
+\ifx \beditor  \undefined \def \beditor#1{#1}\fi
+\ifx \bpublisher  \undefined \def \bpublisher#1{#1}\fi
+\ifx \bbtitle  \undefined \def \bbtitle#1{#1}\fi
+\ifx \bedition  \undefined \def \bedition#1{#1}\fi
+\ifx \bseriesno  \undefined \def \bseriesno#1{#1}\fi
+\ifx \blocation  \undefined \def \blocation#1{#1}\fi
+\ifx \bsertitle  \undefined \def \bsertitle#1{#1}\fi
+\ifx \bsnm \undefined \def \bsnm#1{#1}\fi
+\ifx \bsuffix \undefined \def \bsuffix#1{#1}\fi
+\ifx \bparticle \undefined \def \bparticle#1{#1}\fi
+\ifx \barticle \undefined \def \barticle#1{#1}\fi
+\bibcommenthead
+\ifx \bconfdate \undefined \def \bconfdate #1{#1}\fi
+\ifx \botherref \undefined \def \botherref #1{#1}\fi
+\ifx \url \undefined \def \url#1{\textsf{#1}}\fi
+\ifx \bchapter \undefined \def \bchapter#1{#1}\fi
+\ifx \bbook \undefined \def \bbook#1{#1}\fi
+\ifx \bcomment \undefined \def \bcomment#1{#1}\fi
+\ifx \oauthor \undefined \def \oauthor#1{#1}\fi
+\ifx \citeauthoryear \undefined \def \citeauthoryear#1{#1}\fi
+\ifx \endbibitem  \undefined \def \endbibitem {}\fi
+\ifx \bconflocation  \undefined \def \bconflocation#1{#1}\fi
+\ifx \arxivurl  \undefined \def \arxivurl#1{\textsf{#1}}\fi
+\csname PreBibitemsHook\endcsname
+
+%%% 1
+\bibitem[\protect\citeauthoryear{Radford et~al.}{2021}]{radford2021learning}
+\begin{bchapter}
+\bauthor{\bsnm{Radford}, \binits{A.}},
+\bauthor{\bsnm{Kim}, \binits{J.W.}},
+\bauthor{\bsnm{Hallacy}, \binits{C.}},
+\bauthor{\bsnm{Ramesh}, \binits{A.}},
+\bauthor{\bsnm{Goh}, \binits{G.}},
+\bauthor{\bsnm{Agarwal}, \binits{S.}},
+\bauthor{\bsnm{Sastry}, \binits{G.}},
+\bauthor{\bsnm{Askell}, \binits{A.}},
+\bauthor{\bsnm{Mishkin}, \binits{P.}},
+\bauthor{\bsnm{Clark}, \binits{J.}}, \betal:
+\bctitle{Learning transferable visual models from natural language
+  supervision}.
+In: \bbtitle{International Conference on Machine Learning (ICML)},
+pp. \bfpage{8748}--\blpage{8763}
+(\byear{2021})
+\end{bchapter}
+\endbibitem
+
+%%% 2
+\bibitem[\protect\citeauthoryear{Wang et~al.}{2016}]{wang2016comprehensive}
+\begin{botherref}
+\oauthor{\bsnm{Wang}, \binits{K.}},
+\oauthor{\bsnm{Yin}, \binits{Q.}},
+\oauthor{\bsnm{Wang}, \binits{W.}},
+\oauthor{\bsnm{Wu}, \binits{S.}},
+\oauthor{\bsnm{Wang}, \binits{L.}}:
+A comprehensive survey on cross-modal retrieval.
+arXiv preprint arXiv:1607.06215
+(2016)
+\end{botherref}
+\endbibitem
+
+%%% 3
+\bibitem[\protect\citeauthoryear{Vaswani et~al.}{2017}]{vaswani2017attention}
+\begin{bchapter}
+\bauthor{\bsnm{Vaswani}, \binits{A.}},
+\bauthor{\bsnm{Shazeer}, \binits{N.}},
+\bauthor{\bsnm{Parmar}, \binits{N.}},
+\bauthor{\bsnm{Uszkoreit}, \binits{J.}},
+\bauthor{\bsnm{Jones}, \binits{L.}},
+\bauthor{\bsnm{Gomez}, \binits{A.N.}},
+\bauthor{\bsnm{Kaiser}, \binits{{\L}.}},
+\bauthor{\bsnm{Polosukhin}, \binits{I.}}:
+\bctitle{Attention is all you need}.
+In: \bbtitle{Advances in Neural Information Processing Systems (NeurIPS)},
+vol. \bseriesno{30}
+(\byear{2017})
+\end{bchapter}
+\endbibitem
+
+%%% 4
+\bibitem[\protect\citeauthoryear{Dosovitskiy
+  et~al.}{2021}]{dosovitskiy2021image}
+\begin{bchapter}
+\bauthor{\bsnm{Dosovitskiy}, \binits{A.}},
+\bauthor{\bsnm{Beyer}, \binits{L.}},
+\bauthor{\bsnm{Kolesnikov}, \binits{A.}},
+\bauthor{\bsnm{Weissenborn}, \binits{D.}},
+\bauthor{\bsnm{Zhai}, \binits{X.}},
+\bauthor{\bsnm{Unterthiner}, \binits{T.}},
+\bauthor{\bsnm{Dehghani}, \binits{M.}},
+\bauthor{\bsnm{Minderer}, \binits{M.}},
+\bauthor{\bsnm{Heigold}, \binits{G.}},
+\bauthor{\bsnm{Gelly}, \binits{S.}}, \betal:
+\bctitle{An image is worth 16x16 words: Transformers for image recognition at
+  scale}.
+In: \bbtitle{International Conference on Learning Representations (ICLR)}
+(\byear{2021})
+\end{bchapter}
+\endbibitem
+
+%%% 5
+\bibitem[\protect\citeauthoryear{Liu et~al.}{2019}]{liu2019roberta}
+\begin{botherref}
+\oauthor{\bsnm{Liu}, \binits{Y.}},
+\oauthor{\bsnm{Ott}, \binits{M.}},
+\oauthor{\bsnm{Goyal}, \binits{N.}},
+\oauthor{\bsnm{Du}, \binits{J.}},
+\oauthor{\bsnm{Joshi}, \binits{M.}},
+\oauthor{\bsnm{Chen}, \binits{D.}},
+\oauthor{\bsnm{Levy}, \binits{O.}},
+\oauthor{\bsnm{Lewis}, \binits{M.}},
+\oauthor{\bsnm{Zettlemoyer}, \binits{L.}},
+\oauthor{\bsnm{Stoyanov}, \binits{V.}}:
+{RoBERTa}: A robustly optimized {BERT} pretraining approach.
+arXiv preprint arXiv:1907.11692
+(2019)
+\end{botherref}
+\endbibitem
+
+%%% 6
+\bibitem[\protect\citeauthoryear{Gu et~al.}{2022}]{gu2022efficiently}
+\begin{bchapter}
+\bauthor{\bsnm{Gu}, \binits{A.}},
+\bauthor{\bsnm{Goel}, \binits{K.}},
+\bauthor{\bsnm{R{\'e}}, \binits{C.}}:
+\bctitle{Efficiently modeling long sequences with structured state spaces}.
+In: \bbtitle{International Conference on Learning Representations (ICLR)}
+(\byear{2022})
+\end{bchapter}
+\endbibitem
+
+%%% 7
+\bibitem[\protect\citeauthoryear{Gu and Dao}{2023}]{gu2023mamba}
+\begin{botherref}
+\oauthor{\bsnm{Gu}, \binits{A.}},
+\oauthor{\bsnm{Dao}, \binits{T.}}:
+Mamba: Linear-time sequence modeling with selective state spaces.
+arXiv preprint arXiv:2312.00752
+(2023)
+\end{botherref}
+\endbibitem
+
+%%% 8
+\bibitem[\protect\citeauthoryear{Dao and Gu}{2024}]{dao2024transformers}
+\begin{botherref}
+\oauthor{\bsnm{Dao}, \binits{T.}},
+\oauthor{\bsnm{Gu}, \binits{A.}}:
+Transformers are {SSMs}: Generalized models and efficient algorithms through
+  structured state space duality.
+arXiv preprint arXiv:2405.21060
+(2024)
+\end{botherref}
+\endbibitem
+
+%%% 9
+\bibitem[\protect\citeauthoryear{Greydanus
+  et~al.}{2019}]{greydanus2019hamiltonian}
+\begin{bchapter}
+\bauthor{\bsnm{Greydanus}, \binits{S.}},
+\bauthor{\bsnm{Dzamba}, \binits{M.}},
+\bauthor{\bsnm{Yosinski}, \binits{J.}}:
+\bctitle{Hamiltonian neural networks}.
+In: \bbtitle{Advances in Neural Information Processing Systems (NeurIPS)},
+vol. \bseriesno{32}
+(\byear{2019})
+\end{bchapter}
+\endbibitem
+
+%%% 10
+\bibitem[\protect\citeauthoryear{van~der Schaft}{2000}]{vanderschaft2000}
+\begin{bbook}
+\bauthor{\bsnm{Schaft}, \binits{A.}}:
+\bbtitle{{$L_2$}-Gain and Passivity Techniques in Nonlinear Control}.
+\bpublisher{Springer}, \blocation{???}
+(\byear{2000})
+\end{bbook}
+\endbibitem
+
+%%% 11
+\bibitem[\protect\citeauthoryear{Kingma and Welling}{2014}]{kingma2014auto}
+\begin{bchapter}
+\bauthor{\bsnm{Kingma}, \binits{D.P.}},
+\bauthor{\bsnm{Welling}, \binits{M.}}:
+\bctitle{Auto-encoding variational bayes}.
+In: \bbtitle{International Conference on Learning Representations (ICLR)}
+(\byear{2014})
+\end{bchapter}
+\endbibitem
+
+%%% 12
+\bibitem[\protect\citeauthoryear{Alemi et~al.}{2017}]{alemi2017deep}
+\begin{bchapter}
+\bauthor{\bsnm{Alemi}, \binits{A.A.}},
+\bauthor{\bsnm{Fischer}, \binits{I.}},
+\bauthor{\bsnm{Dillon}, \binits{J.V.}},
+\bauthor{\bsnm{Murphy}, \binits{K.}}:
+\bctitle{Deep variational information bottleneck}.
+In: \bbtitle{International Conference on Learning Representations (ICLR)}
+(\byear{2017})
+\end{bchapter}
+\endbibitem
+
+%%% 13
+\bibitem[\protect\citeauthoryear{van~den Oord
+  et~al.}{2018}]{oord2018representation}
+\begin{botherref}
+\oauthor{\bsnm{Oord}, \binits{A.}},
+\oauthor{\bsnm{Li}, \binits{Y.}},
+\oauthor{\bsnm{Vinyals}, \binits{O.}}:
+Representation learning with contrastive predictive coding.
+arXiv preprint arXiv:1807.03748
+(2018)
+\end{botherref}
+\endbibitem
+
+%%% 14
+\bibitem[\protect\citeauthoryear{Chen et~al.}{2020}]{chen2020simple}
+\begin{bchapter}
+\bauthor{\bsnm{Chen}, \binits{T.}},
+\bauthor{\bsnm{Kornblith}, \binits{S.}},
+\bauthor{\bsnm{Norouzi}, \binits{M.}},
+\bauthor{\bsnm{Hinton}, \binits{G.}}:
+\bctitle{A simple framework for contrastive learning of visual
+  representations}.
+In: \bbtitle{International Conference on Machine Learning (ICML)},
+pp. \bfpage{1597}--\blpage{1607}
+(\byear{2020})
+\end{bchapter}
+\endbibitem
+
+%%% 15
+\bibitem[\protect\citeauthoryear{He et~al.}{2020}]{he2020momentum}
+\begin{bchapter}
+\bauthor{\bsnm{He}, \binits{K.}},
+\bauthor{\bsnm{Fan}, \binits{H.}},
+\bauthor{\bsnm{Wu}, \binits{Y.}},
+\bauthor{\bsnm{Xie}, \binits{S.}},
+\bauthor{\bsnm{Girshick}, \binits{R.}}:
+\bctitle{Momentum contrast for unsupervised visual representation learning}.
+In: \bbtitle{IEEE/CVF Conference on Computer Vision and Pattern Recognition
+  (CVPR)},
+pp. \bfpage{9729}--\blpage{9738}
+(\byear{2020})
+\end{bchapter}
+\endbibitem
+
+%%% 16
+\bibitem[\protect\citeauthoryear{Wang and Isola}{2020}]{wang2020understanding}
+\begin{bchapter}
+\bauthor{\bsnm{Wang}, \binits{T.}},
+\bauthor{\bsnm{Isola}, \binits{P.}}:
+\bctitle{Understanding contrastive representation learning through alignment
+  and uniformity on the hypersphere}.
+In: \bbtitle{International Conference on Machine Learning (ICML)},
+pp. \bfpage{9929}--\blpage{9939}
+(\byear{2020}).
+\bcomment{PMLR}
+\end{bchapter}
+\endbibitem
+
+%%% 17
+\bibitem[\protect\citeauthoryear{Jing et~al.}{2022}]{jing2022understanding}
+\begin{bchapter}
+\bauthor{\bsnm{Jing}, \binits{L.}},
+\bauthor{\bsnm{Vincent}, \binits{P.}},
+\bauthor{\bsnm{LeCun}, \binits{Y.}},
+\bauthor{\bsnm{Tian}, \binits{Y.}}:
+\bctitle{Understanding dimensional collapse in contrastive self-supervised
+  learning}.
+In: \bbtitle{International Conference on Learning Representations (ICLR)}
+(\byear{2022})
+\end{bchapter}
+\endbibitem
+
+%%% 18
+\bibitem[\protect\citeauthoryear{Hodosh et~al.}{2013}]{hodosh2013framing}
+\begin{barticle}
+\bauthor{\bsnm{Hodosh}, \binits{M.}},
+\bauthor{\bsnm{Young}, \binits{P.}},
+\bauthor{\bsnm{Hockenmaier}, \binits{J.}}:
+\batitle{Framing image description as a ranking task: Data, models and
+  evaluation metrics}.
+\bjtitle{Journal of Artificial Intelligence Research}
+\bvolume{47},
+\bfpage{853}--\blpage{899}
+(\byear{2013})
+\end{barticle}
+\endbibitem
+
+\end{thebibliography}
