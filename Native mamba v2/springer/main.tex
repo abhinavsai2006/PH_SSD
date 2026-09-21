@@ -96,7 +96,7 @@ Fig.~\ref{fig:arch} shows the pipeline. Each modality passes through a linear pr
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.92\textwidth]{standalone_architecture.pdf}
+\includegraphics[width=0.7\textwidth]{standalone_architecture.pdf}
 \caption{Architecture. Frozen ViT and RoBERTa token features are projected to $d=128$, adapted by HEDO, processed by native Mamba-2 (SSD) blocks, pooled, normalised and aligned with a multi-positive symmetric InfoNCE loss.}
 \label{fig:arch}
 \end{figure}
@@ -142,8 +142,10 @@ By default we pool with a masked mean, $\bar{\mathbf{y}}_{\mathrm{g}}=\sum_i m_i
 \subsection{Adaptive variational state coupling (AVSC)}
 Pooled boundary features $\mathbf{h}_v$ and $\mathbf{h}_t$ are mapped to diagonal Gaussians $q_v=\mathcal{N}(\bm\mu_v,\bm\Sigma_v)$ and $q_t=\mathcal{N}(\bm\mu_t,\bm\Sigma_t)$ through linear heads, with $\log\bm\sigma^2$ clamped to $[-6,2]$. The penalty is the symmetric KL divergence
 \begin{equation}
-\mathcal{D}^{\mathrm{sym}}=\tfrac12\big(D_{\mathrm{KL}}(q_v\|q_t)+D_{\mathrm{KL}}(q_t\|q_v)\big),\quad
-D_{\mathrm{KL}}(q_v\|q_t)=\tfrac12\sum_{k}\Big(\log\tfrac{\sigma_{t,k}^2}{\sigma_{v,k}^2}+\tfrac{\sigma_{v,k}^2+(\mu_{v,k}-\mu_{t,k})^2}{\sigma_{t,k}^2}-1\Big),
+\begin{aligned}
+\mathcal{D}^{\mathrm{sym}}&=\tfrac12\big(D_{\mathrm{KL}}(q_v\|q_t)+D_{\mathrm{KL}}(q_t\|q_v)\big),\\
+D_{\mathrm{KL}}(q_v\|q_t)&=\tfrac12\sum_{k}\Big(\log\tfrac{\sigma_{t,k}^2}{\sigma_{v,k}^2}+\tfrac{\sigma_{v,k}^2+(\mu_{v,k}-\mu_{t,k})^2}{\sigma_{t,k}^2}-1\Big),
+\end{aligned}
 \label{eq:kl}
 \end{equation}
 which is weighted per pair by a detached cosine-agreement gate $w_i\in[0,1]$:
@@ -159,20 +161,9 @@ A grouped sampler draws 8 images together with all 5 of their captions, which gi
 \mathcal{L}_{t2i}=-\frac1{40}\sum_{j=1}^{40}\log\frac{e^{S_{i^*(j)j}}}{\sum_{i=1}^{8}e^{S_{ij}}},
 \label{eq:nce}
 \end{equation}
-and the total loss is $\mathcal{L}=\tfrac12(\mathcal{L}_{i2t}+\mathcal{L}_{t2i})+\mathcal{L}_{\mathrm{KL}}$. The KL term is present only when AVSC is switched on. Algorithm~\ref{alg:train} gives one training step.
+and the total loss is $\mathcal{L}=\tfrac12(\mathcal{L}_{i2t}+\mathcal{L}_{t2i})+\mathcal{L}_{\mathrm{KL}}$. The KL term is present only when AVSC is switched on. Gradients are clipped at norm 1.0 and parameters are updated with AdamW.
 
-\begin{algorithm}[t]
-\caption{One training step (Mamba-2 + HEDO, optional AVSC)}
-\label{alg:train}
-\begin{algorithmic}[1]
-\State Sample 8 images and their 40 captions; extract frozen features $\mathbf{X}_v,\mathbf{X}_t$
-\State $\mathbf{H}\gets\mathrm{HEDO}(\mathbf{X}\mathbf{W})$ for each stream \Comment{Eqs.~\eqref{eq:JR}--\eqref{eq:hedoout}}
-\State $\mathbf{Y}\gets\mathrm{Mamba2}(\mathbf{H})$; $\mathbf{z}\gets\mathrm{normalize}(\mathrm{Pool}(\mathbf{Y}))$
-\State $\mathcal{L}\gets\tfrac12(\mathcal{L}_{i2t}+\mathcal{L}_{t2i})$ \Comment{Eq.~\eqref{eq:nce}}
-\If{AVSC enabled} $\mathcal{L}\gets\mathcal{L}+\mathcal{L}_{\mathrm{KL}}$ \EndIf
-\State Backpropagate, clip $\|\mathbf{g}\|_2\le1$, AdamW step ($\eta=10^{-4}$, wd $10^{-4}$)
-\end{algorithmic}
-\end{algorithm}
+
 
 %% ============================================================================
 \section{Experimental Setup}
@@ -204,9 +195,9 @@ Configuration & HEDO & Mamba-2 & MSA & AVSC\\
 
 \textbf{Metrics.} On the 1,000-image test set we report R@1, R@5 and R@10 in both directions, the median rank (MedR), and Mean Recall (MR), which is the average of the six recall values.
 
-\textbf{Statistics.} For each configuration $c$ and seed $s\in\{42,43,44\}$ we compute the paired difference $\Delta_{c,s}=\mathrm{MR}_{c,s}-\mathrm{MR}_{\mathrm{base},s}$ and form the interval $\bar\Delta_c\pm t_{0.025,2}\,s_c/\sqrt3$, where $t_{0.025,2}=4.303$. We decided on the reading rule in advance. An interval entirely above zero counts as \emph{supported}, one that contains zero means \emph{no statistical difference}, and one entirely below zero counts as \emph{contradicted}. We report seven comparisons without multiplicity correction and say so openly.
+\textbf{Statistics.} For each configuration $c$ and seed $s\in\{42,43,44\}$ we compute the paired difference $\Delta_{c,s}=\mathrm{MR}_{c,s}-\mathrm{MR}_{\mathrm{base},s}$ and form the interval $\bar\Delta_c\pm t_{0.025,2}\,s_c/\sqrt3$, where $t_{0.025,2}=4.303$. We decided on the reading rule in advance. An interval entirely above zero counts as \emph{supported}, one that contains zero means \emph{no statistical difference}, and one entirely below zero counts as \emph{contradicted}. We report seven comparisons without multiplicity correction. Every run checks that all tensors stay finite and that the official Mamba-2 CUDA kernels are loaded.
 
-\textbf{Controls.} Every forward and backward pass checks that all tensors are finite, and each run confirms that the official Mamba-2 CUDA kernels were loaded. We recorded a SHA-256 hash of the methodology (\texttt{1753cfb7\ldots1af54}) so that the setup can be traced later.
+
 
 %% ============================================================================
 \section{Results}
@@ -214,30 +205,32 @@ Configuration & HEDO & Mamba-2 & MSA & AVSC\\
 
 \begin{table}[t]
 \centering
-\caption{Retrieval on the Flickr8k test set (mean $\pm$ SD over 3 seeds).}
+\caption{Retrieval on the Flickr8k test set (mean over 3 seeds; MR also shows $\pm$ SD). Recall values are in \%.}
 \label{tab:main}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccccccc}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lcccccccrr}
 \toprule
-Configuration & i2t R@1 & i2t R@5 & i2t R@10 & t2i R@1 & t2i R@5 & t2i R@10 & MR (\%) & i2t MedR & t2i MedR\\
+& \multicolumn{3}{c}{Image$\to$Text} & \multicolumn{3}{c}{Text$\to$Image} & & \multicolumn{2}{c}{MedR}\\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){9-10}
+Configuration & R@1 & R@5 & R@10 & R@1 & R@5 & R@10 & MR & i2t & t2i\\
 \midrule
-Baseline & $16.53\pm0.70$ & $43.27\pm0.72$ & $57.47\pm1.14$ & $13.92\pm0.45$ & $38.31\pm0.38$ & $53.45\pm0.49$ & $37.16\pm0.57$ & $7.67$ & $9.00$\\
-Mamba-2 + HEDO & $\mathbf{17.40\pm0.62}$ & $\mathbf{43.47\pm1.85}$ & $57.20\pm1.10$ & $\mathbf{14.20\pm0.58}$ & $38.25\pm0.47$ & $53.35\pm0.50$ & $\mathbf{37.31\pm0.68}$ & $7.67$ & $9.00$\\
+Baseline & 16.53 & 43.27 & \textbf{57.47} & 13.92 & \textbf{38.31} & \textbf{53.45} & $37.16\pm0.57$ & 7.7 & 9.0\\
+Mamba-2 + HEDO & \textbf{17.40} & \textbf{43.47} & 57.20 & \textbf{14.20} & 38.25 & 53.35 & $\mathbf{37.31\pm0.68}$ & 7.7 & 9.0\\
 \midrule
-Mamba-2 + MSA & $9.77\pm0.51$ & $29.53\pm0.95$ & $42.90\pm1.04$ & $8.92\pm0.47$ & $28.22\pm0.59$ & $41.98\pm0.75$ & $26.89\pm0.68$ & $13.83$ & $14.67$\\
-HEDO + MSA & $9.47\pm0.47$ & $29.50\pm1.47$ & $42.87\pm1.59$ & $8.33\pm0.42$ & $27.45\pm0.09$ & $40.84\pm0.84$ & $26.41\pm0.49$ & $14.67$ & $15.33$\\
+Mamba-2 + MSA & 9.77 & 29.53 & 42.90 & 8.92 & 28.22 & 41.98 & $26.89\pm0.68$ & 13.8 & 14.7\\
+HEDO + MSA & 9.47 & 29.50 & 42.87 & 8.33 & 27.45 & 40.84 & $26.41\pm0.49$ & 14.7 & 15.3\\
 \midrule
-AVSC + MSA & $1.47\pm0.32$ & $6.40\pm1.87$ & $11.50\pm1.84$ & $1.50\pm0.26$ & $6.51\pm0.28$ & $12.48\pm0.76$ & $6.64\pm0.82$ & $81.67$ & $61.33$\\
-Mamba-2 + AVSC & $1.80\pm0.78$ & $6.27\pm1.10$ & $11.87\pm0.96$ & $1.05\pm0.32$ & $5.55\pm1.38$ & $10.19\pm2.74$ & $6.12\pm1.14$ & $99.83$ & $72.33$\\
-Full model & $1.47\pm0.31$ & $5.97\pm0.47$ & $10.73\pm0.68$ & $1.25\pm0.29$ & $5.60\pm0.69$ & $10.69\pm1.09$ & $5.95\pm0.42$ & $94.33$ & $69.67$\\
-HEDO + AVSC & $1.03\pm0.12$ & $4.93\pm0.90$ & $9.27\pm1.05$ & $1.01\pm0.23$ & $4.83\pm1.15$ & $9.20\pm1.89$ & $5.04\pm0.84$ & $103.17$ & $79.00$\\
+AVSC + MSA & 1.47 & 6.40 & 11.50 & 1.50 & 6.51 & 12.48 & $6.64\pm0.82$ & 81.7 & 61.3\\
+Mamba-2 + AVSC & 1.80 & 6.27 & 11.87 & 1.05 & 5.55 & 10.19 & $6.12\pm1.14$ & 99.8 & 72.3\\
+Full model & 1.47 & 5.97 & 10.73 & 1.25 & 5.60 & 10.69 & $5.95\pm0.42$ & 94.3 & 69.7\\
+HEDO + AVSC & 1.03 & 4.93 & 9.27 & 1.01 & 4.83 & 9.20 & $5.04\pm0.84$ & 103.2 & 79.0\\
 \bottomrule
-\end{tabular}}
+\end{tabular}
 \end{table}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{fig_factorial_recall.pdf}
+\includegraphics[width=0.75\textwidth]{fig_factorial_recall.pdf}
 \caption{Recall@1/5/10 for (a) image-to-text and (b) text-to-image retrieval. Error bars show $\pm1$ SD over three seeds. The configurations fall into three clear groups.}
 \label{fig:recall}
 \end{figure}
@@ -258,29 +251,25 @@ AVSC produced the largest effect in the study, and the effect was negative. Ever
 \centering
 \caption{Paired Mean Recall differences against the baseline ($n=3$ paired seeds).}
 \label{tab:delta}
-\begin{tabular}{lcccc}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccl}
 \toprule
-Comparison & Per-seed $\Delta$ (42/43/44) & Mean $\Delta$ (pp) & 95\% CI (pp) & Verdict\\
+Comparison & $\Delta$ per seed (42/43/44) & Mean $\Delta$ & 95\% CI & Verdict\\
 \midrule
 Mamba-2 + HEDO & $-0.27/-0.15/+0.88$ & $+0.15$ & $[-1.42,+1.73]$ & No diff.\\
-Mamba-2 + MSA & $-11.26/-9.02/-10.53$ & $-10.27$ & $[-13.10,-7.44]$ & Contradicted\\
-HEDO + MSA & $-11.12/-9.99/-11.14$ & $-10.75$ & $[-12.38,-9.12]$ & Contradicted\\
-AVSC + MSA & $-31.01/-30.94/-29.60$ & $-30.52$ & $[-32.49,-28.54]$ & Contradicted\\
-Mamba-2 + AVSC & $-32.98/-29.83/-30.30$ & $-31.04$ & $[-35.26,-26.81]$ & Contradicted\\
-Full model & $-31.55/-30.56/-31.51$ & $-31.21$ & $[-32.60,-29.81]$ & Contradicted\\
-HEDO + AVSC & $-33.71/-31.05/-31.58$ & $-32.11$ & $[-35.61,-28.62]$ & Contradicted\\
+Mamba-2 + MSA & $-11.26/-9.02/-10.53$ & $-10.27$ & $[-13.10,-7.44]$ & Worse\\
+HEDO + MSA & $-11.12/-9.99/-11.14$ & $-10.75$ & $[-12.38,-9.12]$ & Worse\\
+AVSC + MSA & $-31.01/-30.94/-29.60$ & $-30.52$ & $[-32.49,-28.54]$ & Worse\\
+Mamba-2 + AVSC & $-32.98/-29.83/-30.30$ & $-31.04$ & $[-35.26,-26.81]$ & Worse\\
+Full model & $-31.55/-30.56/-31.51$ & $-31.21$ & $[-32.60,-29.81]$ & Worse\\
+HEDO + AVSC & $-33.71/-31.05/-31.58$ & $-32.11$ & $[-35.61,-28.62]$ & Worse\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.62\textwidth]{fig_paired_deltas.pdf}
-\caption{Paired differences in Mean Recall with 95\% Student-$t$ intervals. Only Mamba-2 + HEDO overlaps zero.}
-\label{fig:delta}
-\end{figure}
 
-Fig.~\ref{fig:delta} shows the same numbers as a forest plot. The seed-to-seed spread is small (SD $\le0.68$ pp for the two leading models). However, three seeds give limited power, so the one interval that includes zero should not be taken as proof that the two models are equivalent.
+
+Across seeds, the seed-to-seed spread is small (SD $\le0.68$ pp for the two leading models). However, three seeds give limited power, so the one interval that includes zero should not be taken as proof that the two models are equivalent.
 
 \subsection{Efficiency ($H_4$)}
 Table~\ref{tab:eff} and Fig.~\ref{fig:eff} report cost. Mamba-2 + HEDO adds 132,610 trainable parameters. That is 28.5\% more than the baseline head but only 0.063\% of the full model, because the backbones are frozen. Peak memory grows by 43.8 MB (4.2\%), head latency goes from 4.19 to 5.67 ms, and end-to-end latency goes from 7.64 to 8.39 ms. Throughput stays at 7,054 pairs/s for the head and 4,766 pairs/s end to end, which supports $H_4$. Among the eight models, Mamba-2 + HEDO lies on the accuracy-throughput Pareto front. The MSA and AVSC variants cost more and give worse accuracy.
@@ -289,10 +278,10 @@ Table~\ref{tab:eff} and Fig.~\ref{fig:eff} report cost. Mamba-2 + HEDO adds 132,
 \centering
 \caption{Cost of each configuration (mean over 3 seeds; p/s = pairs per second).}
 \label{tab:eff}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lcccccc}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrr}
 \toprule
-Configuration & Trainable params & Peak VRAM (MB) & Train time (s) & Head lat.\ (ms) & Head p/s & E2E p/s\\
+Configuration & Params & VRAM (MB) & Train (s) & Lat.\ (ms) & Head p/s & E2E p/s\\
 \midrule
 Baseline & 465,177 & 1,042.31 & 278.4 & 4.19 & 9,550 & 5,240\\
 Mamba-2 + HEDO & 597,787 & 1,086.15 & 362.8 & 5.67 & 7,054 & 4,766\\
@@ -303,12 +292,12 @@ Mamba-2 + AVSC & 531,225 & 1,043.18 & 329.8 & 5.16 & 7,774 & 4,718\\
 Full model & 763,931 & 1,089.33 & 463.1 & 7.07 & 5,671 & 3,749\\
 HEDO + AVSC & 663,835 & 1,087.42 & 427.7 & 6.16 & 6,501 & 4,112\\
 \bottomrule
-\end{tabular}}
+\end{tabular}
 \end{table}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{fig_efficiency_tradeoff.pdf}
+\includegraphics[width=0.7\textwidth]{fig_efficiency_tradeoff.pdf}
 \caption{(a) Head throughput against Mean Recall. (b) End-to-end throughput against peak training memory. Bubble area is proportional to the number of trainable parameters.}
 \label{fig:eff}
 \end{figure}
